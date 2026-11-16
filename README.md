@@ -75,6 +75,17 @@ păstrează ordinea istorică de adăugare (cu versiunea care a adus fiecare tab
 
 Toate cele 24 de taburi se deschid. Se poate naviga și din tastatură (săgeți stânga/dreapta, Home, End).
 
+**Navigare pe categorii:**
+
+- **Breadcrumb** `Acasă › Categorie › Tab`, clickabil — categoria duce la primul ei tab.
+- **Căutare rapidă `⌘K`** (sau `Ctrl+K`): pornește din butonul „Caută” din header; filtrează după nume
+  sau categorie, cu diacritice ignorate; `↑`/`↓` selectează, `Enter` deschide, `Esc` închide.
+- **Săgeți Precedent/Următor** sub panou, cu numele tabului de destinație; se mișcă în categorie,
+  iar la capăt trec o singură categorie mai departe (cu wrap).
+- **Hash** `#categorie/tab` (ex. `#investitii/randament`) — **retro-compatibil** cu `#tab`
+  (ex. `#randament`) și cu `#acasa`; forma veche se normalizează automat.
+- **Badge de categorie** în fiecare panou (iconiță + nume + număr de taburi).
+
 **Categoriile din sidebar:**
 
 | Categorie | Taburi | Întrebarea pe care o răspunde |
@@ -131,7 +142,8 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
 - **Drawer (mobil)** — navigația e un drawer cu overlay, `Esc` închide, focusul e ținut în drawer și
   la alegerea unui tab revine în conținut.
 - **`aria-live` doar în panoul activ** — cititorul de ecran nu anunță rezultatele din panourile ascunse.
-- **Back/forward** — hash-ul tabului este urmărit; butoinele de navigare din browser schimbă tabul.
+- **Back/forward** — hash-ul tabului este urmărit (`#categorie/tab`, cu fallback `#tab`); butoinele de
+  navigare din browser schimbă tabul.
 - **Tabele** — toate tabelele au `caption` (vizibil doar pentru cititoare) și `scope="col"`
   pe coloane, deci antetele sunt asociate formal cu tabelul.
 - **Contrast WCAG AA** — și pentru textul dezactivat (`--disabled` ≥ 4,5:1) în ambele teme.

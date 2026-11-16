@@ -63,7 +63,7 @@ const src =
   'computeDca, citesteDca, DCA_SCENARII, renderDca, computeCost, ' +
   'computeCurs, citesteCurs, renderCurs, initCurs, ' +
   'BIASE_QUIZ, scorBiase, renderBiaseQuiz, renderBiase, resetBiase, ' +
-  'FORMULA_TIPS };';
+  'FORMULA_TIPS, parseHash, hashForTab, stepTab, normalizeText };';
 
 vm.runInContext(src, ctx, { filename: 'glitchcoin-bundle.js' });
 

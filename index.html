@@ -43,6 +43,12 @@
         <span class="brand-name">GlitchCoin</span>
       </a>
       <div class="header-actions">
+        <button class="header-search" id="search-trigger" type="button"
+                aria-haspopup="dialog" aria-controls="search-overlay" title="Căutare rapidă (⌘K)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="header-search-label">Caută</span>
+          <kbd class="header-search-kbd" aria-hidden="true">⌘K</kbd>
+        </button>
         <button class="header-btn" id="focus-toggle" type="button" aria-pressed="false"
                 title="Mod Concentrare (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4"/></svg><span class="header-btn-label">Concentrare</span></button>
         <button class="header-btn" id="theme-toggle" type="button"
@@ -161,7 +167,7 @@
       <p class="lead">GlitchCoin este un set de calculatoare locale pentru a înțelege banii: inflație, buget, investiții, risc, impozite și decizii. Rulează în browser, fără backend și fără date personale.</p>
 
       <div class="home-grid">
-      <a class="home-card" href="#inflatie" data-goto="inflatie" data-cat="fundamente">
+      <a class="home-card" href="#fundamente/inflatie" data-goto="inflatie" data-cat="fundamente">
         <span class="home-card-top">
           <span class="home-card-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span>
           <span class="home-card-count">5 taburi</span>
@@ -169,7 +175,7 @@
         <span class="home-card-title">Fundamentele banilor</span>
         <span class="home-card-desc">Ce se întâmplă cu valoarea banilor în timp?</span>
       </a>
-      <a class="home-card" href="#timp" data-goto="timp" data-cat="buget">
+      <a class="home-card" href="#buget/timp" data-goto="timp" data-cat="buget">
         <span class="home-card-top">
           <span class="home-card-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="1.3"/></svg></span>
           <span class="home-card-count">5 taburi</span>
@@ -177,7 +183,7 @@
         <span class="home-card-title">Bugetul de zi cu zi</span>
         <span class="home-card-desc">Cum-ți organizezi ce câștigi și ce cheltuiești lunar?</span>
       </a>
-      <a class="home-card" href="#randament" data-goto="randament" data-cat="investitii">
+      <a class="home-card" href="#investitii/randament" data-goto="randament" data-cat="investitii">
         <span class="home-card-top">
           <span class="home-card-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M2 20h20"/></svg></span>
           <span class="home-card-count">7 taburi</span>
@@ -185,7 +191,7 @@
         <span class="home-card-title">Investiții</span>
         <span class="home-card-desc">Cum câștig și cum intri în piață?</span>
       </a>
-      <a class="home-card" href="#diversificare" data-goto="diversificare" data-cat="risc">
+      <a class="home-card" href="#risc/diversificare" data-goto="diversificare" data-cat="risc">
         <span class="home-card-top">
           <span class="home-card-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.6-3 8.2-7 10-4-1.8-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
           <span class="home-card-count">4 taburi</span>
@@ -193,7 +199,7 @@
         <span class="home-card-title">Risc și protecție</span>
         <span class="home-card-desc">Ce se întâmplă dacă eșuează?</span>
       </a>
-      <a class="home-card" href="#pensie" data-goto="pensie" data-cat="impozite">
+      <a class="home-card" href="#impozite/pensie" data-goto="pensie" data-cat="impozite">
         <span class="home-card-top">
           <span class="home-card-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-2.3-1.4L14.4 21l-2.4-1.4L9.6 21l-2.3-1.4L5 21z"/><path d="M9 8h6M9 12h6"/></svg></span>
           <span class="home-card-count">2 taburi</span>
@@ -201,7 +207,7 @@
         <span class="home-card-title">Impozite și viitor</span>
         <span class="home-card-desc">Ce plătești și ce acumulezi pe termen foarte lung?</span>
       </a>
-      <a class="home-card" href="#biase" data-goto="biase" data-cat="psihologie">
+      <a class="home-card" href="#psihologie/biase" data-goto="biase" data-cat="psihologie">
         <span class="home-card-top">
           <span class="home-card-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.8.7 1.3 1.5 1.5 2.5h4.2c.2-1 .7-1.8 1.5-2.5A6 6 0 0 0 12 3z"/></svg></span>
           <span class="home-card-count">1 tab</span>
@@ -3285,7 +3291,41 @@
         <a href="https://www.investor.gov/" target="_blank" rel="noopener">Investor.gov — educație pentru investitori</a>.
       </p>
     </section>
+
+    <nav class="panel-nav" id="panel-nav" aria-label="Navigare între taburi" hidden>
+      <button class="panel-nav-btn" id="prev-tab" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        <span class="visually-hidden">Precedent:</span>
+        <span class="panel-nav-text"></span>
+      </button>
+      <button class="panel-nav-btn" id="next-tab" type="button">
+        <span class="visually-hidden">Următor:</span>
+        <span class="panel-nav-text"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </nav>
   </main>
+  </div>
+
+  <div class="search-overlay" id="search-overlay" hidden>
+    <div class="search-backdrop" data-search-close></div>
+    <div class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="search-title">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <label class="visually-hidden" id="search-title" for="search-input">Caută un tab sau o categorie</label>
+        <input id="search-input" type="text" placeholder="Caută un tab…" autocomplete="off"
+               spellcheck="false" role="combobox" aria-expanded="true"
+               aria-controls="search-results" aria-activedescendant="">
+        <kbd class="search-kbd" aria-hidden="true">Esc</kbd>
+      </div>
+      <ul class="search-results" id="search-results" role="listbox" aria-label="Rezultate căutare"></ul>
+      <p class="search-empty" id="search-empty" hidden>Niciun rezultat. Încearcă alt termen.</p>
+      <div class="search-foot">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navighează</span>
+        <span><kbd>Enter</kbd> deschide</span>
+        <span><kbd>Esc</kbd> închide</span>
+      </div>
+    </div>
   </div>
 
   <footer class="footer">

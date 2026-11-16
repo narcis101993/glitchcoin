@@ -4056,6 +4056,64 @@ const CATEGORIES = [
 const TAB_CATEGORY = {};
 CATEGORIES.forEach((c) => c.tabs.forEach((t) => { TAB_CATEGORY[t] = c; }));
 
+/* ── Hash `#categorie/tab` (cu fallback retro-compatibil `#tab`) ──
+   Hash-ul canonic spune clar unde sta tabul: `#investitii/randament`.
+   Hash-urile vechi (#randament) rămân valide pentru bookmark-uri și
+   legături existente. `#acasa` deschide panoul Acasă. */
+function parseHash(raw) {
+  const h = String(raw == null ? '' : raw).replace(/^#/, '');
+  if (!h) return null;
+  if (h === 'acasa') return { type: 'home' };
+  const parts = h.split('/');
+  if (parts.length >= 2 && TABS.includes(parts[parts.length - 1])) {
+    return { type: 'tab', id: parts[parts.length - 1] };
+  }
+  if (TABS.includes(h)) return { type: 'tab', id: h };
+  return null;
+}
+
+/* Hash-ul canonic al unui tab (`#fundamente/inflatie`). */
+function hashForTab(id) {
+  const cat = TAB_CATEGORY[id];
+  return '#' + (cat ? cat.id + '/' : '') + id;
+}
+
+/* Numele vizibil al unui tab (din butonul din sidebar). */
+function tabName(id) {
+  const btn = document.getElementById('tab-' + id);
+  return btn ? btn.textContent.trim() : id;
+}
+
+/* Normalizare pentru căutare: litere mici, fără diacritice, spații unificate. */
+function normalizeText(s) {
+  return String(s == null ? '' : s)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/* Salt Precedent/Următor: în cadrul categoriei, cu wrap; la capătul
+   categoriei trece la categoria următoare/precedentă — mereu o singură
+   categorie, niciodată două sau mai multe (§3.4 din REDESIGN-PROPUNERE). */
+function stepTab(id, dir) {
+  const cat = TAB_CATEGORY[id];
+  if (!cat) return null;
+  const idx = cat.tabs.indexOf(id);
+  if (idx === -1) return null;
+  const catIdx = CATEGORIES.indexOf(cat);
+
+  if (dir > 0) {
+    if (idx < cat.tabs.length - 1) return cat.tabs[idx + 1];
+    const nextCat = CATEGORIES[(catIdx + 1) % CATEGORIES.length];
+    return nextCat.tabs[0];
+  }
+  if (idx > 0) return cat.tabs[idx - 1];
+  const prevCat = CATEGORIES[(catIdx - 1 + CATEGORIES.length) % CATEGORIES.length];
+  return prevCat.tabs[prevCat.tabs.length - 1];
+}
+
 /* Id-ul tabului activ, citit din HTML (clasa `is-active`), nu din hash:
    hash-ul se schimbă la click, dar tabul afișat e cel cu `is-active`. */
 function activeTabId() {
@@ -4099,10 +4157,13 @@ function activateTab(id, { focus = false, focusPanel = false, scroll = false, hi
   if (focusPanel) panel.focus({ preventScroll: true });
   if (scroll || focusPanel) panel.scrollIntoView({ block: 'start', inline: 'nearest' });
 
-  // Reține ultimul tab vizibil în bara de browser (fără a mai încărca pagina).
+  // Reține ultimul tab vizibil în bara de browser, în forma canonică
+  // `#categorie/tab` (fără a mai încărca pagina). Hash-urile vechi
+  // (`#tab`) sunt acceptate la deschidere și la back/forward.
   if (history.replaceState) {
-    if (historyMode === 'push') history.pushState(null, '', '#' + id);
-    else history.replaceState(null, '', '#' + id);
+    const hash = hashForTab(id);
+    if (historyMode === 'push') history.pushState(null, '', hash);
+    else history.replaceState(null, '', hash);
   }
 
   // Panoul „Acasă" se ascunde de fiecare dată când se deschide un tab.
@@ -4149,6 +4210,7 @@ function updateChrome(id) {
   if (homeLink) homeLink.removeAttribute('aria-current');
 
   renderBreadcrumb(id);
+  updatePanelNav(id);
   updatePrintTabName();
 }
 
@@ -4169,7 +4231,7 @@ function renderBreadcrumb(id) {
   if (cat) {
     const liCat = document.createElement('li');
     const aCat = document.createElement('a');
-    aCat.href = '#' + cat.tabs[0];
+    aCat.href = hashForTab(cat.tabs[0]);
     aCat.textContent = cat.nume;
     liCat.appendChild(aCat);
     list.appendChild(liCat);
@@ -4220,6 +4282,7 @@ function activateHome({ focusPanel = false, history: historyMode = 'replace' } =
   if (homeLink) homeLink.setAttribute('aria-current', 'page');
 
   renderBreadcrumbHome();
+  updatePanelNav(null);
   updatePrintTabName();
 
   if (focusPanel && home) {
@@ -4231,6 +4294,74 @@ function activateHome({ focusPanel = false, history: historyMode = 'replace' } =
     if (historyMode === 'push') history.pushState(null, '', '#acasa');
     else history.replaceState(null, '', '#acasa');
   }
+}
+
+/* ── Săgeți Precedent/Următor ───────────────────────────────
+   Butoanele de sub panou arată numele tabului de destinație și
+   urmează aceeași logică ca săgețile din tastatură: se mișcă în
+   categorie, la limită trec o singură categorie mai departe. */
+function updatePanelNav(id) {
+  const nav = document.getElementById('panel-nav');
+  const prevBtn = document.getElementById('prev-tab');
+  const nextBtn = document.getElementById('next-tab');
+  if (!nav || !prevBtn || !nextBtn) return;
+
+  if (!id || !TAB_CATEGORY[id]) {
+    nav.hidden = true;
+    return;
+  }
+  nav.hidden = false;
+
+  const prev = stepTab(id, -1);
+  const next = stepTab(id, 1);
+  prevBtn.querySelector('.panel-nav-text').textContent = tabName(prev);
+  nextBtn.querySelector('.panel-nav-text').textContent = tabName(next);
+  prevBtn.title = 'Precedent: ' + tabName(prev);
+  nextBtn.title = 'Următor: ' + tabName(next);
+}
+
+function initPanelNav() {
+  const prevBtn = document.getElementById('prev-tab');
+  const nextBtn = document.getElementById('next-tab');
+  if (!prevBtn || !nextBtn) return;
+
+  const go = (dir) => {
+    const current = activeTabId();
+    if (!current) return;
+    const target = stepTab(current, dir);
+    if (!target) return;
+    activateTab(target, { focusPanel: true, history: 'push' });
+    persistSave();
+  };
+  prevBtn.addEventListener('click', () => go(-1));
+  nextBtn.addEventListener('click', () => go(1));
+}
+
+/* Badge-ul de categorie din panoul fiecărui tab (injectat din JS,
+   ca panourile să rămână neschimbate în HTML). */
+function renderCategoryBadges() {
+  // Iconițele din sidebar, pentru același semn vizual pe badge.
+  const icons = {};
+  document.querySelectorAll('.side-group').forEach((group) => {
+    const icon = group.querySelector('.side-cat-icon');
+    if (icon && group.dataset.cat) icons[group.dataset.cat] = icon.innerHTML;
+  });
+
+  TABS.forEach((id) => {
+    const panel = document.getElementById('panel-' + id);
+    const cat = TAB_CATEGORY[id];
+    if (!panel || !cat || panel.querySelector('.cat-badge')) return;
+
+    const badge = document.createElement('span');
+    badge.className = 'cat-badge';
+    badge.dataset.cat = cat.id;
+    const n = cat.tabs.length;
+    badge.innerHTML =
+      (icons[cat.id] ? `<span class="cat-badge-icon" aria-hidden="true">${icons[cat.id]}</span>` : '') +
+      `<span class="cat-badge-name">${cat.nume}</span>` +
+      `<span class="cat-badge-count">${n} ${n === 1 ? 'tab' : 'taburi'}</span>`;
+    panel.insertAdjacentElement('afterbegin', badge);
+  });
 }
 
 /* ── Mod Concentrare ─────────────────────────────────────── */
@@ -4435,11 +4566,15 @@ function initShell() {
   initDrawer();
   initBackToTop();
   initHome();
+  initPanelNav();
+  renderCategoryBadges();
 }
 
 /* Tastatură: săgeți stânga/dreapta + Home/End (model WAI-ARIA).
    Funcționează și atunci când focusul e în panoul activ (după click),
-   nu doar când e pe butonul-tab. */
+   nu doar când e pe butonul-tab. Săgețile respectă categoriile
+   (stepTab): la limita categoriei se trece o singură categorie mai
+   departe, cu wrap — nu sar taburi în aleatoriu. */
 function handleTabKeys(event) {
   const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
   if (!keys.includes(event.key)) return;
@@ -4452,17 +4587,32 @@ function handleTabKeys(event) {
   if (index === -1 && current.id && current.id.startsWith('panel-')) {
     index = TABS.indexOf(current.id.replace(/^panel-/, ''));
   }
+  // Focus pe una din săgețile Precedent/Următor: pleacă de la tabul activ.
+  if (index === -1 && (current.id === 'prev-tab' || current.id === 'next-tab')) {
+    const active = activeTabId();
+    if (active) index = TABS.indexOf(active);
+  }
   if (index === -1) return;
 
   event.preventDefault();
-  let next = index;
-  if (event.key === 'ArrowLeft') next = (index - 1 + TABS.length) % TABS.length;
-  if (event.key === 'ArrowRight') next = (index + 1) % TABS.length;
-  if (event.key === 'Home') next = 0;
-  if (event.key === 'End') next = TABS.length - 1;
 
-  activateTab(TABS[next], { focus: true, scroll: true, history: 'push' });
-  persistSave();
+  if (event.key === 'Home') {
+    activateTab(TABS[0], { focus: true, scroll: true, history: 'push' });
+    persistSave();
+    return;
+  }
+  if (event.key === 'End') {
+    activateTab(TABS[TABS.length - 1], { focus: true, scroll: true, history: 'push' });
+    persistSave();
+    return;
+  }
+
+  const base = TABS[index];
+  const target = stepTab(base, event.key === 'ArrowRight' ? 1 : -1);
+  if (target) {
+    activateTab(target, { focus: true, scroll: true, history: 'push' });
+    persistSave();
+  }
 }
 
 function initTabs() {
@@ -4483,27 +4633,254 @@ function initTabs() {
   const sideNav = document.querySelector('.side-nav');
   if (sideNav) sideNav.addEventListener('keydown', handleTabKeys);
 
-  // Back/forward: hash-ul se schimbă și tabul afișat îl urmește.
+  // Și din butoanele Precedent/Următor.
+  const panelNav = document.getElementById('panel-nav');
+  if (panelNav) panelNav.addEventListener('keydown', handleTabKeys);
+
+  // Breadcrumb-ul e clickabil: click pe „Acasă" sau pe categorie
+  // deschide primul tab al categoriei, ca o intrare nouă în istoric.
+  const breadcrumbList = document.getElementById('breadcrumb-list');
+  if (breadcrumbList) {
+    breadcrumbList.addEventListener('click', (event) => {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link) return;
+      const parsed = parseHash(link.getAttribute('href'));
+      if (!parsed) return;
+      event.preventDefault();
+      if (parsed.type === 'home') activateHome({ focusPanel: true, history: 'push' });
+      else activateTab(parsed.id, { focusPanel: true, history: 'push' });
+      persistSave();
+    });
+  }
+
+  // Back/forward și legături externe: hash-ul se schimbă și tabul
+  // afișat îl urmește. Acceptă `#categorie/tab` și `#tab` (vechi).
   window.addEventListener('hashchange', () => {
-    const id = location.hash.replace('#', '');
-    if (TABS.includes(id)) {
-      activateTab(id, { focusPanel: true });
-      persistSave();
-    } else if (id === 'acasa') {
-      activateHome({ focusPanel: true });
-      persistSave();
-    }
+    const parsed = parseHash(location.hash);
+    if (!parsed) return;
+    if (parsed.type === 'tab') activateTab(parsed.id, { focusPanel: true });
+    else activateHome({ focusPanel: true });
+    persistSave();
   });
 
   // Prima deschidere: „Acasă". Dacă există un tab salvat în localStorage
-  // (sau un hash valid), se deschide tabul respectiv — nu se pierde locul.
+  // (sau un hash valid, în oricare dintre cele două forme), se deschide
+  // tabul respectiv — nu se pierde locul.
   let initial = null;
   try { initial = localStorage.getItem('glitchcoin-tab'); } catch (e) { /* blocat */ }
   if (!initial || !TABS.includes(initial)) {
-    initial = location.hash.replace('#', '');
+    const parsed = parseHash(location.hash);
+    if (parsed && parsed.type === 'tab') initial = parsed.id;
   }
   if (TABS.includes(initial)) activateTab(initial);
   else activateHome();
+}
+
+/* ═══ 27. Căutare rapidă ⌘K ═══════════════════════════════
+   Paletă de comenzi minimală: caută taburile după nume sau
+   categorie (diacritice ignorate), navighează cu săgeți, Enter
+   deschide. Structura e pregătită pentru glosar/FAQ (Etapa 3):
+   filtrul pleacă din lista de taburi și poate primi intrări noi. */
+
+let searchOpen = false;
+let searchActive = -1;
+let searchResults = [];
+
+function buildSearchItems() {
+  return TABS.map((id) => {
+    const cat = TAB_CATEGORY[id];
+    return { id, name: tabName(id), category: cat ? cat.nume : '' };
+  });
+}
+
+function filteredSearch(query) {
+  const q = normalizeText(query);
+  if (!q) return buildSearchItems();
+  return buildSearchItems()
+    .map((item) => {
+      const name = normalizeText(item.name);
+      const cat = normalizeText(item.category);
+      let score = -1;
+      if (name.startsWith(q)) score = 0;
+      else if (name.includes(q)) score = 1;
+      else if (cat.includes(q)) score = 2;
+      return { item, score };
+    })
+    .filter((r) => r.score !== -1)
+    .sort((a, b) => a.score - b.score)
+    .map((r) => r.item);
+}
+
+function renderSearchResults(query) {
+  const input = document.getElementById('search-input');
+  const list = document.getElementById('search-results');
+  const empty = document.getElementById('search-empty');
+  if (!input || !list) return;
+
+  searchResults = filteredSearch(query);
+  searchActive = searchResults.length ? 0 : -1;
+
+  list.replaceChildren();
+  searchResults.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'search-option' + (i === searchActive ? ' is-active' : '');
+    li.id = 'search-opt-' + item.id;
+    li.setAttribute('role', 'option');
+    li.setAttribute('aria-selected', i === searchActive ? 'true' : 'false');
+    li.dataset.tab = item.id;
+
+    const name = document.createElement('span');
+    name.className = 'search-option-name';
+    name.textContent = item.name;
+    const cat = document.createElement('span');
+    cat.className = 'search-option-cat';
+    cat.textContent = item.category;
+
+    li.appendChild(name);
+    li.appendChild(cat);
+    list.appendChild(li);
+  });
+
+  if (empty) empty.hidden = searchResults.length > 0;
+  input.setAttribute('aria-activedescendant',
+    searchActive >= 0 ? 'search-opt-' + searchResults[searchActive].id : '');
+}
+
+function setSearchActive(index) {
+  const list = document.getElementById('search-results');
+  if (!list || !searchResults.length) return;
+  const max = searchResults.length - 1;
+  searchActive = index < 0 ? max : (index > max ? 0 : index);
+
+  Array.from(list.children).forEach((li, i) => {
+    const on = i === searchActive;
+    li.classList.toggle('is-active', on);
+    li.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+
+  const activeLi = list.children[searchActive];
+  if (activeLi) {
+    activeLi.scrollIntoView({ block: 'nearest' });
+    const input = document.getElementById('search-input');
+    if (input) input.setAttribute('aria-activedescendant', activeLi.id);
+  }
+}
+
+/* Fundalul devine inert când paleta e deschisă (suport nativ),
+   ca focusul să nu ajungă în spatele dialogului. */
+const SEARCH_INERT = ['#sidebar', '#main-content', '.app-header', '.footer'];
+function setSearchInert(on) {
+  if (typeof HTMLElement === 'undefined' || !('inert' in HTMLElement.prototype)) return;
+  SEARCH_INERT.forEach((sel) => document.querySelectorAll(sel).forEach((el) => {
+    if (on) el.setAttribute('inert', '');
+    else el.removeAttribute('inert');
+  }));
+}
+
+function openSearch() {
+  const overlay = document.getElementById('search-overlay');
+  const input = document.getElementById('search-input');
+  const trigger = document.getElementById('search-trigger');
+  if (!overlay || !input) return;
+
+  searchOpen = true;
+  overlay.hidden = false;
+  document.body.classList.add('is-search-open');
+  setSearchInert(true);
+  input.value = '';
+  renderSearchResults('');
+  input.focus();
+  if (trigger) trigger.setAttribute('aria-expanded', 'true');
+}
+
+function closeSearch(restoreFocus = true) {
+  const overlay = document.getElementById('search-overlay');
+  const trigger = document.getElementById('search-trigger');
+  if (!overlay) return;
+
+  searchOpen = false;
+  overlay.hidden = true;
+  document.body.classList.remove('is-search-open');
+  setSearchInert(false);
+  if (restoreFocus && trigger) {
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.focus();
+  }
+}
+
+function chooseSearchItem(id) {
+  closeSearch(false);
+  if (TABS.includes(id)) {
+    activateTab(id, { focusPanel: true, history: 'push' });
+    persistSave();
+  }
+}
+
+function initSearch() {
+  const trigger = document.getElementById('search-trigger');
+  const overlay = document.getElementById('search-overlay');
+  const input = document.getElementById('search-input');
+  const list = document.getElementById('search-results');
+  if (!trigger || !overlay || !input || !list) return;
+
+  // Eticheta de platformă: ⌘K pe Mac, Ctrl K în rest.
+  const kbd = trigger.querySelector('.header-search-kbd');
+  const isMac = typeof navigator !== 'undefined' &&
+    /Mac|iPod|iPhone|iPad/.test(navigator.platform || '');
+  if (kbd) kbd.textContent = isMac ? '⌘K' : 'Ctrl K';
+  trigger.title = isMac ? 'Căutare rapidă (⌘K)' : 'Căutare rapidă (Ctrl+K)';
+
+  trigger.addEventListener('click', () => {
+    if (searchOpen) closeSearch();
+    else openSearch();
+  });
+
+  // ⌘K / Ctrl+K funcționează peste tot (ca într-o paletă de comenzi).
+  document.addEventListener('keydown', (event) => {
+    if (!(event.metaKey || event.ctrlKey)) return;
+    if (event.key !== 'k' && event.key !== 'K') return;
+    event.preventDefault();
+    if (searchOpen) closeSearch();
+    else openSearch();
+  });
+
+  input.addEventListener('input', () => renderSearchResults(input.value));
+
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown') { event.preventDefault(); setSearchActive(searchActive + 1); }
+    else if (event.key === 'ArrowUp') { event.preventDefault(); setSearchActive(searchActive - 1); }
+    else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (searchActive >= 0 && searchResults[searchActive]) chooseSearchItem(searchResults[searchActive].id);
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      closeSearch();
+    }
+  });
+
+  overlay.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') { event.preventDefault(); closeSearch(); }
+    if (event.key !== 'Tab') return;
+    // Focus trap simplu: singurul element focusabil e câmpul de căutare.
+    event.preventDefault();
+    input.focus();
+  });
+
+  overlay.addEventListener('click', (event) => {
+    if (event.target.closest('[data-search-close]')) closeSearch();
+  });
+
+  list.addEventListener('click', (event) => {
+    const option = event.target.closest('.search-option');
+    if (option) chooseSearchItem(option.dataset.tab);
+  });
+
+  list.addEventListener('mousemove', (event) => {
+    const option = event.target.closest('.search-option');
+    if (!option) return;
+    const idx = searchResults.findIndex((item) => item.id === option.dataset.tab);
+    if (idx !== -1 && idx !== searchActive) setSearchActive(idx);
+  });
 }
 
 /* ── Tooltips accesibile pentru formule ─────────────────────
@@ -5591,6 +5968,7 @@ function init() {
   initTheme();
   initTabs();
   initShell();
+  initSearch();
   initFormulaTips();
   populateYearSelect();
 

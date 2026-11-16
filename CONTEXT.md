@@ -360,3 +360,20 @@ Fundația vizuală implementată și verificată în browser real (`file://`):
   ca să corespundă cu ordinea din sidebar (testele cereau `tabIds == panelIds`).
 - Verificare: **155/155** teste (145 de bază + 10 noi în `tests/shell.test.mjs`); 24/24 taburi deschise;
   zero erori JS; 390 px și 1440 px fără overflow; contrast AA; print ascunde scheletul.
+
+## Etapa 2 finalizată (dev, 2026-11-16)
+
+Navigare pe categorii implementată și verificată în browser real (`file://`):
+
+- **Hash `#categorie/tab`** (ex. `#investitii/randament`) cu **fallback** la hash-urile vechi `#tab`
+  (`#randament`) și la `#acasa`; hash-urile vechi se normalizează automat la formă canonică.
+- **Breadcrumb clickabil**: `Acasă › Categorie › Tab`, categoria duce la primul tab al categoriei.
+- **Căutare `⌘K` / `Ctrl+K`**: paletă cu input focalizat, 24 de rezultate, filtrare diacritic-insensibilă
+  după nume sau categorie, săgeți ↑/↓, Enter deschide, Esc închide; fundal inert + focus trap.
+- **Săgeți Precedent/Următor** sub panou, cu numele tabului de destinație; se mișcă în categorie,
+  la limită trec o singură categorie mai departe (wrap complet) — nu sar categorii neintenționat.
+- **Badge de categorie** în panoul fiecărui tab (iconiță + nume + număr de taburi), injectat din JS.
+- Săgețile din tastatură (←/→, Home, End) urmează aceeași logică de categorie.
+- Verificare: **170/170** teste (155 + 15 noi în `tests/navigare.test.mjs`, din care unele execută
+  `parseHash`/`stepTab`/`normalizeText` real); 24/24 taburi; 20/20 legături cu prefill; zero erori JS;
+  back/forward funcțional; 390 px și 1440 px fără overflow; print ascunde panoul de navigare și paleta.

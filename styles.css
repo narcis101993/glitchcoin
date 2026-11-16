@@ -1384,6 +1384,40 @@ td.strong { color: var(--accent-strong); font-weight: 700; }
 .icon-btn svg { width: 20px; height: 20px; }
 .menu-btn { display: none; }
 
+/* ── Căutare ⌘K în header ────────────────────────────────── */
+.header-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: var(--space-1);
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--muted);
+  font: inherit;
+  font-size: .85rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--speed) var(--ease),
+              border-color var(--speed) var(--ease),
+              background-color var(--speed) var(--ease);
+}
+.header-search:hover { color: var(--ink); border-color: var(--line-strong); }
+.header-search svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.header-search-kbd,
+.search-kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: .72rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 /* În temă deschisă arătăm lunea (duci în dark); în dark, soarele. */
 #theme-toggle .icon-sun { display: none; }
 [data-theme="dark"] #theme-toggle .icon-sun { display: block; }
@@ -1530,6 +1564,166 @@ main {
 .breadcrumb a { color: var(--muted); text-decoration: none; }
 .breadcrumb a:hover { color: var(--accent-strong); text-decoration: underline; }
 .breadcrumb [aria-current="page"] { color: var(--ink); font-weight: 600; }
+
+/* ── Badge de categorie (în panoul fiecărui tab) ──────────── */
+.cat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 0 0 var(--space-3);
+  padding: 5px 12px 5px 8px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.cat-badge-icon { display: inline-flex; color: var(--accent-strong); }
+.cat-badge-icon svg { width: 15px; height: 15px; }
+.cat-badge-count {
+  padding: 1px 7px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: .7rem;
+}
+
+/* ── Săgeți Precedent/Următor ────────────────────────────── */
+.panel-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+.panel-nav[hidden] { display: none; }
+.panel-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 48%;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--speed) var(--ease),
+              border-color var(--speed) var(--ease),
+              background-color var(--speed) var(--ease);
+}
+.panel-nav-btn:hover {
+  color: var(--accent-strong);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.panel-nav-btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.panel-nav-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Paleta de căutare ⌘K ────────────────────────────────── */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding: 12vh var(--space-4) var(--space-4);
+}
+.search-overlay[hidden] { display: none; }
+.search-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 13, 11, .45);
+}
+.search-dialog {
+  position: relative;
+  width: min(600px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.search-field > svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--muted); }
+.search-field input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+}
+.search-field input::placeholder { color: var(--muted); }
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.search-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.search-option.is-active { background: var(--accent-soft); }
+.search-option-name { font-weight: 600; color: var(--ink); }
+.search-option-cat {
+  flex: 0 0 auto;
+  font-size: .78rem;
+  color: var(--muted);
+  text-align: right;
+}
+.search-empty {
+  margin: 0;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--muted);
+}
+.search-empty[hidden] { display: none; }
+.search-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 9px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .75rem;
+}
+.search-foot kbd {
+  padding: 0 5px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface-2);
+  font-family: inherit;
+  font-size: .72rem;
+}
+body.is-search-open { overflow: hidden; }
 
 /* ── Acasă ────────────────────────────────────────────────── */
 .home-grid {
@@ -1689,6 +1883,10 @@ main {
   .brand-name { font-size: .98rem; }
   .home-grid { grid-template-columns: 1fr; }
   .quick-grid { grid-template-columns: 1fr; }
+  .header-search { padding: 8px; }
+  .header-search-label,
+  .header-search-kbd { display: none; }
+  .panel-nav-btn { font-size: .82rem; padding: 9px 12px; }
 }
 
 /* ═══ Tipărire (P5) ═══════════════════════════════════════
@@ -1780,6 +1978,8 @@ main {
   .sidebar-overlay,
   .back-to-top,
   .breadcrumb,
+  .panel-nav,
+  .search-overlay,
   .hero,
   .tabs-bar,
   .subnav,

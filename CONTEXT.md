@@ -337,8 +337,26 @@ Propunerile: `REDESIGN-PROPUNERE.md` (dev) + `CONTINUT-PROPUNERE.md` (finance). 
 | 3 | `t_f747b29e` | interactivitate: pas cu pas (cu banner), alerte, copiere, animații |
 | 4 | `t_ae179204` | conținut: 24 lead-uri, glosar, FAQ, mituri, disclaimer |
 | 5 | `t_9dd90cca` | identitate: favicon/titlu/meta, eliminarea Excelului, README |
-| 6 | `t_9461f4a6` | verificare + livrare; apoi publicarea (`t_c175a2f8`) |
+| 6 | `t_9461f4a6` | verificare + livrare |
+| — | `t_7571199d` | **curățenie finală** (înainte de publicare) → apoi `t_c175a2f8` |
 
 Decizii Narcis: 6 categorii · prima deschidere „Acasă" · paletă verde „registru" · font Inter · interactivitate
 completă · pas cu pas cu banner · toate cele 3 secțiuni globale în sidebar · disclaimer profesional
-(nu oferăm sfaturi financiare; proiect educațional) · publicare după ce aplicația e utilizabilă.
+(nu oferim sfaturi financiare; proiect educațional) · publicare după ce aplicația e utilizabilă.
+
+## Etapa 1 finalizată (dev, 2026-11-16)
+
+Fundația vizuală implementată și verificată în browser real (`file://`):
+
+- Tokeni verzi „registru" (`--accent:#0b7a55`, `--bg:#f6f7f4`), Inter self-hosted (`fonts.css` +
+  `fonts/*.woff2`, latin + latin-ext), cifre tabulare, ritm 8 px, colțuri 12 px.
+- Header 56 px sticky + breadcrumb `Acasă › Categorie › Tab`.
+- Sidebar 260 px cu 24 de taburi grupate pe 6 categorii, pliabile.
+- Prima deschidere „Acasă" (6 carduri de categorii + 3 simulatoare rapide); dacă există un tab salvat
+  în `localStorage`, se deschide tabul respectiv.
+- Mobil (< 1024 px): drawer cu overlay, `Esc`, focus trap; mod **Concentrare** (toggle în header + `F`).
+- **Back-to-top** în colțul din dreapta jos (apare după ~400 px de derulare).
+- Panourile taburilor **nu au fost modificate** (verificate byte-identic); au fost doar reordonate în DOM
+  ca să corespundă cu ordinea din sidebar (testele cereau `tabIds == panelIds`).
+- Verificare: **155/155** teste (145 de bază + 10 noi în `tests/shell.test.mjs`); 24/24 taburi deschise;
+  zero erori JS; 390 px și 1440 px fără overflow; contrast AA; print ascunde scheletul.

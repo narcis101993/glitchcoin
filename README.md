@@ -34,15 +34,17 @@ Nu ai nevoie de internet — toate fișierele și toate datele sunt locale.
 - **La reîncărcare**, valorile introduse anterior reapar; ce lipsește revine la valorile implicite
   din HTML (adică din Excel).
 - **Tabelele dinamice** (Costul mediu de achiziție, „Nu am bani") și **tabul deschis** se rețin la fel.
-- **„Resetează tot”** (bara de taburi, din dreapta) aduce toate cele 24 de taburi la valorile implicite:
+- **„Resetează tot”** (header, din dreapta) aduce toate cele 24 de taburi la valorile implicite:
   inputuri statice, selectul Deflator (2001) și selectul „Tipul de venit", tabelele dinamice —
   și șterge preferințele salvate, ca la o pagină nouă.
 - Funcțiația are `try/catch` pe tot parcursul: dacă `localStorage` e blocat, aplicația funcționează
   oricum, doar nu reține valorile între deschideri (verificat cu stocarea blocată în browser).
 
-## Navigare cu taburi
+## Navigare: sidebar pe categorii
 
-Bara de taburi are aceeași ordine ca taburile din Excel, plus cele cincisprezece taburi noi la final:
+Cele 24 de taburi sunt grupate în **6 categorii** în sidebar (260 px, sticky), nu mai stau într-un rând
+orizontal. Categoriile sunt pliabile; categoria tabului activ se deschide singură. Lista de mai jos
+păstrează ordinea istorică de adăugare (cu versiunea care a adus fiecare tab):
 
 | # | Tab | Stare |
 |---|-----|-------|
@@ -71,8 +73,23 @@ Bara de taburi are aceeași ordine ca taburile din Excel, plus cele cincisprezec
 | 23 | Curs de schimb | **gata** (v2.13, concept N11) |
 | 24 | Biaseuri comportamentale | **gata** (v2.13, concept N14) |
 
-Toate cele 24 de taburi se deschid. Bara se derulează orizontal pe ecrane înguste. Se poate naviga
-și din tastatură (săgeți stânga/dreapta, Home, End).
+Toate cele 24 de taburi se deschid. Se poate naviga și din tastatură (săgeți stânga/dreapta, Home, End).
+
+**Categoriile din sidebar:**
+
+| Categorie | Taburi | Întrebarea pe care o răspunde |
+|---|--:|---|
+| Fundamentele banilor | 5 | Ce se întâmplă cu valoarea banilor în timp? |
+| Bugetul de zi cu zi | 5 | Cum-ți organizezi ce câștigi și ce cheltuiești lunar? |
+| Investiții | 7 | Cum câștig și cum intri în piață? |
+| Risc și protecție | 4 | Ce se întâmplă dacă eșuează? |
+| Impozite și viitor | 2 | Ce plătești și ce acumulezi pe termen foarte lung? |
+| Psihologia banilor | 1 | De ce iau decizii proaste cu banii? |
+
+Prima deschidere e **„Acasă"** (6 carduri de categorii + 3 simulatoare rapide). Dacă ai deschis un tab
+anterior, se deschide tabul respectiv. Pe mobil (< 1024 px) sidebar-ul devine **drawer** (buton
+hamburger, `Esc` închide, focus trap). Breadcrumb-ul `Acasă › Categorie › Tab` e clickabil. Un toggle
+**Concentrare** din header ascunde sidebar-ul și lățește panoul la 720 px (scurtătură `F`).
 
 **Legături între taburi** — taburile noi se apelează una pe alta, cu prefill automat:
 „Buget 50/30/20” → „Timp vs dorințe” (dorințele ca preț), „Timp vs dorințe” → „Buget 50/30/20”
@@ -93,12 +110,12 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
 
 ## Tipărire și export CSV
 
-- **Tipărire (Cmd+P / „Salvează ca PDF")** — se tipărește doar tabul deschis, fără bara de taburi,
-  hero, comutator de temă, tooltip-uri, grafice și butoane. Antetul de pagină arată titlul aplicației
+- **Tipărire (Cmd+P / „Salvează ca PDF”)** — se tipărește doar tabul deschis, fără header, sidebar,
+  breadcrumb, comutator de temă, tooltip-uri, grafice și butoane. Antetul de pagină arată titlul aplicației
   și tabul activ; tabelele se întind pe lățimea paginii, textul se rupe în loc să fie tăiat, iar antetul
   de coloană se repetă pe fiecare pagină. Tema întunecată nu se tipărește — printul e mereu deschis,
   indiferent de tema aleasă. Fiecare tab ocupă 1–5 pagini A4, în funcție de lungimea tabelelor.
-- **„Descarcă CSV"** (bara de taburi, din dreapta) — exportă toate tabelele tabului activ într-un
+- **„Descarcă CSV”** (header, din dreapta) — exportă toate tabelele tabului activ într-un
   fișier `glitchcoin-<tab>.csv`, cu delimitator `;` și BOM UTF-8, ca să se deschidă în Excel cu
   diacritice corecte. Coloana de acțiuni („Șterge") nu se exportă; valorile din tabelele dinamice
   (cost, facturi) se exportă cu virgulă zecimală, ca în Excel.
@@ -108,7 +125,11 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
 - **Skip-link „Sari la conținut"** — primul element focusabil; e ascuns până când primește focus
   și duce direct la conținutul principal.
 - **Focalizare în panou** — la schimbarea tabului, focusul se mută în panoul activ și panoul este
-  derulat în vizibil (nu rămâne ascuns sub bara de taburi).
+  derulat în vizibil (nu rămâne ascuns sub header).
+- **Back-to-top** — buton fix în colțul din dreapta jos, apare după ~400 px de derulare; respectă
+  `prefers-reduced-motion`.
+- **Drawer (mobil)** — navigația e un drawer cu overlay, `Esc` închide, focusul e ținut în drawer și
+  la alegerea unui tab revine în conținut.
 - **`aria-live` doar în panoul activ** — cititorul de ecran nu anunță rezultatele din panourile ascunse.
 - **Back/forward** — hash-ul tabului este urmărit; butoinele de navigare din browser schimbă tabul.
 - **Tabele** — toate tabelele au `caption` (vizibil doar pentru cititoare) și `scope="col"`
@@ -126,11 +147,12 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
 
 | Fișier | Rol |
 |--------|-----|
-| `index.html` | Structura paginii, bara de taburi și cele 4 secțiuni din tabul Inflație |
-| `styles.css` | Stilurile, tokenii de temă și regulile de tipărire (funcționează offline, fără librării externe) |
+| `index.html` | Structura paginii (header, sidebar pe categorii, breadcrumb, Acasă) și cele 24 de panouri |
+| `styles.css` | Stilurile, tokenii de temă, scheletul (header/sidebar/drawer) și regulile de tipărire |
+| `fonts.css` + `fonts/` | Inter self-hosted (woff2, latin + latin-ext), cu fallback de sistem |
 | `data.js` | Datele brute: inflația 1991–2026 (INS, IPC național) și prețurile alimentelor 2020–2026 |
-| `app.js` | Toate calculele, interactivitatea, navigarea cu taburi, comutatorul de temă, persistența inputurilor și exportul CSV |
-| `tests/` | Testele automate (`node --test tests/`): corecțiile C1–C12, conceptele noi N1–N15 și datele din `data.js` |
+| `app.js` | Toate calculele, interactivitatea, navigarea, comutatorul de temă, modul Concentrare, drawer-ul, back-to-top, persistența inputurilor și exportul CSV |
+| `tests/` | Testele automate (`node --test tests/`): corecțiile C1–C12, conceptele noi N1–N15, scheletul (Etapa 1) și datele din `data.js` |
 | `favicon.svg` / `favicon.png` / `favicon-180.png` | Icoana aplicației (vector + PNG, apple-touch) |
 
 ## Teste

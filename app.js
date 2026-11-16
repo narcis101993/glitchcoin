@@ -115,7 +115,7 @@ function persistSaveNow() {
     PERSIST_TABLES.forEach(({ key, get }) => {
       try { localStorage.setItem(key, JSON.stringify(get())); } catch (e) { /* blocat */ }
     });
-    try { localStorage.setItem('glitchcoin-tab', activeTabId()); } catch (e) { /* blocat */ }
+    try { localStorage.setItem('glitchcoin-tab', activeTabId() || ''); } catch (e) { /* blocat */ }
   } catch (e) {
     // localStorage indisponibil — calculele merg mai departe, doar nu se rețin valorile
   }
@@ -227,7 +227,7 @@ function resetAll() {
 
 const THEME_KEY = 'glitchcoin-theme';
 /* Culoarea barei browserului (theme-color) pentru fiecare temă. */
-const THEME_COLORS = { light: '#0b1530', dark: '#070d1d' };
+const THEME_COLORS = { light: '#f6f7f4', dark: '#0c1110' };
 
 function getStoredTheme() {
   try {
@@ -4040,15 +4040,28 @@ function goToTab(id, valori = {}) {
 
 /* ═══ 25. Navigarea cu taburi (v2) ═══════════════════════ */
 
-/* Definiția taburilor: id-ul butonului ↔ id-ul panoului (`tab-<id>` / `panel-<id>`). */
-const TABS = ['inflatie', 'timp', 'dobanda', 'compusa', 'randament', 'profit', 'cost', 'suma', 'nuam', 'di', 'regula72', 'fond', 'oportunitate', 'buget', 'sanatate', 'diversificare', 'asigurari', 'stres', 'pensie', 'impozitare', 'datorii', 'dca', 'curs', 'biase'];
+/* Definiția taburilor: id-ul butonului ↔ id-ul panoului (`tab-<id>` / `panel-<id>`).
+   Ordinea e cea din sidebar (pe categorii), nu cea istorică din Excel. */
+const TABS = ['inflatie', 'dobanda', 'compusa', 'di', 'regula72', 'timp', 'nuam', 'buget', 'fond', 'sanatate', 'randament', 'profit', 'cost', 'suma', 'oportunitate', 'dca', 'curs', 'diversificare', 'asigurari', 'stres', 'datorii', 'pensie', 'impozitare', 'biase'];
+
+/* Cele 6 categorii din sidebar (§4.1 din REDESIGN-PROPUNERE). */
+const CATEGORIES = [
+  { id: 'fundamente', nume: 'Fundamentele banilor', tabs: ['inflatie', 'dobanda', 'compusa', 'di', 'regula72'] },
+  { id: 'buget', nume: 'Bugetul de zi cu zi', tabs: ['timp', 'nuam', 'buget', 'fond', 'sanatate'] },
+  { id: 'investitii', nume: 'Investiții', tabs: ['randament', 'profit', 'cost', 'suma', 'oportunitate', 'dca', 'curs'] },
+  { id: 'risc', nume: 'Risc și protecție', tabs: ['diversificare', 'asigurari', 'stres', 'datorii'] },
+  { id: 'impozite', nume: 'Impozite și viitor', tabs: ['pensie', 'impozitare'] },
+  { id: 'psihologie', nume: 'Psihologia banilor', tabs: ['biase'] },
+];
+const TAB_CATEGORY = {};
+CATEGORIES.forEach((c) => c.tabs.forEach((t) => { TAB_CATEGORY[t] = c; }));
 
 /* Id-ul tabului activ, citit din HTML (clasa `is-active`), nu din hash:
    hash-ul se schimbă la click, dar tabul afișat e cel cu `is-active`. */
 function activeTabId() {
-  const active = document.querySelector('.tabs .tab.is-active');
+  const active = document.querySelector('.side-nav .tab.is-active');
   if (active) return active.id.replace(/^tab-/, '');
-  return 'inflatie';
+  return null; // panoul „Acasă" e activ
 }
 
 /* Comută tabul. `focus` „pune" focusul pe buton (tastatură), `focusPanel` îl
@@ -4092,15 +4105,336 @@ function activateTab(id, { focus = false, focusPanel = false, scroll = false, hi
     else history.replaceState(null, '', '#' + id);
   }
 
-  updatePrintTabName();
+  // Panoul „Acasă" se ascunde de fiecare dată când se deschide un tab.
+  const homePanel = document.getElementById('panel-acasa');
+  if (homePanel) homePanel.hidden = true;
+
+  updateChrome(id);
 }
 
 /* Numele tabului din antetul de tipărire (P5). */
 function updatePrintTabName() {
   const el = document.getElementById('print-tab-name');
   if (!el) return;
-  const tab = document.getElementById('tab-' + activeTabId());
+  const id = activeTabId();
+  if (!id) { el.textContent = 'Acasă'; return; }
+  const tab = document.getElementById('tab-' + id);
   el.textContent = tab ? tab.textContent : '—';
+}
+
+/* ═══ 26. Schelet: breadcrumb, Acasă, concentrare, drawer, sus ═══ */
+
+/* Împachetarea vizuală curentă: sidebar (categoria activă deschisă),
+   breadcrumb și numele tabului din antetul de tipărire. */
+function updateChrome(id) {
+  const cat = TAB_CATEGORY[id];
+
+  document.querySelectorAll('.side-nav .tab').forEach((btn) => {
+    const activ = btn.id === 'tab-' + id;
+    btn.classList.toggle('is-active', activ);
+    btn.setAttribute('aria-selected', activ ? 'true' : 'false');
+  });
+
+  document.querySelectorAll('.side-group').forEach((group) => {
+    const toggle = group.querySelector('.side-cat');
+    const items = group.querySelector('.side-items');
+    if (!toggle || !items) return;
+    if (cat && group.dataset.cat === cat.id) {
+      items.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  const homeLink = document.getElementById('nav-acasa');
+  if (homeLink) homeLink.removeAttribute('aria-current');
+
+  renderBreadcrumb(id);
+  updatePrintTabName();
+}
+
+function renderBreadcrumb(id) {
+  const list = document.getElementById('breadcrumb-list');
+  if (!list) return;
+  const tab = document.getElementById('tab-' + id);
+  const cat = TAB_CATEGORY[id];
+  list.replaceChildren();
+
+  const liHome = document.createElement('li');
+  const aHome = document.createElement('a');
+  aHome.href = '#acasa';
+  aHome.textContent = 'Acasă';
+  liHome.appendChild(aHome);
+  list.appendChild(liHome);
+
+  if (cat) {
+    const liCat = document.createElement('li');
+    const aCat = document.createElement('a');
+    aCat.href = '#' + cat.tabs[0];
+    aCat.textContent = cat.nume;
+    liCat.appendChild(aCat);
+    list.appendChild(liCat);
+  }
+
+  const liTab = document.createElement('li');
+  liTab.setAttribute('aria-current', 'page');
+  liTab.textContent = tab ? tab.textContent : '—';
+  list.appendChild(liTab);
+}
+
+function renderBreadcrumbHome() {
+  const list = document.getElementById('breadcrumb-list');
+  if (!list) return;
+  list.replaceChildren();
+  const li = document.createElement('li');
+  li.setAttribute('aria-current', 'page');
+  li.textContent = 'Acasă';
+  list.appendChild(li);
+}
+
+/* Deschide panoul „Acasă" și ascunde toate taburile. */
+function activateHome({ focusPanel = false, history: historyMode = 'replace' } = {}) {
+  TABS.forEach((tid) => {
+    const btn = document.getElementById('tab-' + tid);
+    const pnl = document.getElementById('panel-' + tid);
+    if (btn) {
+      btn.classList.remove('is-active');
+      btn.setAttribute('aria-selected', 'false');
+    }
+    if (pnl) {
+      pnl.classList.remove('is-active');
+      pnl.setAttribute('hidden', '');
+    }
+  });
+
+  const home = document.getElementById('panel-acasa');
+  if (home) {
+    home.classList.add('is-active');
+    home.hidden = false;
+  }
+
+  document.querySelectorAll('.tab-panel[hidden] [aria-live]').forEach((el) => {
+    el.removeAttribute('aria-live');
+  });
+
+  const homeLink = document.getElementById('nav-acasa');
+  if (homeLink) homeLink.setAttribute('aria-current', 'page');
+
+  renderBreadcrumbHome();
+  updatePrintTabName();
+
+  if (focusPanel && home) {
+    home.focus({ preventScroll: true });
+    home.scrollIntoView({ block: 'start', inline: 'nearest' });
+  }
+
+  if (history.replaceState) {
+    if (historyMode === 'push') history.pushState(null, '', '#acasa');
+    else history.replaceState(null, '', '#acasa');
+  }
+}
+
+/* ── Mod Concentrare ─────────────────────────────────────── */
+function applyFocus(on) {
+  document.documentElement.classList.toggle('is-focus', on);
+  const btn = document.getElementById('focus-toggle');
+  if (btn) {
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.title = on ? 'Oprește modul Concentrare (F)' : 'Mod Concentrare (F)';
+  }
+}
+
+/* ── Drawer (mobil) ──────────────────────────────────────── */
+function initDrawer() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const menuBtn = document.getElementById('menu-btn');
+  if (!sidebar || !overlay || !menuBtn) return;
+  let lastFocus = null;
+
+  function trapFocus(event) {
+    if (event.key === 'Escape') { event.preventDefault(); closeDrawer(); return; }
+    if (event.key !== 'Tab') return;
+    const focusables = Array.from(sidebar.querySelectorAll('a[href], button:not([disabled])'));
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  }
+
+  function openDrawer() {
+    lastFocus = document.activeElement;
+    sidebar.classList.add('is-open');
+    overlay.hidden = false;
+    menuBtn.setAttribute('aria-expanded', 'true');
+    menuBtn.setAttribute('aria-label', 'Închide navigarea');
+    sidebar.setAttribute('aria-modal', 'true');
+    document.body.classList.add('is-drawer-open');
+    const first = sidebar.querySelector('.side-home') || sidebar.querySelector('button');
+    if (first) first.focus();
+    document.addEventListener('keydown', trapFocus);
+  }
+
+  function closeDrawer(restore = true) {
+    sidebar.classList.remove('is-open');
+    overlay.hidden = true;
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.setAttribute('aria-label', 'Deschide navigarea');
+    sidebar.removeAttribute('aria-modal');
+    document.body.classList.remove('is-drawer-open');
+    document.removeEventListener('keydown', trapFocus);
+    if (restore && lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  menuBtn.addEventListener('click', () => {
+    if (sidebar.classList.contains('is-open')) closeDrawer();
+    else openDrawer();
+  });
+  overlay.addEventListener('click', () => closeDrawer());
+
+  // Alegerea unui tab în drawer: închide și lasă focusul în conținut.
+  sidebar.addEventListener('click', (event) => {
+    if (event.target.closest('.side-tab') && sidebar.classList.contains('is-open')) {
+      closeDrawer(false);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024 && sidebar.classList.contains('is-open')) closeDrawer(false);
+  });
+}
+
+/* ── Buton „sus" ─────────────────────────────────────────── */
+function initBackToTop() {
+  const btn = document.getElementById('back-to-top');
+  if (!btn) return;
+  const onScroll = () => { btn.hidden = window.scrollY < 400; };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  btn.addEventListener('click', () => {
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  });
+}
+
+/* ── Simulatoare rapide de pe Acasă ──────────────────────── */
+function renderQuick() {
+  const c = document.getElementById('q-compusa-suma');
+  if (c) {
+    const suma = Math.max(0, readNumber(c));
+    const rez = document.getElementById('q-compusa-rez');
+    if (rez) {
+      if (suma <= 0) rez.textContent = '—';
+      else {
+        const { scenA } = computeCompusa(suma, 0, 0.07);
+        rez.textContent = fmtLei(scenA[10].valoare);
+      }
+    }
+  }
+
+  const f = document.getElementById('q-fond-suma');
+  if (f) {
+    const rezerva = Math.max(0, readNumber(f));
+    const rez = document.getElementById('q-fond-rez');
+    if (rez) {
+      if (rezerva <= 0) rez.textContent = '—';
+      else {
+        const luni = rezerva / 3600;
+        rez.textContent = luni.toLocaleString(LOCALE, { maximumFractionDigits: 1 }) + (luni === 1 ? ' lună' : ' luni');
+      }
+    }
+  }
+
+  const d = document.getElementById('q-datorii-suma');
+  if (d) {
+    const suma = Math.max(0, readNumber(d));
+    const rez = document.getElementById('q-datorii-rez');
+    if (rez) rez.textContent = suma > 0 ? fmtLei(rataAnuitate(suma, 0.07 / 12, 240)) + '/lună' : '—';
+  }
+}
+
+function initHome() {
+  ['q-compusa-suma', 'q-fond-suma', 'q-datorii-suma'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', renderQuick);
+  });
+
+  document.querySelectorAll('.quick-card [data-goto]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-goto');
+      const valori = {};
+      const prefill = btn.getAttribute('data-prefill');
+      if (prefill) {
+        const [dest, sursa] = prefill.split(':');
+        const s = document.getElementById(sursa);
+        if (s) valori[dest] = s.value;
+      }
+      goToTab(id, valori);
+    });
+  });
+
+  renderQuick();
+}
+
+/* ── Inițializarea scheletului ───────────────────────────── */
+function initShell() {
+  // Categorii pliabile.
+  document.querySelectorAll('.side-cat').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const items = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!items) return;
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      items.hidden = open;
+    });
+  });
+
+  // Acasă (brand + link din sidebar).
+  const goHome = (event) => {
+    event.preventDefault();
+    activateHome({ focusPanel: true, history: 'push' });
+    persistSave();
+  };
+  const homeLink = document.getElementById('nav-acasa');
+  if (homeLink) homeLink.addEventListener('click', goHome);
+  const brand = document.getElementById('brand');
+  if (brand) brand.addEventListener('click', goHome);
+
+  // Cardurile de categorie de pe Acasă.
+  document.querySelectorAll('.home-card[data-goto]').forEach((card) => {
+    card.addEventListener('click', (event) => {
+      event.preventDefault();
+      activateTab(card.getAttribute('data-goto'), { focusPanel: true, history: 'push' });
+      persistSave();
+    });
+  });
+
+  // Mod Concentrare (implicit pe mobil).
+  const focusBtn = document.getElementById('focus-toggle');
+  let storedFocus = null;
+  try { storedFocus = localStorage.getItem('glitchcoin-focus'); } catch (e) { /* blocat */ }
+  let focus = storedFocus === null ? window.innerWidth < 1024 : storedFocus === '1';
+  applyFocus(focus);
+
+  const toggleFocus = () => {
+    focus = !focus;
+    applyFocus(focus);
+    try { localStorage.setItem('glitchcoin-focus', focus ? '1' : '0'); } catch (e) { /* blocat */ }
+  };
+  if (focusBtn) focusBtn.addEventListener('click', toggleFocus);
+
+  // Scurtătură: F (nu când scrii într-un câmp).
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'f' && event.key !== 'F') return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    const t = event.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    toggleFocus();
+  });
+
+  initDrawer();
+  initBackToTop();
+  initHome();
 }
 
 /* Tastatură: săgeți stânga/dreapta + Home/End (model WAI-ARIA).
@@ -4113,7 +4447,7 @@ function handleTabKeys(event) {
   const current = document.activeElement;
   if (!current) return;
 
-  const tabList = Array.from(document.querySelectorAll('.tabs [role="tab"]'));
+  const tabList = Array.from(document.querySelectorAll('.side-nav [role="tab"]'));
   let index = tabList.indexOf(current);
   if (index === -1 && current.id && current.id.startsWith('panel-')) {
     index = TABS.indexOf(current.id.replace(/^panel-/, ''));
@@ -4146,41 +4480,30 @@ function initTabs() {
     if (panel) panel.addEventListener('keydown', handleTabKeys);
   });
 
-  document.querySelector('.tabs').addEventListener('keydown', handleTabKeys);
+  const sideNav = document.querySelector('.side-nav');
+  if (sideNav) sideNav.addEventListener('keydown', handleTabKeys);
 
-  // Back/forward: hash-ul se schimbă și tabul afișat îl urmează.
+  // Back/forward: hash-ul se schimbă și tabul afișat îl urmește.
   window.addEventListener('hashchange', () => {
     const id = location.hash.replace('#', '');
     if (TABS.includes(id)) {
       activateTab(id, { focusPanel: true });
       persistSave();
+    } else if (id === 'acasa') {
+      activateHome({ focusPanel: true });
+      persistSave();
     }
   });
 
-  // Dacă pagina se deschide cu #nume-tab, pornește de acolo.
-  // Tabul deschis anterior (din localStorage) e o dovadă mai bună decât hash-ul:
-  // hash-ul rămâne în bara de browser și ar putea să indice un tab neintenționat.
+  // Prima deschidere: „Acasă". Dacă există un tab salvat în localStorage
+  // (sau un hash valid), se deschide tabul respectiv — nu se pierde locul.
   let initial = null;
   try { initial = localStorage.getItem('glitchcoin-tab'); } catch (e) { /* blocat */ }
   if (!initial || !TABS.includes(initial)) {
     initial = location.hash.replace('#', '');
   }
-  activateTab(TABS.includes(initial) ? initial : 'inflatie');
-
-  updateTabsScrollHint();
-
-  // Recemplește indiciul și la schimbarea mărimii ferestrei sau a conținutului.
-  if (typeof ResizeObserver !== 'undefined') {
-    new ResizeObserver(updateTabsScrollHint).observe(document.querySelector('.tabs'));
-  }
-}
-
-/* Bara de taburi afișează indiciul de derulare doar dacă are overflow. */
-function updateTabsScrollHint() {
-  const bar = document.querySelector('.tabs-bar');
-  const tabs = document.querySelector('.tabs');
-  if (!bar || !tabs) return;
-  bar.classList.toggle('is-scrollable', tabs.scrollWidth > tabs.clientWidth + 1);
+  if (TABS.includes(initial)) activateTab(initial);
+  else activateHome();
 }
 
 /* ── Tooltips accesibile pentru formule ─────────────────────
@@ -5267,6 +5590,7 @@ function populateYearSelect() {
 function init() {
   initTheme();
   initTabs();
+  initShell();
   initFormulaTips();
   populateYearSelect();
 
@@ -5306,12 +5630,12 @@ function init() {
     if (isPersistable(event.target)) persistSave();
   });
 
-  // Butonul global „Resetează tot" — toate cele 9 taburi la valorile din Excel.
+  // Butonul global „Resetează tot" — toate cele 24 de taburi la valorile implicite.
   const resetAllBtn = document.getElementById('reset-all');
   if (resetAllBtn) {
     resetAllBtn.addEventListener('click', () => {
       resetAll();
-      const active = document.querySelector('.tabs .tab.is-active');
+      const active = document.querySelector('.side-nav .tab.is-active') || document.getElementById('nav-acasa');
       if (active) active.focus();
     });
   }
@@ -5320,10 +5644,11 @@ function init() {
   const exportCsvBtn = document.getElementById('export-csv');
   if (exportCsvBtn) {
     exportCsvBtn.addEventListener('click', () => {
+      const id = activeTabId();
       const panel = document.querySelector('.tab-panel.is-active');
-      if (!panel) return;
+      if (!id || !panel) return;
       const csv = panelToCSV(panel);
-      if (csv.trim()) downloadCSV('glitchcoin-' + activeTabId() + '.csv', csv);
+      if (csv.trim()) downloadCSV('glitchcoin-' + id + '.csv', csv);
     });
   }
 
@@ -5634,9 +5959,6 @@ function init() {
   initDca();
   initCurs();
   initBiase();
-
-  // Indiciul de derulare din bara de taburi se recalcul la redimensionare.
-  window.addEventListener('resize', updateTabsScrollHint);
 }
 
 document.addEventListener('DOMContentLoaded', init);

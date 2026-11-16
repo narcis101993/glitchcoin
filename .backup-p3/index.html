@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlitchCoin — Educație financiară</title>
+  <meta name="description" content="Mini-calculatoare local de educație financiară: inflație, timp vs dorințe, dobânzi, randament, profit, costul mediu de achiziție, sumă dorită și flux de numerar zilnic.">
+  <meta name="theme-color" id="meta-theme-color" content="#0b1530">
+
+  <!-- Favicon (SVG vector + PNG fallback, apple-touch-icon). -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon-180.png">
+
+  <!-- Tema se aplică înainte de paint, ca să nu apară un flash de culoare.
+       Preferința e în localStorage; la prima vizită se respetă prefers-color-scheme. -->
+  <script>
+    (function () {
+      var KEY = 'glitchcoin-theme';
+      var root = document.documentElement;
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      var dark = stored ? stored === 'dark'
+                        : !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    })();
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main-content">Sari la conținut</a>
+
+  <header class="hero">
+    <div class="container">
+      <div class="hero-row">
+        <h1>GlitchCoin</h1>
+        <span class="badge">v2 · local</span>
+        <button id="theme-toggle" class="theme-toggle" type="button"
+                aria-label="Comută la tema întunecată" aria-pressed="false"
+                title="Comută tema">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+          </svg>
+        </button>
+      </div>
+      <p class="tagline">Mini-calculatoare de educație financiară</p>
+      <p class="meta">Rulează în browser, pe acest calculator · fără backend · fără conturi · fără date personale</p>
+    </div>
+  </header>
+
+  <!-- ── Bara de TABURI (navigarea cu taburi) ───────────── -->
+  <div class="tabs-bar">
+    <div class="container tabs-bar-inner">
+      <div class="tabs" role="tablist" aria-label="Taburile aplicației">
+        <button type="button" class="tab is-active" id="tab-inflatie" role="tab"
+                aria-controls="panel-inflatie" aria-selected="true">Inflație</button>
+        <button type="button" class="tab" id="tab-timp" role="tab"
+                aria-controls="panel-timp" aria-selected="false">Timp vs dorințe</button>
+        <button type="button" class="tab" id="tab-dobanda" role="tab"
+                aria-controls="panel-dobanda" aria-selected="false">Calculul dobânzii</button>
+        <button type="button" class="tab" id="tab-compusa" role="tab"
+                aria-controls="panel-compusa" aria-selected="false">Dobânda compusă</button>
+        <button type="button" class="tab" id="tab-randament" role="tab"
+                aria-controls="panel-randament" aria-selected="false">Randament</button>
+        <button type="button" class="tab" id="tab-profit" role="tab"
+                aria-controls="panel-profit" aria-selected="false">Profit</button>
+        <button type="button" class="tab" id="tab-cost" role="tab"
+                aria-controls="panel-cost" aria-selected="false">Costul mediu de achiziție</button>
+        <button type="button" class="tab" id="tab-suma" role="tab"
+                aria-controls="panel-suma" aria-selected="false">Sumă dorită</button>
+        <button type="button" class="tab" id="tab-nuam" role="tab"
+                aria-controls="panel-nuam" aria-selected="false">Nu am bani</button>
+      </div>
+      <button type="button" class="chip chip-ghost reset-all" id="reset-all"
+              title="Resetează toate cele 9 taburi la valorile implicite din Excel">Resetează tot</button>
+    </div>
+  </div>
+
+  <main class="container" id="main-content" tabindex="-1">
+
+    <!-- ═════════ TAB 1 · Inflație ═════════ -->
+    <section id="panel-inflatie" class="tab-panel is-active" role="tabpanel" aria-labelledby="tab-inflatie" tabindex="-1">
+      <p class="lead">Tabul Inflație este gata: simulator, prețuri alimente, inflația 1991–2024 și deflatorul sumelor.</p>
+
+      <nav class="subnav" aria-label="Secțiuni din tabul Inflație">
+        <div class="subnav-row">
+          <a href="#simulator">Simulator</a>
+          <a href="#alimente">Alimente</a>
+          <a href="#inflatie">Inflație 1991–2024</a>
+          <a href="#deflator">Deflator</a>
+        </div>
+      </nav>
+
+      <!-- ───────────────── Simulator ───────────────── -->
+      <section id="simulator" class="section">
+        <h2>Simulatorul inflației</h2>
+        <p class="lead">
+          Află cât de multi bani îi vei avea nevoie peste câțiva ani pentru a cumpara aceleași lucruri,
+          dacă inflația rămâne constantă. <strong>Anul 1 = anul curent</strong> (suma actuală).
+        </p>
+
+        <div class="card inputs">
+          <div class="field">
+            <label for="sim-suma">Suma actuală (lei)</label>
+            <input type="number" id="sim-suma" value="5000" min="0" step="any" inputmode="decimal">
+          </div>
+          <div class="field">
+            <label for="sim-rata">Rata inflației (% pe an)</label>
+            <input type="number" id="sim-rata" value="5" step="any" inputmode="decimal">
+          </div>
+          <div class="presets" aria-label="Valori rapide pentru rată">
+            <span>Presete:</span>
+            <button type="button" class="chip" data-rata="2">2%</button>
+            <button type="button" class="chip" data-rata="5">5%</button>
+            <button type="button" class="chip" data-rata="10">10%</button>
+            <button type="button" class="chip" data-rata="13.8">13,8%</button>
+          </div>
+        </div>
+
+        <p id="sim-summary" class="summary" aria-live="polite"></p>
+
+        <div class="cards">
+          <div class="stat">
+            <span class="stat-label">Anul 2</span>
+            <span class="stat-value" id="sim-card-2">—</span>
+            <span class="stat-sub">echivalent în acel an</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Anul 5</span>
+            <span class="stat-value" id="sim-card-5">—</span>
+            <span class="stat-sub">echivalent în acel an</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Anul 10</span>
+            <span class="stat-value" id="sim-card-10">—</span>
+            <span class="stat-sub">echivalent în acel an</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Anul 15</span>
+            <span class="stat-value" id="sim-card-15">—</span>
+            <span class="stat-sub">echivalent în acel an</span>
+          </div>
+        </div>
+
+        <div class="card table-wrap">
+          <table id="sim-table">
+            <caption class="visually-hidden">Simularea inflației: suma necesară pentru a păstra puterea de cumpărare</caption>
+            <thead>
+              <tr>
+                <th scope="col">An</th>
+                <th scope="col">Suma necesară</th>
+                <th scope="col">Necesar în plus</th>
+                <th scope="col">vs anul 1</th>
+                <th scope="col">Multiplu</th>
+              </tr>
+            </thead>
+            <tbody id="sim-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ───────────────── Alimente ───────────────── -->
+      <section id="alimente" class="section">
+        <h2>Prețurile la alimentele de bază</h2>
+        <p class="lead">Evoluția prețurilor 2020–2025 (2025 = estimare) și creșterea pe cei cinci ani.</p>
+
+        <div class="card table-wrap">
+          <table id="food-table">
+            <caption class="visually-hidden">Prețurile la alimentele de bază, 2020–2025, și creșterea pe cinci ani</caption>
+            <thead>
+              <tr>
+                <th scope="col">Produs</th>
+                <th scope="col">2020</th>
+                <th scope="col">2021</th>
+                <th scope="col">2022</th>
+                <th scope="col">2023</th>
+                <th scope="col">2024</th>
+                <th scope="col">2025 (est)</th>
+                <th scope="col">Creștere 2025 vs 2020</th>
+              </tr>
+            </thead>
+            <tbody id="food-table-body"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>Creștere 2025 vs 2020, pe produs</h3>
+          <div id="food-chart" class="bar-chart"></div>
+        </div>
+      </section>
+
+      <!-- ───────────────── Inflație 1991–2024 ───────────────── -->
+      <section id="inflatie" class="section">
+        <h2>Inflația în România, 1991–2024</h2>
+        <p class="lead">Rata inflației anuale, în procente. Anii cu deflație (ratoare negativă) sunt evidențiați cu roșu.</p>
+
+        <div class="card">
+          <div class="chart-toggle" role="group" aria-label="Interval afișat">
+            <button type="button" class="chip is-active" data-range="all">Toți anii (1991–2024)</button>
+            <button type="button" class="chip" data-range="recent">2000–2024</button>
+          </div>
+          <div id="inflation-chart" class="vchart"></div>
+          <div class="legend">
+            <span><span class="dot dot-pos"></span> inflație</span>
+            <span><span class="dot dot-neg"></span> deflație</span>
+          </div>
+          <div id="inflation-stats" class="stats-row"></div>
+        </div>
+
+        <div class="card table-wrap scroll">
+          <table id="inflation-table">
+            <caption class="visually-hidden">Rata inflației anuale în România, 1991–2024</caption>
+            <thead>
+              <tr><th scope="col">An</th><th scope="col">Rata inflației</th></tr>
+            </thead>
+            <tbody id="inflation-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ───────────────── Deflator ───────────────── -->
+      <section id="deflator" class="section">
+        <h2>Deflatorul sumelor</h2>
+        <p class="lead">
+          Vezi cât valorează suma actuală în anii trecuți — echivalentul banilor tăi din 2025,
+          exprimat în lei din alt an. Anul 2025 păstrează suma neschimbată.
+        </p>
+
+        <div class="card inputs">
+          <div class="field">
+            <label for="def-suma">Suma actuală (lei)</label>
+            <input type="number" id="def-suma" value="5000" min="0" step="any" inputmode="decimal">
+          </div>
+          <div class="field">
+            <label for="def-year">Selectează anul</label>
+            <select id="def-year"></select>
+          </div>
+        </div>
+
+        <p id="def-result" class="summary" aria-live="polite"></p>
+
+        <div class="card table-wrap scroll">
+          <table id="def-table">
+            <caption class="visually-hidden">Deflatorul sumelor: echivalentul în lei al sumei actuale, pe ani</caption>
+            <thead>
+              <tr><th scope="col">An</th><th scope="col">Echivalent (lei)</th><th scope="col">Diferență vs 2025</th></tr>
+            </thead>
+            <tbody id="def-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- ═════════ TAB 2 · Timp vs dorințe ═════════ -->
+    <section id="panel-timp" class="tab-panel" role="tabpanel" aria-labelledby="tab-timp" tabindex="-1" hidden>
+      <p class="lead">
+        Vezi cât timp trebuie să muncești pentru o dorință, pornind de la venitul tău lunar net.
+        Calculele sunt identice cu tabul „Timp vs dorințe" din <code>GlitchCoin.xlsx</code>.
+      </p>
+
+      <div class="card inputs">
+        <div class="field">
+          <label for="timp-venit">Venitul tău lunar NET (lei)</label>
+          <input type="number" id="timp-venit" value="5000" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="timp-pret">Prețul dorinței (lei)</label>
+          <input type="number" id="timp-pret" value="3600" min="0" step="any" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Venitul tău, pe unități de timp</h3>
+        <div class="cards">
+          <div class="stat">
+            <span class="stat-label">Pe zi · 31 zile</span>
+            <span class="stat-value" id="timp-venit-zi">—</span>
+            <span class="stat-sub">venit net ÷ 31 de zile</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Pe oră · 24/24</span>
+            <span class="stat-value" id="timp-venit-ora">—</span>
+            <span class="stat-sub">venit net ÷ 24 de ore</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Pe minut</span>
+            <span class="stat-value" id="timp-venit-minut">—</span>
+            <span class="stat-sub">venit net ÷ minute</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Pe zi lucrătoare · 20</span>
+            <span class="stat-value" id="timp-venit-ziluc">—</span>
+            <span class="stat-sub">venit net ÷ 20 zile lucrătoare</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Pe oră lucrătoare · 8/24</span>
+            <span class="stat-value" id="timp-venit-oraluc">—</span>
+            <span class="stat-sub">venit net ÷ ore lucrate</span>
+          </div>
+        </div>
+      </div>
+
+      <p id="timp-summary" class="summary" aria-live="polite"></p>
+
+      <div class="cards">
+        <div class="stat">
+          <span class="stat-label">Minute de muncă</span>
+          <span class="stat-value" id="timp-minute">—</span>
+          <span class="stat-sub">timp 24/24 pentru dorință</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Ore · 24/24</span>
+          <span class="stat-value" id="timp-ore">—</span>
+          <span class="stat-sub">ore 24/24 pentru dorință</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Zile din viață · 24/24</span>
+          <span class="stat-value" id="timp-zile">—</span>
+          <span class="stat-sub">zile 24/24 pentru dorință</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Ore lucrate · 8/24</span>
+          <span class="stat-value" id="timp-oreluc">—</span>
+          <span class="stat-sub">ore lucrate (8/24)</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Zile lucrate · 8/24</span>
+          <span class="stat-value" id="timp-zileluc">—</span>
+          <span class="stat-sub">zile lucrate (8/24)</span>
+        </div>
+      </div>
+
+      <div class="card table-wrap">
+        <table>
+          <caption class="visually-hidden">Zilele necesare pentru a-ți permite dorința, pe perioade de referință</caption>
+          <thead>
+            <tr>
+              <th scope="col">Perioada de referință</th>
+              <th scope="col">Zile necesare</th>
+              <th scope="col">Zile într-un an</th>
+              <th scope="col">% din an</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>An calendaristic (24/24)</td>
+              <td class="num" id="timp-tabel-zile">—</td>
+              <td class="num">365</td>
+              <td class="num" id="timp-tabel-pct">—</td>
+            </tr>
+            <tr>
+              <td>An lucrător (8/24)</td>
+              <td class="num" id="timp-tabel-zileluc">—</td>
+              <td class="num">261</td>
+              <td class="num" id="timp-tabel-pctluc">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═════════ TAB 3 · Calculul dobânzii ═════════ -->
+    <section id="panel-dobanda" class="tab-panel" role="tabpanel" aria-labelledby="tab-dobanda" tabindex="-1" hidden>
+      <p class="lead">
+        Dobânda este prețul plătit pentru banii împrumutați. Calculează dobânda brută și netă
+        pentru o sumă, o rată anuală și un număr de zile — la fel ca în tabul „Calculul dobânzii"
+        din <code>GlitchCoin.xlsx</code>.
+      </p>
+
+      <div class="card inputs">
+        <div class="field">
+          <label for="dob-suma">Suma inițială (lei)</label>
+          <input type="number" id="dob-suma" value="15000" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="dob-rata">Rata anuală a dobânzii (%)</label>
+          <input type="number" id="dob-rata" value="7" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="dob-zile">Numărul de zile investite</label>
+          <input type="number" id="dob-zile" value="184" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="dob-impozit">Impozit (%)</label>
+          <input type="number" id="dob-impozit" value="10" min="0" max="100" step="any" inputmode="decimal">
+        </div>
+      </div>
+
+      <p id="dob-summary" class="summary" aria-live="polite"></p>
+
+      <div class="cards">
+        <div class="stat">
+          <span class="stat-label">Dobânda brută</span>
+          <span class="stat-value" id="dob-brut">—</span>
+          <span class="stat-sub">sumă × rată × zile / 365</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Dobânda netă</span>
+          <span class="stat-value" id="dob-net">—</span>
+          <span class="stat-sub">brut − impozit</span>
+        </div>
+      </div>
+
+      <div class="card table-wrap">
+        <table>
+          <caption class="visually-hidden">Pașii calculului dobânzii brute și nete</caption>
+          <thead>
+            <tr><th scope="col">Pas</th><th scope="col">Rezultat</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Dobânda brută = ROUND(suma × rată × zile / 365, 2)</td>
+              <td class="num" id="dob-pas-brut">—</td>
+            </tr>
+            <tr>
+              <td>Dobânda netă = ROUND((1 − impozit) × brut, 2)</td>
+              <td class="num" id="dob-pas-net">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═════════ TAB 4 · Dobânda compusă ═════════ -->
+    <section id="panel-compusa" class="tab-panel" role="tabpanel" aria-labelledby="tab-compusa" tabindex="-1" hidden>
+      <p class="lead">
+        Dobânda compusă: în fiecare perioadă dobânda se calculează la suma inițială <strong>plus dobânzile
+        acumulate până atunci</strong>. Vezi evoluția pe 20 de ani, cu și fără contribuție lunară —
+        la fel ca în tabul „Dobânda compusă" din <code>GlitchCoin.xlsx</code>.
+      </p>
+
+      <div class="card inputs">
+        <div class="field">
+          <label for="comp-suma">Suma inițială (lei)</label>
+          <input type="number" id="comp-suma" value="10000" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="comp-contributie">Contribuția lunară (lei)</label>
+          <input type="number" id="comp-contributie" value="200" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="comp-rata">Rata anuală a dobânzii (%)</label>
+          <input type="number" id="comp-rata" value="2.5" min="0" step="any" inputmode="decimal">
+        </div>
+      </div>
+
+      <section class="section">
+        <h2>Fără contribuție lunară</h2>
+        <p class="lead">Suma inițială crește doar din dobândă, an după an.</p>
+
+        <p id="comp-a-summary" class="summary" aria-live="polite"></p>
+
+        <div class="card table-wrap scroll">
+          <table>
+            <caption class="visually-hidden">Dobânda compusă fără contribuție lunară, pe 20 de ani</caption>
+            <thead>
+              <tr>
+                <th scope="col">An</th>
+                <th scope="col">Suma + dobândă</th>
+                <th scope="col">Dobânda</th>
+                <th scope="col">Randament vs primul an</th>
+              </tr>
+            </thead>
+            <tbody id="comp-a-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Cu contribuție lunară</h2>
+        <p class="lead">Adaugi aceeași sumă în fiecare lună; dobânda se adaugă la capital.</p>
+
+        <p id="comp-b-summary" class="summary" aria-live="polite"></p>
+
+        <div class="card table-wrap scroll">
+          <table>
+            <caption class="visually-hidden">Dobânda compusă cu contribuție lunară, pe 20 de ani</caption>
+            <thead>
+              <tr>
+                <th scope="col">An</th>
+                <th scope="col">Suma investită</th>
+                <th scope="col">Dobânda acumulată</th>
+                <th scope="col">Sumă totală</th>
+                <th scope="col">Creștere anuală</th>
+              </tr>
+            </thead>
+            <tbody id="comp-b-body"></tbody>
+          </table>
+        </div>
+        <p class="note">
+          „Creștere anuală" arată creșterea sumei totale față de suma investită în anul anterior —
+          ca în Excel, ea începe din anul 2.
+        </p>
+      </section>
+    </section>
+
+    <!-- ═════════ TAB 5 · Randament ═════════ -->
+    <section id="panel-randament" class="tab-panel" role="tabpanel" aria-labelledby="tab-randament" tabindex="-1" hidden>
+      <p class="lead">
+        Randamentul este procentul de profit (sau pierdere) pe care-l obțin banii investiți.
+        Calculează randamentul brut, net (după impozit și comisioane) și real (după inflație) —
+        la fel ca în tabul „Randament" din <code>GlitchCoin.xlsx</code>.
+      </p>
+
+      <div class="card inputs">
+        <div class="field">
+          <label for="rand-suma">Suma investită (lei)</label>
+          <input type="number" id="rand-suma" value="10000" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="rand-randament">Randament (%)</label>
+          <input type="number" id="rand-randament" value="7" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="rand-impozit">Impozit (%)</label>
+          <input type="number" id="rand-impozit" value="10" min="0" max="100" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="rand-comisioane">Comisioane (%)</label>
+          <input type="number" id="rand-comisioane" value="2" min="0" max="100" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="rand-inflatie">Inflație (%)</label>
+          <input type="number" id="rand-inflatie" value="5" min="-100" step="any" inputmode="decimal">
+        </div>
+      </div>
+
+      <p id="rand-summary" class="summary" aria-live="polite"></p>
+
+      <div class="cards">
+        <div class="stat">
+          <span class="stat-label">Randament brut</span>
+          <span class="stat-value" id="rand-brut-pct">—</span>
+          <span class="stat-sub">câștig brut ÷ sumă</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Randament net</span>
+          <span class="stat-value" id="rand-net-pct">—</span>
+          <span class="stat-sub">brut − impozit − comisioane</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Randament real</span>
+          <span class="stat-value" id="rand-real-pct">—</span>
+          <span class="stat-sub">net ajustat cu inflația</span>
+        </div>
+      </div>
+
+      <div class="card table-wrap">
+        <table>
+          <caption class="visually-hidden">Randament brut, net și real, cu câștigurile în lei</caption>
+          <thead>
+            <tr>
+              <th scope="col">Măsurătoare</th>
+              <th scope="col">Randament</th>
+              <th scope="col">Câștig (lei)</th>
+              <th scope="col">Observație</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Randament brut</td>
+              <td class="num" id="rand-tabel-brut-pct">—</td>
+              <td class="num" id="rand-tabel-brut-lei">—</td>
+              <td>Înainte de deduceri</td>
+            </tr>
+            <tr>
+              <td>Randament net</td>
+              <td class="num" id="rand-tabel-net-pct">—</td>
+              <td class="num" id="rand-tabel-net-lei">—</td>
+              <td>Din brut se scad taxele și comisioanele</td>
+            </tr>
+            <tr>
+              <td>Randament real</td>
+              <td class="num" id="rand-tabel-real-pct">—</td>
+              <td class="num" id="rand-tabel-real-lei">—</td>
+              <td>Din net se scade inflația</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═════════ TAB 6 · Profit ═════════ -->
+    <section id="panel-profit" class="tab-panel" role="tabpanel" aria-labelledby="tab-profit" tabindex="-1" hidden>
+      <p class="lead">
+        Profitul este suma de bani câștigată (sau pierdută) dintr-o investiție. Calculează valoarea finală,
+        profitul brut și net, randamentul brut, net și real (după inflație) —
+        la fel ca în tabul „Profit" din <code>GlitchCoin.xlsx</code>.
+      </p>
+
+      <div class="card inputs">
+        <div class="field">
+          <label for="prof-suma">Suma investită (lei)</label>
+          <input type="number" id="prof-suma" value="10000" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="prof-pret-init">Preț inițial / mediu (lei)</label>
+          <input type="number" id="prof-pret-init" value="25" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="prof-pret-vanzare">Preț vânzare (lei)</label>
+          <input type="number" id="prof-pret-vanzare" value="28" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="prof-impozit">Impozit (%)</label>
+          <input type="number" id="prof-impozit" value="10" min="0" max="100" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="prof-comisioane">Comisioane (%)</label>
+          <input type="number" id="prof-comisioane" value="2" min="0" max="100" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="prof-inflatie">Inflație (%)</label>
+          <input type="number" id="prof-inflatie" value="5" min="-100" step="any" inputmode="decimal">
+        </div>
+      </div>
+
+      <p id="prof-summary" class="summary" aria-live="polite"></p>
+
+      <div class="cards">
+        <div class="stat">
+          <span class="stat-label">Valoarea finală</span>
+          <span class="stat-value" id="prof-final">—</span>
+          <span class="stat-sub">sumă ÷ preț inițial × preț vânzare</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Profit brut</span>
+          <span class="stat-value" id="prof-brut">—</span>
+          <span class="stat-sub">valoare finală − sumă</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Profit net</span>
+          <span class="stat-value" id="prof-net">—</span>
+          <span class="stat-sub">brut − impozit − comisioane</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Profit real</span>
+          <span class="stat-value" id="prof-real">—</span>
+          <span class="stat-sub">net ajustat cu inflația</span>
+        </div>
+      </div>
+
+      <div class="card table-wrap">
+        <table>
+          <caption class="visually-hidden">Valoarea finală a investiției, profit și randamente</caption>
+          <thead>
+            <tr>
+              <th scope="col">Măsurătoare</th>
+              <th scope="col">Valoare</th>
+              <th scope="col">Observație</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Valoarea finală a investiției</td>
+              <td class="num" id="prof-tabel-final">—</td>
+              <td>sumă / preț inițial × preț vânzare</td>
+            </tr>
+            <tr>
+              <td>Profit brut</td>
+              <td class="num" id="prof-tabel-brut">—</td>
+              <td>Înainte de deduceri</td>
+            </tr>
+            <tr>
+              <td>Randament brut</td>
+              <td class="num" id="prof-tabel-rand-brut">—</td>
+              <td>valoarea finală / sumă − 1</td>
+            </tr>
+            <tr>
+              <td>Profit net</td>
+              <td class="num" id="prof-tabel-net">—</td>
+              <td>Din brut se scad taxele și comisioanele</td>
+            </tr>
+            <tr>
+              <td>Randament net</td>
+              <td class="num" id="prof-tabel-rand-net">—</td>
+              <td>profit net / sumă</td>
+            </tr>
+            <tr>
+              <td>Randament real</td>
+              <td class="num" id="prof-tabel-rand-real">—</td>
+              <td>Din net se scade inflația</td>
+            </tr>
+            <tr>
+              <td>Profit real</td>
+              <td class="num" id="prof-tabel-real">—</td>
+              <td>randament real × sumă</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═════════ TAB 7 · Costul mediu de achiziție ═════════ -->
+    <section id="panel-cost" class="tab-panel" role="tabpanel" aria-labelledby="tab-cost" tabindex="-1" hidden>
+      <p class="lead">
+        Costul mediu de achiziție este prețul mediu ponderat plătit pentru un activ cumpărat în mai multe
+        tranșe. Adaugă sau șterge rânduri și vezi imediat rezultatul — la fel ca în tabul
+        „Costul mediu" din <code>GlitchCoin.xlsx</code>.
+      </p>
+
+      <div class="card table-wrap">
+        <table class="cost-table" id="cost-table">
+          <caption class="visually-hidden">Costul mediu de achiziție: tranșele cumpărate</caption>
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Preț (lei)</th>
+              <th scope="col">Cantitate</th>
+              <th scope="col">Comision (%)</th>
+              <th scope="col">Valoare (lei)</th>
+              <th scope="col">Comision (lei)</th>
+              <th scope="col"><span class="visually-hidden">Acțiuni</span></th>
+            </tr>
+          </thead>
+          <tbody id="cost-body"></tbody>
+        </table>
+        <div class="table-actions">
+          <button type="button" class="chip" id="cost-add">+ Adaugă rând</button>
+          <button type="button" class="chip chip-ghost" id="cost-reset">Resetează valorile din Excel</button>
+        </div>
+      </div>
+
+      <p id="cost-summary" class="summary" aria-live="polite"></p>
+
+      <div class="cards">
+        <div class="stat">
+          <span class="stat-label">Costul mediu de achiziție</span>
+          <span class="stat-value" id="cost-mediu">—</span>
+          <span class="stat-sub">ponderat cu cantitatea</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Cantitate totală</span>
+          <span class="stat-value" id="cost-cantitate">—</span>
+          <span class="stat-sub">unități cumulate</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Valoare achiziționată</span>
+          <span class="stat-value" id="cost-valoare">—</span>
+          <span class="stat-sub">fără comision</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Total plătit (cu comision)</span>
+          <span class="stat-value" id="cost-total">—</span>
+          <span class="stat-sub">cu comision</span>
+        </div>
+      </div>
+
+      <p class="note">
+        Formula: (Σ preț × cantitate + Σ preț × cantitate × comision) / Σ cantitate —
+        comisionul fiecărei tranșe se adaugă la valoarea ei, ca în Excel.
+      </p>
+    </section>
+
+    <!-- ═════════ TAB 8 · Sumă dorită ═════════ -->
+    <section id="panel-suma" class="tab-panel" role="tabpanel" aria-labelledby="tab-suma" tabindex="-1" hidden>
+      <p class="lead">
+        Stabilește o sumă țintă și află cât trebuie să economisești în fiecare lună pentru a o atinge,
+        la fel ca în tabul „Sumă dorită" din <code>GlitchCoin.xlsx</code>.
+      </p>
+
+      <div class="card inputs">
+        <div class="field">
+          <label for="suma-randament">Randamentul anual (%)</label>
+          <input type="number" id="suma-randament" value="10" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="suma-ani">Numărul de ani</label>
+          <input type="number" id="suma-ani" value="15" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="suma-initiala">Suma inițială (lei)</label>
+          <input type="number" id="suma-initiala" value="0" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="suma-dorita">Suma dorită (lei)</label>
+          <input type="number" id="suma-dorita" value="1000000" min="0" step="any" inputmode="decimal">
+        </div>
+      </div>
+
+      <p id="suma-summary" class="summary" aria-live="polite"></p>
+
+      <div class="cards">
+        <div class="stat">
+          <span class="stat-label">Economia lunară necesară</span>
+          <span class="stat-value" id="suma-economie">—</span>
+          <span class="stat-sub">contribuție lunară</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Total economisit</span>
+          <span class="stat-value" id="suma-total-economisit">—</span>
+          <span class="stat-sub">din contribuții</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Suma din dobândă</span>
+          <span class="stat-value" id="suma-dobanda">—</span>
+          <span class="stat-sub">creștere generată</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Suma totală la final</span>
+          <span class="stat-value" id="suma-final">—</span>
+          <span class="stat-sub">țintă atinsă</span>
+        </div>
+      </div>
+
+      <div class="card table-wrap scroll">
+        <table>
+          <caption class="visually-hidden">Suma dorită: evoluția anuală a economiilor și dobânzii</caption>
+          <thead>
+            <tr>
+              <th scope="col">An</th>
+              <th scope="col">Suma acumulată</th>
+              <th scope="col">Economisit în total</th>
+              <th scope="col">Din dobândă</th>
+              <th scope="col">Cât din țintă e acumulat</th>
+            </tr>
+          </thead>
+          <tbody id="suma-table-body"></tbody>
+        </table>
+      </div>
+
+      <p class="note">
+        Formula: <code>-PMT(randament/12, ani×12, sumă inițială, sumă dorită)</code> —
+        identică cu <code>D9</code> din tabul „Sumă dorită" din Excel.
+      </p>
+    </section>
+
+    <!-- ═════════ TAB 9 · „Nu am bani" (tab ascuns din Excel) ═════════ -->
+    <section id="panel-nuam" class="tab-panel" role="tabpanel" aria-labelledby="tab-nuam" tabindex="-1" hidden>
+      <p class="lead">
+        Tabul ascuns din Excel: vezi ce se întâmplă cu banii la finalul lunii dacă îi adaugi în contul de
+        economii fix în ziua în care primești venitul și plătești facturile la scadență.
+      </p>
+
+      <div class="card inputs">
+        <div class="field">
+          <label for="nuam-venit">Venitul tău lunar NET (lei)</label>
+          <input type="number" id="nuam-venit" value="5000" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="nuam-zi">Ziua din lună când primești venitul</label>
+          <input type="number" id="nuam-zi" value="10" min="1" max="31" step="1" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="nuam-inflatie">Rata inflației (% pe an)</label>
+          <input type="number" id="nuam-inflatie" value="5" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="nuam-economii">Suma adăugată în contul de economii (lei)</label>
+          <input type="number" id="nuam-economii" value="5000" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field">
+          <label for="nuam-rata">Rata dobânzii oferită de bancă (% pe an)</label>
+          <input type="number" id="nuam-rata" value="2" min="0" step="any" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="card table-wrap">
+        <table class="cost-table nuam-table" id="nuam-table">
+          <caption class="visually-hidden">Facturile plătite la scadență, în tabul „Nu am bani”</caption>
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Factura</th>
+              <th scope="col">Ziua scadentă</th>
+              <th scope="col">Suma (lei)</th>
+              <th scope="col"><span class="visually-hidden">Acțiuni</span></th>
+            </tr>
+          </thead>
+          <tbody id="nuam-body"></tbody>
+        </table>
+        <div class="table-actions">
+          <button type="button" class="chip" id="nuam-add">+ Adaugă rând</button>
+          <button type="button" class="chip chip-ghost" id="nuam-reset">Resetează valorile din Excel</button>
+        </div>
+      </div>
+
+      <p id="nuam-summary" class="summary" aria-live="polite"></p>
+
+      <div class="cards">
+        <div class="stat">
+          <span class="stat-label">Suma la finalul lunii · fără CE</span>
+          <span class="stat-value" id="nuam-fara">—</span>
+          <span class="stat-sub">fără cont de economii</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Suma la finalul lunii · cu CE</span>
+          <span class="stat-value" id="nuam-cu">—</span>
+          <span class="stat-sub">cu cont de economii</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Profit (diferență)</span>
+          <span class="stat-value" id="nuam-profit">—</span>
+          <span class="stat-sub">diferența față de fără CE</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Profit raportat la investiție</span>
+          <span class="stat-value" id="nuam-raport">—</span>
+          <span class="stat-sub">profit ÷ economii</span>
+        </div>
+      </div>
+
+      <section class="section">
+        <h2>Ce înseamnă într-un an?</h2>
+        <p class="lead">
+          Plecând de la premisa că adaugi aceeași sumă în aceeași zi și la finalul lunii retragi banii din CE.
+        </p>
+        <div class="cards">
+          <div class="stat">
+            <span class="stat-label">Profit într-un an</span>
+            <span class="stat-value" id="nuam-profit-anual">—</span>
+            <span class="stat-sub">pe 12 luni</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Profit raportat la investiție</span>
+            <span class="stat-value" id="nuam-raport-anual">—</span>
+            <span class="stat-sub">profit ÷ economii</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Rata inflației pentru tine</span>
+            <span class="stat-value" id="nuam-inflatie-tine">—</span>
+            <span class="stat-sub">inflație − profit anual</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Ce înseamnă în 10 ani?</h2>
+        <div class="cards">
+          <div class="stat">
+            <span class="stat-label">Profit în 10 ani</span>
+            <span class="stat-value" id="nuam-profit-10">—</span>
+            <span class="stat-sub">pe 120 de luni</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Profit raportat la investiție</span>
+            <span class="stat-value" id="nuam-raport-10">—</span>
+            <span class="stat-sub">profit ÷ economii</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Desfășuratorul zilnic</h2>
+        <p class="lead">
+          Simularea acoperă zilele de la venit până la ziua 30. Dobânda e netă de impozit (10%),
+          ca în formulele din Excel.
+        </p>
+        <div class="card table-wrap scroll">
+          <table>
+            <caption class="visually-hidden">Desfășuratorul zilnic al soldului, de la venit până la ziua 30</caption>
+            <thead>
+              <tr>
+                <th scope="col">Ziua</th>
+                <th scope="col">Suma + dobândă</th>
+                <th scope="col">Dobânda</th>
+                <th scope="col">Suma retrasă</th>
+                <th scope="col">Sold după retragere</th>
+              </tr>
+            </thead>
+            <tbody id="nuam-schedule-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Metoda „plătește la scadență + cont de economii"</h2>
+        <div class="cards info-cards">
+          <div class="stat">
+            <span class="stat-label">Ce ai nevoie</span>
+            <ul class="info-list">
+              <li>O bună planificare</li>
+              <li>Cont de economii</li>
+              <li>Cont de credit</li>
+              <li>Curaj</li>
+            </ul>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Riscuri</span>
+            <ul class="info-list">
+              <li>Ratarea unei plăți</li>
+              <li>Cheltuirea din cardul de credit din impuls, pe motivul „am bani"</li>
+            </ul>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Avantaje</span>
+            <ul class="info-list">
+              <li>Reducerea inflației</li>
+              <li>Ușor de utilizat</li>
+              <li>Acces la bani oricând</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <p class="note">
+        Valorile implicite sunt cele din Excel: venit 5.000 lei, venitul în ziua 10, inflație 5%,
+        economii 5.000 lei, dobândă 2%. Rezultatele: 2.570,00 lei fără CE, 2.565,77 lei cu CE,
+        profit 4,23 lei (0,0847%).
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        Sursă date: <code>GlitchCoin.xlsx</code>, 9 taburi (septembrie 2025) ·
+        GlitchCoin v2 · aplicație locală, fără backend
+      </p>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -4,8 +4,8 @@
    Sursa inflatiei: INS, IPC national (serie annuala).
    • 1991–1993: aliniate la INS (valorile anterioare, World Bank/IMF, difereau semnificativ).
    • 1994–2024: coincid cu INS la zecimala de procent.
-   • 2025: media anuala IPC nationala, 7,3% (INS).
-   • 2026: cresterea de la inceputul anului, 6,3% (partial, ianuarie–octombrie).
+   • 2025: media anuala IPC nationala, 7,3% (INS, definitiva).
+   • 2026: 6,3% — oct 2026 vs dec 2025 (partial); rata anuala oct/oct = 6,9%.
 
    Surse oficiale:
    • INS — https://insse.ro/cms/en/content/cpi-annual-data-series

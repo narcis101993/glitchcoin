@@ -38,25 +38,26 @@ test('C1 — caz particular, fără facturi', () => {
   near(r.cheltuitCuCE, 6002.864227, 1e-6);
 });
 
-test('C2 — deflator: rândul 2025 = suma neschimbată, 2024 = echivalentul din 2024', () => {
-  near(deflatorValue(5000, 2025), 5000); // anul curent nu se deflatează
-  near(deflatorValue(5000, 2024), 4659.832246, 1e-6);
-  near(deflatorValue(5000, 2020), 3343.481865, 1e-6);
-  near(deflatorValue(5000, 2010), 2631.671233, 1e-6);
-  near(deflatorValue(5000, 2001), 1131.928184, 1e-6);
-  near(deflatorValue(5000, 2000), 841.707454, 1e-6);
+test('C2 — deflator: rândul 2026 = suma neschimbată, 2025 = echivalentul din 2025', () => {
+  near(deflatorValue(5000, 2026), 5000); // anul curent nu se deflatează
+  near(deflatorValue(5000, 2025), 4703.668862, 1e-6);
+  near(deflatorValue(5000, 2024), 4383.661567, 1e-6);
+  near(deflatorValue(5000, 2020), 3145.326308, 1e-6);
+  near(deflatorValue(5000, 2010), 2475.702007, 1e-6);
+  near(deflatorValue(5000, 2001), 1064.843070, 1e-6);
+  near(deflatorValue(5000, 2000), 791.822628, 1e-6);
   // 2024 trebuie să fie mai mare decât 2023 (deflatia e monotonă în timp).
   assert.ok(deflatorValue(5000, 2024) > deflatorValue(5000, 2023));
-  // și 2024 să fie mai mic decât suma din 2025 (inflație pozitivă).
-  assert.ok(deflatorValue(5000, 2024) < 5000);
+  // și 2025 să fie mai mică decât suma din 2026 (inflație pozitivă).
+  assert.ok(deflatorValue(5000, 2025) < 5000);
 });
 
 test('C3 — impozit pe tipuri de venit: rate reale, nu 10% generic', () => {
   assert.equal(IMPOZIT_TIPURI['dobandi'].rata, 10);
-  assert.equal(IMPOZIT_TIPURI['dividende'].rata, 10);
-  assert.equal(IMPOZIT_TIPURI['vm-ro'].rata, 1);        // acțiuni broker RO ≥ 1 an (2025)
-  assert.equal(IMPOZIT_TIPURI['vm-ro-scurt'].rata, 3);  // < 1 an (2025)
-  assert.equal(IMPOZIT_TIPURI['vm-strain'].rata, 10);   // broker străin / crypto (2025)
+  assert.equal(IMPOZIT_TIPURI['dividende'].rata, 16);
+  assert.equal(IMPOZIT_TIPURI['vm-ro'].rata, 3);        // acțiuni broker RO ≥ 1 an (2026)
+  assert.equal(IMPOZIT_TIPURI['vm-ro-scurt'].rata, 6);  // < 1 an (2026)
+  assert.equal(IMPOZIT_TIPURI['vm-strain'].rata, 16);   // broker străin / crypto (2026)
 });
 
 test('C3/C6 — Randament: valorile implicite cu 1% impozit și 0,3% comisioane', () => {
@@ -98,9 +99,9 @@ test('A2/A3 — 2025 = 7,3% (INS), 2026 = 6,3% (parțial)', () => {
   assert.equal(byYear[2026].partial, true, '2026 trebuie marcat ca parțial');
 });
 
-test('C5/C11 — Timp vs dorințe: zile lucrătoare parametrizate (implicit 248) și 30,44 zile/lună', () => {
+test('C5/C11 — Timp vs dorințe: zile lucrătoare parametrizate (implicit 250) și 30,44 zile/lună', () => {
   // Valoarea implicită a inputului „Zile lucrătoare / an".
-  near(gc.TIMP_ZILE_LUCRATOARE_AN_DEFAULT, 248);
+  near(gc.TIMP_ZILE_LUCRATOARE_AN_DEFAULT, 250);
   near(gc.TIMP_ZILE_LUNA, 365 / 12);
 
   const r = computeTimp(5000, 3600);
@@ -108,10 +109,10 @@ test('C5/C11 — Timp vs dorințe: zile lucrătoare parametrizate (implicit 248)
   near(r.minute, 31536, 1e-6);
   near(r.ore, 525.6, 1e-6);
   near(r.zile, 21.9, 1e-6);
-  // Zilele lucrătoare pe lună se derivă din cele anuale: 248/12 = 20,67.
-  near(r.venitZiLucr, 60000 / 248, 1e-6);   // 241,935484
-  near(r.oreLucrate, 119.04, 1e-6);
-  near(r.zileLucrate, 14.88, 1e-6);
+  // Zilele lucrătoare pe lună se derivă din cele anuale: 250/12 = 20,83.
+  near(r.venitZiLucr, 60000 / 250, 1e-6);   // 240
+  near(r.oreLucrate, 120, 1e-6);
+  near(r.zileLucrate, 15, 1e-6);
   near(r.pctAn, 0.06, 1e-9);
   // % dintr-un an lucrător = zilele lucrate ÷ zilele lucrătoare = prețul ÷ venitul anual.
   near(r.pctAnLucrator, 0.06, 1e-9);
@@ -140,7 +141,7 @@ test('C5/C11 — Timp vs dorințe: caz particular', () => {
   const r = computeTimp(4200, 1500);
   near(r.venitZi, 138.082192, 1e-6);
   near(r.minute, 15642.857143, 1e-6);
-  near(r.venitZiLucr, 4200 * 12 / 248, 1e-6);
+  near(r.venitZiLucr, 4200 * 12 / 250, 1e-6);
   near(r.pctAnLucrator, 1500 / (4200 * 12), 1e-9);
 });
 

@@ -5,7 +5,7 @@
 /* Format internațional: virgulă pentru mii, punct pentru zecimale
    (5,000.00 lei / 0.3% / 1.10x). Nu mai folosim ro-RO, care dădea 5.000,00. */
 const LOCALE = 'en-US';
-const AN_CURENT = 2025; // anul "prezent" pentru care suma actuală este introdusă
+const AN_CURENT = 2026; // anul "prezent" pentru care suma actuală este introdusă
 
 /* ── Formatare ────────────────────────────────────────── */
 
@@ -302,17 +302,17 @@ const RATE_BY_YEAR = Object.fromEntries(
   GLITCHCOIN_DATA.inflation.map((d) => [d.year, d.rate]),
 );
 
-/* Corecție C3 — impozitul pe tipuri de venit (România, 2025).
+/* Corecție C3 — impozitul pe tipuri de venit (România, 2026).
    Selectul „Tipul de venit" (taburile Randament și Profit) setează impozitul
    implicit; utilizatorul îl poate apoi modifica manual. Sunt rate reale,
    nu valori generice (10% supraestimează impozitul pentru acțiuni păstrate
    mai mult de un an prin broker românesc). */
 const IMPOZIT_TIPURI = {
   'dobandi':     { rata: 10, eticheta: 'Dobândă (depozite, obligațiuni RO)' },
-  'dividende':   { rata: 10, eticheta: 'Dividende' },
-  'vm-ro':       { rata: 1,  eticheta: 'Valori mobiliere · broker RO · ≥ 1 an' },
-  'vm-ro-scurt': { rata: 3,  eticheta: 'Valori mobiliere · broker RO · < 1 an' },
-  'vm-strain':   { rata: 10, eticheta: 'Valori mobiliere · broker străin / crypto' },
+  'dividende':   { rata: 16, eticheta: 'Dividende' },
+  'vm-ro':       { rata: 3,  eticheta: 'Valori mobiliere · broker RO · ≥ 1 an' },
+  'vm-ro-scurt': { rata: 6,  eticheta: 'Valori mobiliere · broker RO · < 1 an' },
+  'vm-strain':   { rata: 16, eticheta: 'Valori mobiliere · broker străin / crypto' },
 };
 
 /* ═══ 1. Simulatorul inflației ═════════════════════════ */
@@ -378,9 +378,9 @@ function renderSimulator() {
 
 const FOOD_YEARS = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
-/* Creștere 2025 vs 2020 — 2025 e ultimul an complet; 2026 e parțial. */
+/* Creștere 2026 vs 2020 — 2026 e parțial (estimare metodologică). */
 function foodGrowth(product) {
-  return product.prices[2025] / product.prices[2020] - 1;
+  return product.prices[2026] / product.prices[2020] - 1;
 }
 
 function renderFood() {
@@ -408,18 +408,18 @@ function renderFood() {
       </div>`;
   }).join('');
   chart.setAttribute('aria-label',
-    `Creștere 2025 vs 2020, pe produs. Maxim: ${fmtPct(max)} la ${prodMax.name}; minim: ${fmtPct(min)} la ${prodMin.name}.`);
+    `Creștere 2026 vs 2020, pe produs. Maxim: ${fmtPct(max)} la ${prodMax.name}; minim: ${fmtPct(min)} la ${prodMin.name}.`);
 
   // Tooltip cu cifrele reale pentru fiecare bară (hover + focus).
   [...chart.querySelectorAll('.bar-row')].forEach((row, i) => {
     const p = GLITCHCOIN_DATA.food[i];
     const growth = foodGrowth(p);
     const pret2020 = fmtLei(p.prices[2020]);
-    const pret2025 = fmtLei(p.prices[2025]);
+    const pret2026 = fmtLei(p.prices[2026]);
     attachChartTip(row,
-      `${p.name}: creștere ${fmtPct(growth)}, preț 2020 ${pret2020}, preț 2025 ${pret2025}`,
-      `<strong>${escapeHtml(p.name)}</strong><span class="tip-text">Creștere 2025 vs 2020: <b>${fmtPct(growth)}</b>` +
-      `<br>Preț 2020: ${pret2020}<br>Preț 2025: ${pret2025}</span>`);
+      `${p.name}: creștere ${fmtPct(growth)}, preț 2020 ${pret2020}, preț 2026 ${pret2026}`,
+      `<strong>${escapeHtml(p.name)}</strong><span class="tip-text">Creștere 2026 vs 2020: <b>${fmtPct(growth)}</b>` +
+      `<br>Preț 2020: ${pret2020}<br>Preț 2026 (parțial): ${pret2026}</span>`);
   });
 }
 
@@ -529,20 +529,20 @@ function renderDeflator() {
 /* ═══ 5. Timp vs dorințe ═══════════════════════════════ */
 
 /* Constantele tabulului „Timp vs dorințe”.
-   Corecții C5 și C11: 248 de zile lucrătoare (România 2025) și 30,44 zile/lună
+   Corecții C5 și C11: 250 de zile lucrătoare (România 2026) și 30,44 zile/lună
    (365 ÷ 12), în loc de convenția SUA de 261 și de „31 zile/lună".
    Din 2026-11-13 numărul de zile lucrătoare e un INPUT (cerință Narcis): utilizatorul
-   îl poate schimba, iar valoarea implicită rămâne 248. */
+   îl poate schimba, iar valoarea implicită rămâne 250. */
 const TIMP_ZILE_LUNA = 365 / 12;     // 30,44 — media reală de zile pe lună (365/12)
 const TIMP_LUNI_AN = 12;             // luni într-un an (venitul anual = 12 × venitul lunar)
 const TIMP_ORE_ZI = 24;              // venitul pe oră = venit pe zi / 24
 const TIMP_MINUTE_ORA = 60;          // venitul pe minut = venit pe oră / 60
 const TIMP_ORE_LUCRATOARE = 8;       // venitul pe oră lucrătoare = zi lucrătoare / 8
 const TIMP_ZILE_AN = 365;            // zile într-un an calendaristic
-const TIMP_ZILE_LUCRATOARE_AN_DEFAULT = 248; // România 2025: 365 − 104 weekend − 13 sărbători legale
+const TIMP_ZILE_LUCRATOARE_AN_DEFAULT = 250; // România 2026: 365 − 104 weekend − 11 sărbători legale
 
 /* Zilele lucrătoare dintr-un an se citesc din inputul „Zile lucrătoare / an".
-   Orice valoare invalidă, nulă sau negativă revine la 248 — altfel am împărți la zero. */
+   Orice valoare invalidă, nulă sau negativă revine la 250 — altfel am împărți la zero. */
 function zileLucratoareAn() {
   const el = document.getElementById('timp-zile-lucratore');
   if (!el) return TIMP_ZILE_LUCRATOARE_AN_DEFAULT;
@@ -555,8 +555,8 @@ function computeTimp(venit, pret, zileLucratoareAn = TIMP_ZILE_LUCRATOARE_AN_DEF
   const venitOra = venitZi / TIMP_ORE_ZI;
   const venitMinut = venitOra / TIMP_MINUTE_ORA;
   // Zilele lucrătoare dintr-o lună se derivă din cele anuale, la fel ca zilele calendaristice
-  // (365/12): 248/12 = 20,67. Venitul pe zi lucrătoare = venitul anual lucrător ÷ zilele
-  // lucrătoare din an. (Un divisor fix de 20 ar presupune 240 de zile lucrătoare, nu 248.)
+  // (365/12): 250/12 = 20,83. Venitul pe zi lucrătoare = venitul anual lucrător ÷ zilele
+  // lucrătoare din an. (Un divisor fix de 20 ar presupune 240 de zile lucrătoare, nu 250.)
   const venitZiLucr = venit * TIMP_LUNI_AN / zileLucratoareAn;
   const venitOraLucr = venitZiLucr / TIMP_ORE_LUCRATOARE;
 
@@ -590,7 +590,7 @@ function renderTimp() {
   const summary = document.getElementById('timp-summary');
 
   // Numărul de zile lucrătoare (și echivalentul pe lună) se afișează indiferent de venit,
-  // ca să nu rămână 248 dacă utilizatorul a setat altă valoare.
+  // ca să nu rămână 250 dacă utilizatorul a setat altă valoare.
   const zilePeLuna = zileAn / TIMP_LUNI_AN;
   document.getElementById('timp-venit-ziluc-div').textContent =
     zilePeLuna.toLocaleString(LOCALE, { maximumFractionDigits: 2 });
@@ -1403,7 +1403,7 @@ function initNuam() {
 /* ═══ 13. Dobânda vs inflație (N4) ═══════════════════════════ */
 
 const DI_ANI_START = 2000;
-const DI_ANI_END = 2025;
+const DI_ANI_END = 2026;
 
 /* Randamentul real pe un an — formula exactă (Fisher):
      (1 + randament nominal) ÷ (1 + inflație) − 1
@@ -1424,7 +1424,7 @@ function computeRandamentReal(suma, nominal, inflatie) {
   };
 }
 
-/* Seria istorică 2000–2025 (INS, IPC național) aplicată unei rate
+/* Seria istorică 2000–2026 (INS, IPC național) aplicată unei rate
    nominale constante: arată de ce un depozit „sigur” poate fi
    negativ real — banii cresc nominal, dar prețurile cresc mai repede. */
 function computeIstoricReal(nominal, suma) {
@@ -1440,9 +1440,9 @@ function computeIstoricReal(nominal, suma) {
   const maxim = rows.reduce((a, b) => (b.real > a.real ? b : a));
   const numarNegativi = rows.filter((r) => r.real < 0).length;
 
-  // Suma din 2000 adusă în 2025: cash-ul își pierde puterea de cumpărare
+  // Suma din 2000 adusă în 2026: cash-ul își pierde puterea de cumpărare
   // cu produsul inflației; la randament nominal compus, crește cu
-  // (1 + nominal)^număr de ani, apoi se aduce la puterea de cumpărare din 2025.
+  // (1 + nominal)^număr de ani, apoi se aduce la puterea de cumpărare din 2026.
   const cashReal = suma / produsInflatie;
   const investitReal = suma * Math.pow(1 + nominal, ani.length) / produsInflatie;
 
@@ -2838,7 +2838,7 @@ function initStres() {
 /* ═══ 22. Pensie / Pilon III (N6) ═══════════════════════ */
 
 /* Valori ilustrative, nu recomandări. Randamentul mediu al fondurilor de
-   pensii facultative (Pilon III) pe 2007–2025 a fost 6,7% pe an, calculat de
+   pensii facultative (Pilon III) pe 2007–2025 (ultimul an complet) a fost 6,7% pe an, calculat de
    APAPR din datele ASF, față de o inflație medie de 4,9%. Comisioanele din
    schemele autorizate: 3–5% din contribuție (maxim 5%) + 0,091–0,195% lunar
    din activul net (maxim 0,2% pe lună) — echivalent de ~1,5% pe an. */
@@ -5308,7 +5308,7 @@ const STEP_TEXT = {
   'sim-suma': 'Începe cu suma care îți definește momentul de acum — punctul de plecare al simulării.',
   'sim-rata': 'Setează inflația anuală medie. 5% e o premisă realistă pentru planificare.',
   'def-suma': 'Introdu suma actuală pe care vrei să o traduci în putere de cumpărare.',
-  'def-year': 'Alege anul pentru care vrei deflatorul (anul curent e 2025).',
+  'def-year': 'Alege anul pentru care vrei deflatorul (anul curent e 2026).',
   'dob-suma': 'Introdu suma depusă la bancă.',
   'dob-rata': 'Setează dobânda anuală brută, înainte de impozit.',
   'dob-zile': 'Numărul de zile pe care banii stau depuși.',
@@ -5324,7 +5324,7 @@ const STEP_TEXT = {
   'r72-ani': 'Numărul de ani în care vrei să vezi evoluția.',
   'timp-venit': 'Introdu venitul lunar net — el transformă prețul în timp de muncă.',
   'timp-pret': 'Prețul dorinței pe care vrei să o achiziționezi.',
-  'timp-zile-lucratore': 'Zile lucrătoare pe an (248 e valoarea obișnuită).',
+  'timp-zile-lucratore': 'Zile lucrătoare pe an (250 e valoarea pentru România 2026).',
   'nuam-venit': 'Introdu venitul lunar net.',
   'nuam-zi': 'Ziua din lună când primești venitul — pentru fluxul zilnic.',
   'nuam-inflatie': 'Inflația cu care comparăm ce economisești.',
@@ -5865,7 +5865,7 @@ const FORMULA_TIPS = {
   },
   'deflator': {
     title: 'Echivalentul în anul A',
-    text: 'Suma actuală ÷ Π (1 + rata inflației anuale), pentru anii A+1, A+2, …, 2025. Rândul A arată cât puteai cumpăra în anul A cu banii din 2025. Anul 2025 păstrează suma neschimbată.'
+    text: 'Suma actuală ÷ Π (1 + rata inflației anuale), pentru anii A+1, A+2, …, 2026. Rândul A arată cât puteai cumpăra în anul A cu banii din 2026. Anul 2026 păstrează suma neschimbată.'
   },
   'timp-basis': {
     title: 'Baza de calcul a timpului',
@@ -5881,7 +5881,7 @@ const FORMULA_TIPS = {
   },
   'timp-zile-lucratore': {
     title: 'Zile lucrătoare într-un an',
-    text: 'Zilele lucrătoare = zile calendaristice − weekenduri − sărbători legale: 365 − 104 (52 × 2) − 13 = 248 în România, în 2025. De ce contează: venitul pe zi lucrătoare = venitul anual (12 × lunar) ÷ zilele lucrătoare, iar „% dintr-un an lucrător" = zilele lucrate ÷ zilele lucrătoare. Cu mai puține zile lucrătoare, fiecare zi valorează mai mult. Procentul dintr-un an lucrător este echivalent cu prețul ÷ venitul anual, deci nu se modifică odată cu numărul de zile. Surse: calendarul sărbătorilor legale — <a href="https://legislatie.just.ro/" target="_blank" rel="noopener">legislatie.just.ro</a>; date macro — <a href="https://www.insse.ro/" target="_blank" rel="noopener">INS</a>.'
+    text: 'Zilele lucrătoare = zile calendaristice − weekenduri − sărbători legale: 365 − 104 (52 × 2) − 11 = 250 în România, în 2026. De ce contează: venitul pe zi lucrătoare = venitul anual (12 × lunar) ÷ zilele lucrătoare, iar „% dintr-un an lucrător" = zilele lucrate ÷ zilele lucrătoare. Cu mai puține zile lucrătoare, fiecare zi valorează mai mult. Procentul dintr-un an lucrător este echivalent cu prețul ÷ venitul anual, deci nu se modifică odată cu numărul de zile. Surse: calendarul sărbătorilor legale — <a href="https://legislatie.just.ro/" target="_blank" rel="noopener">legislatie.just.ro</a>; date macro — <a href="https://www.insse.ro/" target="_blank" rel="noopener">INS</a>.'
   },
   'dob-brut': {
     title: 'Dobânda brută',
@@ -6028,20 +6028,20 @@ const FORMULA_TIPS = {
     text: 'Estimare rapidă, fără compunere: randamentul nominal minus inflația. La rate mari deviază de la formula exactă (Fisher); diferența este afișată în rezumat.'
   },
   'di-istoric': {
-    title: 'Randamentul real istoric 2000–2025',
+    title: 'Randamentul real istoric 2000–2026',
     text: 'Pentru fiecare an, (1 + randament nominal constant) ÷ (1 + inflația anuală INS) − 1. Un depozit „sigur” poate fi negativ real în anii cu inflație ridicată. Sursa: INS — IPC național, serie annuală (<a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">insse.ro</a>).'
   },
   'di-cash-real': {
-    title: 'Cash păstrat 26 de ani',
-    text: 'Suma ÷ produsul inflației 2000–2025. Câtă putere de cumpărare din 2025 mai are banii notați în 2000.'
+    title: 'Cash păstrat 27 de ani',
+    text: 'Suma ÷ produsul inflației 2000–2026. Câtă putere de cumpărare din 2026 mai are banii notați în 2000.'
   },
   'di-investit-real': {
     title: 'La randamentul nominal',
-    text: 'Suma × (1 + nominal)^26 ÷ produsul inflației — aceiași bani compuși nominal 26 de ani, aduși în putere de cumpărare din 2025.'
+    text: 'Suma × (1 + nominal)^27 ÷ produsul inflației — aceiași bani compuși nominal 27 de ani, aduși în putere de cumpărare din 2026.'
   },
   'di-diferenta': {
     title: 'Diferența pe termen lung',
-    text: 'Valoarea reală de la randament nominal − valoarea reală a cash-ului, pe 26 de ani. Pozitivă când randamentul depășește inflația acumulată.'
+    text: 'Valoarea reală de la randament nominal − valoarea reală a cash-ului, pe 27 de ani. Pozitivă când randamentul depășește inflația acumulată.'
   },
   'r72-regula': {
     title: 'Regula 72',
@@ -6365,7 +6365,7 @@ const FORMULA_TIPS = {
   },
   'pn-scenariu': {
     title: 'Scenariul de randament',
-    text: 'Presetul setează randamentul anual brut și inflația. „Istoric” folosește media fondurilor Pilon III pe 2007–2025 (6,7% pe an, APAPR/ASF). Alege „Personalizat” pentru propriile valori.'
+    text: 'Presetul setează randamentul anual brut și inflația. „Istoric” folosește media fondurilor Pilon III pe 2007–2025 (ultimul an complet; 6,7% pe an, APAPR/ASF). Alege „Personalizat” pentru propriile valori.'
   },
   'pn-varsta': {
     title: 'Vârsta acum',
@@ -6384,7 +6384,7 @@ const FORMULA_TIPS = {
     text: 'Activul pe care îl ai acum în fond (0 dacă abia începi). Se adaugă la contribuții și e compus la fel ca ele.'
   },
   'pn-randament': {
-    text: 'Randamentul anual brut al fondului, înainte de comisioane. Randamentul istoric mediu al Pilon III e 6,7% pe an (2007–2025), dar un an bun (2025: 19,6%) nu e regulă.',
+    text: 'Randamentul anual brut al fondului, înainte de comisioane. Randamentul istoric mediu al Pilon III e 6,7% pe an (2007–2025, ultimul an complet), dar un an bun (2025: 19,6%) nu e regulă.',
     title: 'Randament anual brut'
   },
   'pn-comision': {
@@ -6397,7 +6397,7 @@ const FORMULA_TIPS = {
   },
   'pn-inflatie': {
     title: 'Inflația anuală',
-    text: 'Folosită pentru valoarea reală de la pensionare: câți bani din astăzi valorează suma acumulată. Media 2007–2025 a fost 4,9% pe an (INS).'
+    text: 'Folosită pentru valoarea reală de la pensionare: câți bani din astăzi valorează suma acumulată. Media 2007–2025 (ultimul an complet) a fost 4,9% pe an (INS).'
   },
   'pn-final-brut': {
     title: 'Valoarea brută la pensionare',

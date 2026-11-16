@@ -1,7 +1,7 @@
 // Teste pentru conceptele noi 1 (GlitchCoin): N1 fond de urgență, N4 dobândă vs inflație,
 // N5 costul oportunității, N10 regula 72.
 // Valorile așteptate au fost recalculate independent în Python (scratch/recalc-concepte1.py)
-// din seria INS IPC național 2000–2025.
+// din seria INS IPC național 2000–2026.
 // Rulează: node --test tests/
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -30,11 +30,11 @@ test('N4 — randamentul real pe 1 an: formula exactă (Fisher) și aproximația
   near(r.valoareReala, 10190.476190476);
 });
 
-test('N4 — seria istorică 2000–2025 (INS) aplicată unei rate nominale de 7%', () => {
+test('N4 — seria istorică 2000–2026 (INS) aplicată unei rate nominale de 7%', () => {
   const h = computeIstoricReal(0.07, 10000);
-  assert.equal(h.rows.length, 26);                       // 2000–2025 incluse
-  near(h.produsInflatie, 8.653244031001, 1e-9);
-  near(h.medie, -0.011681201011, 1e-9);
+  assert.equal(h.rows.length, 27);                       // 2000–2026 incluse
+  near(h.produsInflatie, 9.198398404954, 1e-9);
+  near(h.medie, -0.011004669996, 1e-9);
   near(h.minim.real, -0.265463032883, 1e-9);
   assert.equal(h.minim.an, 2000);
   near(h.maxim.real, 0.086735730246, 1e-9);
@@ -44,15 +44,15 @@ test('N4 — seria istorică 2000–2025 (INS) aplicată unei rate nominale de 7
   const an2022 = h.rows.find((r) => r.an === 2022);
   near(an2022.inflatie, 0.138);
   near(an2022.real, 1.07 / 1.138 - 1);
-  near(h.cashReal, 1155.635963134034);
-  near(h.investitReal, 6711.185890662465);
-  near(h.diferenta, 5555.549927528431);
+  near(h.cashReal, 1087.1457790537);
+  near(h.investitReal, 6755.3799652012);
+  near(h.diferenta, 5668.2341861475);
 });
 
 test('N4 — constantele de interval și sursa INS', () => {
   includes(js, 'DI_ANI_START = 2000');
-  includes(js, 'DI_ANI_END = 2025');
-  includes(html, 'Exemple istorice · 2000–2025');
+  includes(js, 'DI_ANI_END = 2026');
+  includes(html, 'Exemple istorice · 2000–2026');
   includes(html, 'insse.ro');
 });
 

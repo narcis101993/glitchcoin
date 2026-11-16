@@ -68,13 +68,13 @@ test('attachChartTip există și e accesibil: focus, hover, Escape, aria-describ
   assert.match(body, /document\.body\.appendChild\(panel\)/, 'panoul e portal în body (fără clipping)');
 });
 
-test('bar-chart „Creștere 2025 vs 2020" — tooltip cu cifrele produsului', () => {
+test('bar-chart „Creștere 2026 vs 2020" — tooltip cu cifrele produsului', () => {
   const body = section('function renderFood(', '/* ═══ 3. Inflația');
   assert.match(body, /clearChartTips\(chart\)/, 'curăță doar tooltip-urile acestui grafic înainte de re-render');
   assert.match(body, /attachChartTip\(/, 'fiecare bară primește tooltip');
   assert.match(body, /fmtPct\(growth\)/, 'tooltipul arată creșterea');
   assert.match(body, /p\.prices\[2020\]/, 'tooltipul arată prețul din 2020');
-  assert.match(body, /p\.prices\[2025\]/, 'tooltipul arată prețul din 2025');
+  assert.match(body, /p\.prices\[2026\]/, 'tooltipul arată prețul din 2026');
   assert.match(body, /escapeHtml\(p\.name\)/, 'numele produsului e escapat');
 });
 

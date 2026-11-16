@@ -19,16 +19,16 @@ test('C3 — selectul „Tipul de venit" există în Randament și Profit, cu ra
       assert.ok(block.includes(`value="${opt}"`), `${id}: opțiunea ${opt} lipsește`);
     }
   }
-  includes(html, 'id="rand-impozit" value="1"', 'C3');
+  includes(html, 'id="rand-impozit" value="3"', 'C3');
   includes(html, 'id="rand-comisioane" value="0.3"', 'C6');
-  includes(html, 'id="prof-impozit" value="1"', 'C3');
+  includes(html, 'id="prof-impozit" value="3"', 'C3');
   includes(html, 'id="prof-comisioane" value="0.3"', 'C6');
 });
 
 test('C3 — tabelele de impozitare din app.js folosesc ratele reale', () => {
-  includes(js, "'vm-ro':       { rata: 1", 'C3');
-  includes(js, "'vm-ro-scurt': { rata: 3", 'C3');
-  includes(js, "'vm-strain':   { rata: 10", 'C3');
+  includes(js, "'vm-ro':       { rata: 3", 'C3');
+  includes(js, "'vm-ro-scurt': { rata: 6", 'C3');
+  includes(js, "'vm-strain':   { rata: 16", 'C3');
   includes(js, 'impozit-tipuri', 'C3 tooltip');
 });
 
@@ -47,13 +47,13 @@ test('A2/A3 — data.js: 2025 = 7,3% (INS), 2026 = 6,3% (parțial)', () => {
 });
 
 test('C5/C11 — Timp vs dorințe: zile lucrătoare ca input (implicit 248) și 30,44 zile/lună', () => {
-  includes(js, 'TIMP_ZILE_LUCRATOARE_AN_DEFAULT = 248', 'C5 default');
+  includes(js, 'TIMP_ZILE_LUCRATOARE_AN_DEFAULT = 250', 'C5 default');
   includes(js, 'TIMP_ZILE_LUNA = 365 / 12', 'C11');
   includes(js, "getElementById('timp-zile-lucratore')", 'C5 input');
   includes(js, 'timp-zile-lucratore', 'C5 tooltip');
-  includes(html, 'id="timp-zile-lucratore" value="248"', 'C5 input');
+  includes(html, 'id="timp-zile-lucratore" value="250"', 'C5 input');
   includes(html, 'data-tip="timp-zile-lucratore"', 'C5 tooltip');
-  includes(html, 'id="timp-tabel-zileanluc">248</td>', 'C5 tabel');
+  includes(html, 'id="timp-tabel-zileanluc">250</td>', 'C5 tabel');
   includes(html, 'Pe zi · 30,44 zile', 'C11');
   includes(html, '365 ÷ 12', 'C11');
 });
@@ -65,7 +65,7 @@ test('C1 — „Nu am bani": semnul dobânzii e corect (venit − facturi + prof
 
 test('C2 — deflator: iterează de la an+1 (fără off-by-one)', () => {
   includes(js, 'for (let y = an + 1; y <= AN_CURENT; y++)', 'C2');
-  includes(js, 'Suma actuală ÷ Π (1 + rata inflației anuale), pentru anii A+1, A+2, …, 2025', 'C2 tooltip');
+  includes(js, 'Suma actuală ÷ Π (1 + rata inflației anuale), pentru anii A+1, A+2, …, 2026', 'C2 tooltip');
 });
 
 test('C8/C9 — Dobânda compusă: creștere reală și contribuție lunară consistentă', () => {

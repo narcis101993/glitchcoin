@@ -5881,7 +5881,7 @@ const FORMULA_TIPS = {
   },
   'timp-zile-lucratore': {
     title: 'Zile lucrătoare într-un an',
-    text: 'Zilele lucrătoare = zile calendaristice − weekenduri − sărbători legale: 365 − 104 (52 × 2) − 11 = 250 în România, în 2026. De ce contează: venitul pe zi lucrătoare = venitul anual (12 × lunar) ÷ zilele lucrătoare, iar „% dintr-un an lucrător" = zilele lucrate ÷ zilele lucrătoare. Cu mai puține zile lucrătoare, fiecare zi valorează mai mult. Procentul dintr-un an lucrător este echivalent cu prețul ÷ venitul anual, deci nu se modifică odată cu numărul de zile. Surse: calendarul sărbătorilor legale — <a href="https://legislatie.just.ro/" target="_blank" rel="noopener">legislatie.just.ro</a>; date macro — <a href="https://www.insse.ro/" target="_blank" rel="noopener">INS</a>.'
+    text: 'Zilele lucrătoare = zile calendaristice − weekenduri − sărbători legale: 365 − 104 (52 × 2) − 11 = 250 în România, în 2026. De ce contează: venitul pe zi lucrătoare = venitul anual (12 × lunar) ÷ zilele lucrătoare, iar „% dintr-un an lucrător" = zilele lucrate ÷ zilele lucrătoare. Cu mai puține zile lucrătoare, fiecare zi valorează mai mult. Procentul dintr-un an lucrător este echivalent cu prețul ÷ venitul anual, deci nu se modifică odată cu numărul de zile. Surse: calendarul sărbătorilor legale — <a href="https://legislatie.just.ro/Public/DetaliiDocument/128647" target="_blank" rel="noopener">legislatie.just.ro</a>; date macro — <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.'
   },
   'dob-brut': {
     title: 'Dobânda brută',
@@ -6073,7 +6073,7 @@ const FORMULA_TIPS = {
   },
   'fu-tinta': {
     title: 'Ținta fondului de urgență',
-    text: 'Cheltuielile lunare esențiale × numărul de luni (3–6). Reprezintă cât ai avea nevoie dacă venitul s-ar opri complet. Surse: BNR — dobânzi la depozite (<a href="https://www.bnr.ro/" target="_blank" rel="noopener">bnr.ro</a>), INS — inflație (<a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">insse.ro</a>).'
+    text: 'Cheltuielile lunare esențiale × numărul de luni (3–6). Reprezintă cât ai avea nevoie dacă venitul s-ar opri complet. Surse: BNR — dobânzi la depozite (<a href="https://www.bnr.ro/1936-piete-financiare" target="_blank" rel="noopener">bnr.ro</a>), INS — inflație (<a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">insse.ro</a>).'
   },
   'fu-dobanda': {
     title: 'Dobânda pe fond',
@@ -6221,7 +6221,7 @@ const FORMULA_TIPS = {
   },
   'dv-corelare': {
     title: 'Corelația dintre active',
-    text: 'Cât de mult se mișcă activele împreună, de la −100% (se mișcă exact invers) la +100% (se mișcă identic). 0% = independente. Cu cât e mai mică, cu atât diversificarea reduce mai mult volatilitatea. Surse: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>, <a href="https://www.asfromania.ro/" target="_blank" rel="noopener">ASF</a>.'
+    text: 'Cât de mult se mișcă activele împreună, de la −100% (se mișcă exact invers) la +100% (se mișcă identic). 0% = independente. Cu cât e mai mică, cu atât diversificarea reduce mai mult volatilitatea. Surse: <a href="https://www.bnr.ro/1936-piete-financiare" target="_blank" rel="noopener">BNR</a>, <a href="https://www.asfromania.ro/ro/a/1687/ghiduri-investitori-piata-capital" target="_blank" rel="noopener">ASF</a>.'
   },
   'dv-rf': {
     title: 'Rată fără risc',
@@ -6317,7 +6317,7 @@ const FORMULA_TIPS = {
   },
   'st-inflatie': {
     title: 'Inflația anuală',
-    text: 'Rata anuală cu care cresc cheltuielile esențiale și scade puterea de cumpărare a economiilor. Surse: <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>, <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>.'
+    text: 'Rata anuală cu care cresc cheltuielile esențiale și scade puterea de cumpărare a economiilor. Surse: <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>, <a href="https://www.bnr.ro/uploads/2026-11-16raportasuprainflatiei,noiembrie2026_documentpdf_545_1794821695.pdf" target="_blank" rel="noopener">BNR</a>.'
   },
   'st-scadere': {
     title: 'Scăderea venitului',
@@ -6593,7 +6593,7 @@ const FORMULA_TIPS = {
   },
   'cs-curs': {
     title: 'Cursul RON/valută la start',
-    text: 'Câți lei dai astăzi pentru o unitate de valută (ex. 4,97 lei pentru 1 EUR). BNR publică cursul oficial zilnic; pentru USD vezi și raportul H.10 al Fed. Surse: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>, <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener">ECB</a>.'
+    text: 'Câți lei dai astăzi pentru o unitate de valută (ex. 4,97 lei pentru 1 EUR). BNR publică cursul oficial zilnic; pentru USD vezi și raportul H.10 al Fed. Surse: <a href="https://www.bnr.ro/report?cid=668&type=1" target="_blank" rel="noopener">BNR</a>, <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener">ECB</a>.'
   },
   'cs-apreciere': {
     title: 'Apreciere anuală a valutei față de RON',
@@ -6689,7 +6689,7 @@ const FORMULA_TIPS = {
   },
   'bs-ancorare': {
     title: 'Ancorarea',
-    text: 'Tendința de a te agăța de primul număr văzut (prețul istoric, prețul de listă, cursul de ieri) și de a ajusta prea puțin față de el. Surse: <a href="https://en.wikipedia.org/wiki/Anchoring_(cognitive_bias)" target="_blank" rel="noopener">Wikipedia — anchoring</a>, <a href="https://www.investor.gov/" target="_blank" rel="noopener">Investor.gov</a>.'
+    text: 'Tendința de a te agăța de primul număr văzut (prețul istoric, prețul de listă, cursul de ieri) și de a ajusta prea puțin față de el. Surse: <a href="https://en.wikipedia.org/wiki/Anchoring_(cognitive_bias)" target="_blank" rel="noopener">Wikipedia — anchoring</a>, <a href="https://www.investor.gov/introduction-investing" target="_blank" rel="noopener">Investor.gov</a>.'
   },
   'bs-cont-mental': {
     title: 'Contul mental',

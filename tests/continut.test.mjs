@@ -4,7 +4,7 @@
 // panouri globale în sidebar + căutare. Rulează: node --test tests/
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { html, css, js } from './helpers/bundle.mjs';
+import { html, css, js, data } from './helpers/bundle.mjs';
 import { gc } from './helpers/bundle.mjs';
 
 const TAB_IDS = ['inflatie', 'dobanda', 'compusa', 'di', 'regula72', 'timp', 'nuam', 'buget',
@@ -90,7 +90,8 @@ test('„De ce contează pentru tine” — bloc recurent la finalul fiecărui t
 
 /* ── 3. Surse inline ────────────────────────────────────── */
 test('Surse — fiecare tab are bloc cu linkuri externe valide', () => {
-  assert.equal((html.match(/class="panel-sources"/g) || []).length, 24, 'număr de blocuri');
+  // 24 de taburi + un bloc „Toate sursele” în pagina Despre
+  assert.equal((html.match(/class="panel-sources"/g) || []).length, 25, 'număr de blocuri');
   for (const id of TAB_IDS) {
     const block = sectionOf(PANELS[id], 'panel-sources');
     assert.ok(block, `${id}: lipsește .panel-sources`);
@@ -101,6 +102,49 @@ test('Surse — fiecare tab are bloc cu linkuri externe valide', () => {
       assert.ok(!href.includes(' '), `${id}: URL cu spații ${href}`);
     }
   }
+});
+
+/* ── 3b. Pagina „Despre” — toate sursele, linkuri precise ── */
+test('Despre — conține toate sursele aplicației, cu linkuri precise și sigure', () => {
+  const start = html.indexOf('<section id="panel-despre"');
+  assert.ok(start >= 0, 'lipsește panel-despre');
+  const end = html.indexOf('</section>', start);
+  const panel = html.slice(start, end);
+  const block = sectionOf(panel, 'panel-sources');
+  assert.ok(block, 'Despre: lipsește blocul cu surse');
+
+  const norm = (u) => u.replace(/&amp;/g, '&');
+  const despreUrls = [...block.matchAll(/href="(https?:\/\/[^"]+)"/g)].map((m) => m[1]);
+  const set = new Set(despreUrls.map(norm));
+  assert.ok(set.size >= 50, `Despre: doar ${set.size} surse unice`);
+  for (const url of despreUrls) {
+    const at = block.indexOf(`href="${url}"`);
+    const tag = block.slice(Math.max(0, at - 3), at + url.length + 60);
+    assert.match(tag, /target="_blank"/, `fără target="_blank": ${url}`);
+    assert.match(tag, /rel="noopener"/, `fără rel="noopener": ${url}`);
+  }
+
+  // Nicio sursă nu mai trimite la homepage-ul site-ului.
+  const homepages = ['https://www.bnr.ro/', 'https://www.bvb.ro/', 'https://www.asfromania.ro/',
+    'https://infocons.ro/', 'https://www.anpc.ro/', 'https://www.investor.gov/',
+    'https://legislatie.just.ro/', 'https://www.insse.ro/'];
+  for (const hp of homepages) {
+    assert.ok(!html.includes(`href="${hp}"`), `link către homepage în HTML: ${hp}`);
+    assert.ok(!js.includes(`href="${hp}"`), `link către homepage în JS: ${hp}`);
+    assert.ok(!data.trimEnd().endsWith(hp), `link către homepage în data.js: ${hp}`);
+  }
+
+  // Fiecare URL folosit în aplicație apare și în pagina Despre.
+  const appUrls = new Set();
+  const add = (u) => appUrls.add(norm(u));
+  for (const m of html.matchAll(/href="(https?:\/\/[^"]+)"/g)) {
+    if (m.index >= start && m.index <= end) continue;
+    add(m[1]);
+  }
+  for (const m of js.matchAll(/href=\\"(https?:\/\/[^"\\]+)/g)) add(m[1]);
+  for (const m of js.matchAll(/url: '(https?:\/\/[^']+)'/g)) add(m[1]);
+  for (const m of data.matchAll(/https?:\/\/[^\s]+/g)) add(m[0].replace(/[.,;]$/, ''));
+  for (const u of appUrls) assert.ok(set.has(u), `sursă absentă din Despre: ${u}`);
 });
 
 /* ── 4. Glosar ──────────────────────────────────────────── */

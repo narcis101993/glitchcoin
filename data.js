@@ -9,10 +9,10 @@
 
    Surse oficiale:
    • INS — https://insse.ro/cms/en/content/cpi-annual-data-series
-   • BNR — https://www.bnr.ro/
+   • BNR — https://www.bnr.ro/uploads/2026-11-16raportasuprainflatiei,noiembrie2026_documentpdf_545_1794821695.pdf
    • AGERPRES (octombrie 2026) — https://agerpres.ro/economic/2026/11/12/rata-anuala-a-inflatiei-isi-continua-cresterea-si-ajunge-la-6-9-in-octombrie--1612494
    • Prețuri alimente: estimări metodologice (variații INS aplicate prețului 2024),
-     cf. InfoCons — https://infocons.ro/ */
+     cf. InfoCons — https://infocons.ro/studiu-comparativ-infocons-protectia-consumatorilor-cat-ne-costa-alimentele-de-baza-septembrie-2025-vs-septembrie-2026 */
 'use strict';
 
 const GLITCHCOIN_DATA = {

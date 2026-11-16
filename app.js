@@ -4183,6 +4183,13 @@ function activateTab(id, { focus = false, focusPanel = false, scroll = false, hi
     if (!el.hasAttribute('aria-live')) el.setAttribute('aria-live', 'polite');
   });
 
+  // Panoul „Acasă" se ascunde ÎNAINTE de derulare. Dacă rămâne vizibil,
+  // `scrollIntoView` țintește poziția panoului nou calculată cu „Acasă"
+  // încă pe ecran; după ascundere, pagina rămâne prea jos — click pe
+  // „Inflație" arăta „Prețurile la alimentele de bază" în vârful ecranului.
+  const homePanel = document.getElementById('panel-acasa');
+  if (homePanel) homePanel.hidden = true;
+
   if (focus) tab.focus();
   if (focusPanel) panel.focus({ preventScroll: true });
   if (scroll || focusPanel) panel.scrollIntoView({ block: 'start', inline: 'nearest' });
@@ -4195,10 +4202,6 @@ function activateTab(id, { focus = false, focusPanel = false, scroll = false, hi
     if (historyMode === 'push') history.pushState(null, '', hash);
     else history.replaceState(null, '', hash);
   }
-
-  // Panoul „Acasă" se ascunde de fiecare dată când se deschide un tab.
-  const homePanel = document.getElementById('panel-acasa');
-  if (homePanel) homePanel.hidden = true;
 
   updateChrome(id);
   if (stepMode) retargetStepMode(id);

@@ -559,9 +559,16 @@ table th,
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  /* Spațiu sub rândul de butoane: fără el, o notă următoare (`.note` are
+     margin-top: -8px) se suprapune peste chip-uri. */
+  margin-bottom: 18px;
   color: var(--muted);
   font-size: .88rem;
 }
+
+/* În `.inputs` (card flex cu align-items: flex-end) marginea de jos ar
+   ridica rândul de presete deasupra câmpurilor; acolo spațiul îl dă cardul. */
+.inputs .presets { margin-bottom: 0; }
 
 .chip {
   font: inherit;

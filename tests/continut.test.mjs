@@ -151,9 +151,9 @@ test('Disclaimer — vizibil în footer și pe Acasă, redactat profesional', ()
 });
 
 /* ── 9. Secțiuni globale în sidebar ────────────────────── */
-test('Sidebar — trei secțiuni globale, cu stare activă și hash', () => {
+test('Sidebar — patru secțiuni globale, cu stare activă și hash', () => {
   const links = [...html.matchAll(/<a class="side-global-link" id="nav-([a-z]+)" href="#([a-z]+)" data-global="([a-z]+)">/g)];
-  assert.deepEqual(links.map((m) => m[1]), ['glosar', 'faq', 'mituri']);
+  assert.deepEqual(links.map((m) => m[1]), ['glosar', 'faq', 'mituri', 'despre']);
   for (const m of links) {
     assert.equal(m[2], m[1], 'href și id diferă');
     assert.equal(m[3], m[1], 'data-global și id diferă');
@@ -173,11 +173,14 @@ test('JS — panouri globale: parseHash, activateGlobal, buildSearchItems', () =
   assert.equal(gc.parseHash('#glosar').id, 'glosar');
   assert.equal(gc.parseHash('#faq').id, 'faq');
   assert.equal(gc.parseHash('#mituri').id, 'mituri');
+  assert.equal(gc.parseHash('#despre').type, 'global');
+  assert.equal(gc.parseHash('#despre').id, 'despre');
   assert.equal(gc.parseHash('#investitii/randament').type, 'tab', 'taburile rămân valide');
   assert.equal(gc.parseHash('#nimerel'), null, 'hash invalid');
   assert.equal(gc.globalName('glosar'), 'Glosar');
   assert.equal(gc.globalName('mituri'), 'Mituri și adevăruri');
-  assert.equal(gc.GLOBAL_PANELS.length, 3);
+  assert.equal(gc.globalName('despre'), 'Despre');
+  assert.equal(gc.GLOBAL_PANELS.length, 4);
   assert.equal(gc.buildSearchItems().length, 24, 'în vm nu există [data-search]');
 });
 

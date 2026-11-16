@@ -1,6 +1,6 @@
 # GlitchCoin — Educație financiară
 
-Aplicație web de educație financiară, conversie a taburilor din `GlitchCoin.xlsx`.
+Aplicație web de educație financiară, cu 24 de calculatoare grupate în 6 categorii.
 HTML + CSS + JavaScript static, **fără backend**, fără conturi, fără date personale.
 
 ## Cum deschizi
@@ -8,7 +8,7 @@ HTML + CSS + JavaScript static, **fără backend**, fără conturi, fără date 
 1. **Dublu-click pe `index.html`** — se deschide în browserul implicit (Safari/Chrome), direct din folder.
 2. Sau, din Terminal:
    ```bash
-   open "/Users/narciscriveanu/Hermes Projects/GlitchCoin/index.html"
+   open "index.html"
    ```
 
 Nu ai nevoie de internet — toate fișierele și toate datele sunt locale.
@@ -32,7 +32,7 @@ Nu ai nevoie de internet — toate fișierele și toate datele sunt locale.
 - **Toate inputurile se salvează automat**, cu un mic debounce (~300 ms), ca să nu se scrie
   la fiecare tastă. Cheile sunt de forma `glitchcoin-input:<id>` (ex. `glitchcoin-input:timp-venit`).
 - **La reîncărcare**, valorile introduse anterior reapar; ce lipsește revine la valorile implicite
-  din HTML (adică din Excel).
+  din HTML.
 - **Tabelele dinamice** (Costul mediu de achiziție, „Nu am bani") și **tabul deschis** se rețin la fel.
 - **„Resetează tot”** (header, din dreapta) aduce toate cele 24 de taburi la valorile implicite:
   inputuri statice, selectul Deflator (2001) și selectul „Tipul de venit", tabelele dinamice —
@@ -56,7 +56,7 @@ păstrează ordinea istorică de adăugare (cu versiunea care a adus fiecare tab
 | 6 | Profit | **gata** (v2.3) |
 | 7 | Costul mediu de achiziție | **gata** (v2.3) |
 | 8 | Sumă dorită | **gata** (v2.4) |
-| 9 | „Nu am bani” | **gata** (v2.4, tab ascuns în Excel) |
+| 9 | „Nu am bani” | **gata** (v2.4, scenariu avansat) |
 | 10 | Dobânda vs inflație | **gata** (v2.8, concept N4) |
 | 11 | Regula 72 | **gata** (v2.8, concept N10) |
 | 12 | Fond de urgență | **gata** (v2.8, concept N1) |
@@ -144,9 +144,9 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
   de coloană se repetă pe fiecare pagină. Tema întunecată nu se tipărește — printul e mereu deschis,
   indiferent de tema aleasă. Fiecare tab ocupă 1–5 pagini A4, în funcție de lungimea tabelelor.
 - **„Descarcă CSV”** (header, din dreapta) — exportă toate tabelele tabului activ într-un
-  fișier `glitchcoin-<tab>.csv`, cu delimitator `;` și BOM UTF-8, ca să se deschidă în Excel cu
-  diacritice corecte. Coloana de acțiuni („Șterge") nu se exportă; valorile din tabelele dinamice
-  (cost, facturi) se exportă cu virgulă zecimală, ca în Excel.
+  fișier `glitchcoin-<tab>.csv`, cu delimitator `;` și BOM UTF-8, ca să se deschidă cu
+  diacritice corecte în orice aplicație de tabele. Coloana de acțiuni („Șterge") nu se exportă;
+  valorile din tabelele dinamice (cost, facturi) se exportă cu virgulă zecimală.
 
 ## Accesibilitate
 
@@ -252,7 +252,7 @@ Valori implicite: venit 5.000 lei, dorință 3.600 lei, 248 zile lucrătoare →
 1. **Patru inputuri** — sumă inițială, rată anuală, număr de zile și impozit.
 2. **Dobânda brută și netă** — brut = ROUND(suma × rată × zile / 365, 2); net = ROUND((1 − impozit) × brut, 2).
 
-Valori implicite din Excel: 15.000 lei / 7% / 184 zile / 10% → brut 529,32 lei, net 476,39 lei.
+Valori implicite: 15.000 lei / 7% / 184 zile / 10% → brut 529,32 lei, net 476,39 lei.
 
 ## Ce conține tabul Dobânda compusă
 
@@ -261,7 +261,7 @@ Valori implicite din Excel: 15.000 lei / 7% / 184 zile / 10% → brut 529,32 lei
    randamentul față de primul an.
 3. **Scenariul cu contribuție** — suma investită, dobânda acumulată, suma totală și creștere anuală.
 
-Valori implicite din Excel: 10.000 lei / 200 lei lunar / 2,50% → anul 1 = 10.250,00 lei,
+Valori implicite: 10.000 lei / 200 lei lunar / 2,50% → anul 1 = 10.250,00 lei,
 anul 2 = 10.506,25 lei, anul 20 = 16.386,14 lei (fără contribuție) și 78.673,58 lei
 cu contribuție, din care 58.000,00 lei investiți.
 
@@ -294,11 +294,11 @@ profit brut 1.200,00 lei, profit net 1.184,40 lei, randament real 6,52% (profit 
 ## Ce conține tabul Costul mediu de achiziție
 
 1. **Tabel dinamic** — fiecare rând are preț, cantitate și comision (%); poți adăuga rânduri cu
-   „+ Adaugă rând", șterge rândurile cu „Șterge" și revino la valorile din Excel cu „Resetează".
+   „+ Adaugă rând", șterge rândurile cu „Șterge" și revino la valorile implicite cu „Resetează".
 2. **Costul mediu ponderat** — (Σ preț × cantitate + Σ preț × cantitate × comision) / Σ cantitate,
    plus cantitatea totală, valoarea achiziționată și totalul plătit (cu comision).
 
-Valori implicite din Excel: (28,81 × 24), (27,75 × 144), (32,89 × 4), (34,40 × 30), toate cu comision 2%
+Valori implicite: (28,81 × 24), (27,75 × 144), (32,89 × 4), (34,40 × 30), toate cu comision 2%
 → costul mediu 29,5447 lei pentru 202 de unități (5.851,00 lei achiziționat + 117,02 lei comisioane
 = 5.968,02 lei plătiți).
 
@@ -309,10 +309,10 @@ Valori implicite din Excel: (28,81 × 24), (27,75 × 144), (32,89 × 4), (34,40 
    plus totalul economisit și suma din dobândă.
 3. **Tabela pe ani** — suma acumulată, economisit în total, din dobândă și cât din țintă e acumulat.
 
-Valori implicite din Excel: 10% / 15 ani / 0 / 1.000.000 lei → **2.412,72 lei pe lună**
+Valori implicite: 10% / 15 ani / 0 / 1.000.000 lei → **2.412,72 lei pe lună**
 (434.289,21 lei economisiți + 565.710,79 lei din dobândă = 1.000.000,00 lei).
 
-## Ce conține tabul „Nu am bani" (ascuns în Excel)
+## Ce conține tabul „Nu am bani"
 
 1. **Inputuri** — venit lunar NET, ziua din lună în care primești venitul, inflația, suma
    adăugată în contul de economii și dobânda oferită de bancă.
@@ -483,8 +483,8 @@ Valori implicite: valori mobiliare prin broker RO, 2026, 10.000 lei câștig →
 
 ## De unde vin datele
 
-- Sursă de structură: `/Users/narciscriveanu/Library/CloudStorage/OneDrive-Personal/Educatie financiara/GlitchCoin.xlsx`,
-  9 taburi (septembrie 2025).
+- Valorile implicite și structura taburilor provin dintr-un document intern de lansare
+  (septembrie 2025); nu sunt date personale.
 - Surse publice, cu linkuri în aplicație (secțiunea „Surse și note metodologice"):
   INS — IPC național ([insse.ro](https://insse.ro/cms/en/content/cpi-annual-data-series));
   BNR — Raportul asupra inflației ([bnr.ro](https://www.bnr.ro/));

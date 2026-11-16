@@ -62,7 +62,7 @@ const PERSIST_PREFIX = 'glitchcoin-';
 const PERSIST_DEBOUNCE_MS = 300;
 let persistTimer = null;
 
-/* Valorile implicite pentru tabelele dinamice (identice cu cele din HTML/Excel).
+/* Valorile implicite pentru tabelele dinamice (identice cu cele din HTML).
    Sunt singura sursă de adevăr pentru reset — `COST_ROWS_DEFAULT` / `NUAM_ROWS_DEFAULT`
    de mai jos sunt initialize din ele, ca să nu existe două liste care să se diveră. */
 const COST_DEFAULTS = [
@@ -81,7 +81,7 @@ const NUAM_DEFAULTS = [
   { nume: 'Abonament internet', zi: 30, suma: 80 },
 ];
 
-/* Anul implicit din tabul Deflator din Excel. */
+/* Anul implicit din tabul „Deflator”. */
 const DEF_YEAR_DEFAULT = 2001;
 
 /* Cheile de localStorage se construiesc din id-ul elementului.
@@ -146,7 +146,7 @@ function persistRestore() {
       } catch (e) { /* blocat sau date corupte — rămân valorile implicite */ }
     });
   } catch (e) {
-    // fără stocare locală: se folosesc valorile implicite din HTML/Excel
+    // fără stocare locală: se folosesc valorile implicite din HTML
   }
 }
 
@@ -162,7 +162,7 @@ function persistClear() {
 
 /* ── Buton „Resetează tot" ───────────────────────────────── */
 
-/* Revine la valorile implicite din Excel:
+/* Revine la valorile implicite:
    • inputurile statice — `value="…"` din HTML (păstrat în `defaultValue`);
    • selectul Deflator — 2001 (valoarea din tabul sursă);
    • tabelele dinamice — listele de mai sus. */
@@ -504,7 +504,7 @@ function renderDeflator() {
 
 /* ═══ 5. Timp vs dorințe ═══════════════════════════════ */
 
-/* Constantele din tabul „Timp vs dorințe" din Excel.
+/* Constantele tabulului „Timp vs dorințe”.
    Corecții C5 și C11: 248 de zile lucrătoare (România 2025) și 30,44 zile/lună
    (365 ÷ 12), în loc de convenția SUA de 261 și de „31 zile/lună".
    Din 2026-11-13 numărul de zile lucrătoare e un INPUT (cerință Narcis): utilizatorul
@@ -614,7 +614,7 @@ function renderTimp() {
 
 /* ═══ 6. Calculul dobânzii ═════════════════════════════ */
 
-/* Rotunjește la 2 zecimale, ca funcția ROUND din Excel. */
+/* Rotunjește la 2 zecimale, ca funcția ROUND standard. */
 function round2(value) {
   return Math.round(value * 100) / 100;
 }
@@ -651,7 +651,7 @@ function renderDobanda() {
 
 /* ═══ 7. Dobânda compusă ═══════════════════════════════ */
 
-/* Constantele din tabul „Dobânda compusă" din Excel. */
+/* Constantele tabulului „Dobânda compusă”. */
 const COMP_ANI = 20;        // evoluția pe 20 de ani
 const COMP_LUNI_AN = 12;    // 12 luni într-un an
 
@@ -665,7 +665,7 @@ const COMP_LUNI_AN = 12;    // 12 luni într-un an
      G(n) = ROUND(G(n-1) + contribuție × 12, 2)
      I(n) = C7 × (1 + rată/12)^(12×n) + contribuție × ((1 + rată/12)^(12×n) − 1) / (rată/12)
      Dobânda acumulată(n) = I(n) − G(n)
-     Creștere anuală(n) = I(n) / G(n-1) − 1   (din anul 2, ca în Excel) */
+     Creștere anuală(n) = I(n) / G(n-1) − 1   (din anul 2) */
 function computeCompusa(suma, contributie, rata) {
   const factorAn = 1 + rata;
 
@@ -766,7 +766,7 @@ function renderCompusa() {
 
 /* ═══ 8. Randament ═════════════════════════════════════ */
 
-/* Formulele din tabul „Randament" din Excel:
+/* Formulele tabulului „Randament”:
      câștig brut = sumă × randament
      câștig net   = brut − impozit × brut − comisioane × brut
      randament brut = brut / sumă · randament net = net / sumă
@@ -829,7 +829,7 @@ function renderRandament() {
 
 /* ═══ 9. Profit ════════════════════════════════════════ */
 
-/* Formulele din tabul „Profit" din Excel:
+/* Formulele tabulului „Profit”:
      valoarea finală = sumă / preț inițial × preț vânzare
      profit brut     = valoarea finală − sumă
      randament brut  = valoarea finală / sumă − 1
@@ -903,13 +903,13 @@ function renderProfit() {
 
 /* ═══ 10. Costul mediu de achiziție ════════════════════ */
 
-/* Valorile implicite din tabul „Costul mediu" din Excel (comisionul e fractie, nu procent).
+/* Valorile implicite ale tabulului „Costul mediu” (comisionul e fracție, nu procent).
    Se initializează din COST_DEFAULTS (mai sus), ca să existe o singură sursă pentru reset. */
 const COST_ROWS_DEFAULT = COST_DEFAULTS;
 
 let costRows = COST_ROWS_DEFAULT.map((r) => ({ ...r }));
 
-/* Formula din Excel:
+/* Formula:
      costul mediu = (SUMPRODUCT(preț, cantitate) + SUMPRODUCT(preț, cantitate, comision))
                     / SUM(cantitate) */
 function computeCost(rows) {
@@ -1041,7 +1041,7 @@ function initCost() {
 
     const field = input.dataset.field;
     const value = parseFloat(input.value);
-    // Comisionul e introdus în procente și ținut intern ca fracție (ca în Excel).
+    // Comisionul e introdus în procente și ținut intern ca fracție.
     costRows[index][field] = Number.isFinite(value) ? value / (field === 'comision' ? 100 : 1) : 0;
     updateCostOutputs();
   });
@@ -1078,7 +1078,7 @@ function initCost() {
 
 /* ═══ 11. Sumă dorită ═══════════════════════════════════ */
 
-/* Formula D9 din Excel: -PMT(randament/12, ani*12, suma inițială, sumă dorită).
+/* Formula: -PMT(randament/12, ani*12, suma inițială, sumă dorită).
    PMT(rate, nper, pv, fv) = -rate × (pv × (1+rate)^nper + fv) / ((1+rate)^nper − 1) */
 function pmt(rate, nper, pv, fv) {
   if (nper <= 0) return null;
@@ -1166,15 +1166,15 @@ function renderSuma() {
     </tr>`).join('');
 }
 
-/* ═══ 12. „Nu am bani" (tab ascuns din Excel) ═══════════ */
+/* ═══ 12. „Nu am bani" (scenariu avansat) ═══════════ */
 
-/* Constantele din formulele Excel:
-   — impozitul pe dobândă e 10% (hardcodat în D60/D61);
-   — simularea acoperă zilele D7…30, adică SEQUENCE(31−D7, 1, D7, 1). */
+/* Constantele formulelor:
+   — impozitul pe dobândă e 10% (hardcodat);
+   — simularea acoperă zilele de la venit până la ziua 30. */
 const NUAM_IMPOZIT_DOBANDA = 0.10;
 const NUAM_ZIUA_FINALA = 30;
 
-/* Valorile implicite din tabul „Nu am bani" din Excel.
+/* Valorile implicite ale tabulului „Nu am bani”.
    Se initializează din NUAM_DEFAULTS (mai sus), ca să existe o singură sursă pentru reset. */
 const NUAM_ROWS_DEFAULT = NUAM_DEFAULTS;
 
@@ -4048,7 +4048,7 @@ function goToTab(id, valori = {}) {
 /* ═══ 25. Navigarea cu taburi (v2) ═══════════════════════ */
 
 /* Definiția taburilor: id-ul butonului ↔ id-ul panoului (`tab-<id>` / `panel-<id>`).
-   Ordinea e cea din sidebar (pe categorii), nu cea istorică din Excel. */
+   Ordinea e cea din sidebar (pe categorii), nu cea istorică. */
 const TABS = ['inflatie', 'dobanda', 'compusa', 'di', 'regula72', 'timp', 'nuam', 'buget', 'fond', 'sanatate', 'randament', 'profit', 'cost', 'suma', 'oportunitate', 'dca', 'curs', 'diversificare', 'asigurari', 'stres', 'datorii', 'pensie', 'impozitare', 'biase'];
 
 /* Cele 6 categorii din sidebar (§4.1 din REDESIGN-PROPUNERE). */
@@ -4063,13 +4063,14 @@ const CATEGORIES = [
 const TAB_CATEGORY = {};
 CATEGORIES.forEach((c) => c.tabs.forEach((t) => { TAB_CATEGORY[t] = c; }));
 
-/* Secțiunile globale din sidebar (Etapa 4): glosar, FAQ, mituri.
+/* Secțiunile globale din sidebar (Etapa 4 + 5): glosar, FAQ, mituri, despre.
    Nu sunt taburi — nu au categorie, nu se numără în cele 24 și nu au
    săgeți Precedent/Următor. Se deschide din sidebar sau din căutare. */
 const GLOBAL_PANELS = [
   { id: 'glosar', nume: 'Glosar' },
   { id: 'faq', nume: 'Întrebări frecvente' },
   { id: 'mituri', nume: 'Mituri și adevăruri' },
+  { id: 'despre', nume: 'Despre' },
 ];
 const GLOBAL_IDS = GLOBAL_PANELS.map((g) => g.id);
 
@@ -6807,7 +6808,7 @@ document.addEventListener('keydown', (event) => {
 /* ═══ Export CSV (P5) ══════════════════════════════════
    Butonul „Descarcă CSV" (bara de taburi) exportă tabelele
    panoului activ într-un fișier CSV, cu delimitator `;`
-   (compatibil cu Excel în România) și BOM UTF-8, ca să se
+   (compatibil cu aplicațiile de tabele) și BOM UTF-8, ca să se
    deschidă cu diacritice corecte. */
 
 const CSV_DELIMITER = ';';
@@ -6829,8 +6830,8 @@ function csvCellText(td) {
   return csvInputValue(input);
 }
 
-/* Inputurile HTML au punct zecimal (`28.81`), dar Excelul românesc
-   așteaptă virgulă (`28,81`). Punctul îl înlocuim exact, fără
+/* Inputurile HTML au punct zecimal (`28.81`), dar în română
+   folosim virgula (`28,81`). Punctul îl înlocuim exact, fără
    trecere prin virgulă mobilă; formele exponențiale cad în fallback. */
 function csvInputValue(input) {
   const raw = input.value.trim();
@@ -7265,7 +7266,7 @@ function init() {
   ['suma-randament', 'suma-ani', 'suma-initiala', 'suma-dorita']
     .forEach((id) => document.getElementById(id).addEventListener('input', renderSuma));
 
-  // „Nu am bani" (tab ascuns din Excel)
+  // „Nu am bani" (scenariu avansat)
   initNuam();
 
   // Taburile noi 3–5 (N3, N8, N15, N6, N7, N9, N12)

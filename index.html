@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GlitchCoin — Educație financiară</title>
-  <meta name="description" content="Calculatoare locale de educație financiară: inflație, timp vs dorințe, dobânzi, randament, profit, costul mediu de achiziție, sumă dorită și flux de numerar zilnic.">
+  <title>GlitchCoin — Calculatoare pentru a înțelege banii</title>
+  <meta name="description" content="GlitchCoin — 24 de calculatoare de educație financiară: fundamentele banilor, bugetul de zi cu zi, investiții, risc și protecție, impozite și viitor, psihologia banilor.">
   <meta name="theme-color" id="meta-theme-color" content="#f6f7f4">
 
   <!-- Favicon (SVG vector + PNG fallback, apple-touch-icon). -->
@@ -68,7 +68,7 @@
         <button class="header-btn" id="reset-all" type="button"
                 title="Resetează toate cele 24 de taburi la valorile implicite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span class="header-btn-label">Resetează tot</span></button>
         <button class="header-btn" id="export-csv" type="button"
-                title="Descarcă tabelele tabului activ în format CSV (se deschide în Excel, Numbers sau Google Sheets)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg><span class="header-btn-label">CSV</span></button>
+                title="Descarcă tabelele tabului activ în format CSV (compatibil cu orice aplicație de tabele)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg><span class="header-btn-label">CSV</span></button>
       </div>
     </div>
   </header>
@@ -81,6 +81,7 @@
         <a class="side-global-link" id="nav-glosar" href="#glosar" data-global="glosar">Glosar</a>
         <a class="side-global-link" id="nav-faq" href="#faq" data-global="faq">Întrebări frecvente</a>
         <a class="side-global-link" id="nav-mituri" href="#mituri" data-global="mituri">Mituri și adevăruri</a>
+        <a class="side-global-link" id="nav-despre" href="#despre" data-global="despre">Despre</a>
       </div>
       <div class="side-group" data-cat="fundamente">
         <button class="side-cat" type="button" aria-expanded="true" aria-controls="cat-fundamente">
@@ -194,7 +195,7 @@
     </div>
 
     <div class="print-header">
-      <p class="print-title">GlitchCoin — Educație financiară</p>
+      <p class="print-title">GlitchCoin — Calculatoare pentru a înțelege banii</p>
       <p class="print-sub">Tab: <span id="print-tab-name">—</span> · valorile afișate la tipărire</p>
     </div>
 
@@ -1128,7 +1129,7 @@
         </table>
         <div class="table-actions">
           <button type="button" class="chip" id="nuam-add">+ Adaugă rând</button>
-          <button type="button" class="chip chip-ghost" id="nuam-reset">Resetează valorile din Excel</button>
+          <button type="button" class="chip chip-ghost" id="nuam-reset">Resetează la valorile implicite</button>
         </div>
       </div>
 
@@ -1200,8 +1201,7 @@
       <section class="section">
         <h2>Desfășuratorul zilnic</h2>
         <p class="lead">
-          Simularea acoperă zilele de la venit până la ziua 30. Dobânda e netă de impozit (10%),
-          ca în formulele din Excel.
+          Simularea acoperă zilele de la venit până la ziua 30. Dobânda e netă de impozit (10%).
         </p>
         <div class="card table-wrap scroll">
           <table>
@@ -1966,7 +1966,7 @@
         </table>
         <div class="table-actions">
           <button type="button" class="chip" id="cost-add">+ Adaugă rând</button>
-          <button type="button" class="chip chip-ghost" id="cost-reset">Resetează valorile din Excel</button>
+          <button type="button" class="chip chip-ghost" id="cost-reset">Resetează la valorile implicite</button>
         </div>
       </div>
 
@@ -2001,7 +2001,7 @@
 
       <p class="note">
         Formula: (Σ preț × cantitate + Σ preț × cantitate × comision) / Σ cantitate —
-        comisionul fiecărei tranșe se adaugă la valoarea ei, ca în Excel.
+        comisionul fiecărei tranșe se adaugă la valoarea ei (baza e suma plătită, nu doar prețul).
       </p>
           <div class="panel-sources">
         <h3>Surse</h3>
@@ -2082,7 +2082,7 @@
 
       <p class="note">
         Formula: <code>-PMT(randament/12, ani×12, sumă inițială, sumă dorită)</code> —
-        identică cu <code>D9</code> din tabul „Sumă dorită" din Excel.
+        adică rata lunară care, compusă, ajunge la țintă.
       </p>
           <div class="panel-sources">
         <h3>Surse</h3>
@@ -3886,6 +3886,26 @@
       </div>
     </section>
 
+    <section id="panel-despre" class="global-panel" role="region" aria-labelledby="despre-title" tabindex="-1" hidden>
+      <h2 id="despre-title">Despre</h2>
+      <p class="lead">Ce este GlitchCoin, ce nu este și de unde vin datele.</p>
+      <div class="about-grid">
+        <div class="about-card" data-search data-search-id="d-ce" data-search-cat="Despre" data-search-target="despre">
+          <h3>Ce este</h3>
+          <p>Un set de 24 de calculatoare locale pentru a înțelege banii, grupate în 6 categorii: de la inflație și buget până la investiții, risc, impozite și psihologia banilor.</p>
+        </div>
+        <div class="about-card" data-search data-search-id="d-nu" data-search-cat="Despre" data-search-target="despre">
+          <h3>Ce nu este</h3>
+          <p>Nu e un produs financiar, nu oferă sfaturi personalizate și nu stochează date personale. Rulează integral în browser; inputurile rămân pe dispozitivul tău.</p>
+        </div>
+        <div class="about-card" data-search data-search-id="d-date" data-search-cat="Despre" data-search-target="despre">
+          <h3>De unde vin datele</h3>
+          <p>Valorile implicite sunt alese ca exerciții. Datele publice provin de la INS (IPC) și BNR; sursele oficiale sunt listate în fiecare tab.</p>
+        </div>
+      </div>
+      <p class="note">GlitchCoin este un proiect educațional, fără backend și fără conturi.</p>
+    </section>
+
         <nav class="panel-nav" id="panel-nav" aria-label="Navigare între taburi" hidden>
       <button class="panel-nav-btn" id="prev-tab" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
@@ -3955,7 +3975,7 @@
         dacă e cazul, consultă un specialist autorizat.
       </p>
       <p>
-        Sursă date: <code>GlitchCoin.xlsx</code>, 9 taburi (septembrie 2025) ·
+        Valorile implicite sunt alese ca exerciții, nu sunt date personale ·
         GlitchCoin v2.13 · aplicație locală, fără backend
       </p>
       <p>

@@ -226,7 +226,7 @@ test('Structură — legăturile dintre taburi sunt prezente (butoane + TAB_REND
   for (const id of ['bg-go-timp', 'timp-go-buget', 'sf-go-fond', 'sf-go-buget', 'fu-go-sanatate']) {
     assert.ok(html.includes(`id="${id}"`), `lipsește butonul #${id}`);
   }
-  assert.deepEqual([...Object.keys(TAB_RENDERERS)], ['timp', 'fond', 'buget', 'sanatate', 'randament', 'diversificare', 'stres', 'suma', 'impozitare', 'datorii', 'dca', 'curs', 'biase', 'cost']);
+  assert.deepEqual([...Object.keys(TAB_RENDERERS)], ['compusa', 'timp', 'fond', 'buget', 'sanatate', 'randament', 'diversificare', 'stres', 'suma', 'regula72', 'impozitare', 'datorii', 'dca', 'curs', 'biase', 'cost']);
   assert.equal(typeof goToTab, 'function');
 });
 

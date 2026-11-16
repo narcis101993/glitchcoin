@@ -203,6 +203,32 @@
       <p class="lead">GlitchCoin este un set de calculatoare locale pentru a înțelege banii: inflație, buget, investiții, risc, impozite și decizii. Rulează în browser, fără backend și fără date personale.</p>
       <p class="disclaimer-note">Aplicația e educațională: nu oferă sfaturi, recomandări sau consultanță financiară. Calculatoarele arată scenarii, nu rezultate garantate.</p>
 
+      <h2 class="home-h2" id="home-title">Simulatoare rapide</h2>
+      <p class="lead">Trei calcule scurte, cu valori implicite. Apoi deschizi tabul complet.</p>
+      <div class="quick-grid">
+        <div class="quick-card" data-quick="compusa">
+          <h3>Cât ajungi să ai cu 7% în 10 ani?</h3>
+          <label class="quick-label" for="q-compusa-suma">Sumă inițială (lei)</label>
+          <input class="quick-input" id="q-compusa-suma" type="number" min="0" step="100" value="10000" inputmode="decimal">
+          <p class="quick-result">≈ <strong id="q-compusa-rez">—</strong></p>
+          <button class="chip" type="button" data-goto="compusa" data-prefill="comp-suma:q-compusa-suma,comp-contributie:0,comp-rata:7">Deschide în tabul complet</button>
+        </div>
+        <div class="quick-card" data-quick="regula72">
+          <h3>Când îți dublezi banii la 7%?</h3>
+          <label class="quick-label" for="q-r72-rata">Randament anual (%)</label>
+          <input class="quick-input" id="q-r72-rata" type="number" min="0" max="100" step="0.5" value="7" inputmode="decimal">
+          <p class="quick-result">≈ <strong id="q-r72-rez">—</strong></p>
+          <button class="chip" type="button" data-goto="regula72" data-prefill="r72-rata:q-r72-rata,r72-suma:10000,r72-ani:10">Deschide în tabul complet</button>
+        </div>
+        <div class="quick-card" data-quick="suma">
+          <h3>Cât pui lunar pentru 100.000 lei?</h3>
+          <label class="quick-label" for="q-suma-tinta">Sumă țintă (lei)</label>
+          <input class="quick-input" id="q-suma-tinta" type="number" min="0" step="1000" value="100000" inputmode="decimal">
+          <p class="quick-result">≈ <strong id="q-suma-rez">—</strong></p>
+          <button class="chip" type="button" data-goto="suma" data-prefill="suma-dorita:q-suma-tinta,suma-randament:10,suma-ani:15,suma-initiala:0">Deschide în tabul complet</button>
+        </div>
+      </div>
+
       <div class="home-grid">
       <a class="home-card" href="#fundamente/inflatie" data-goto="inflatie" data-cat="fundamente">
         <span class="home-card-top">
@@ -254,31 +280,6 @@
       </a>
       </div>
 
-      <h2 class="home-h2" id="home-title">Simulatoare rapide</h2>
-      <p class="lead">Trei calcule scurte, cu valori implicite. Apoi deschizi tabul complet.</p>
-      <div class="quick-grid">
-        <div class="quick-card" data-quick="compusa">
-          <h3>Cât ajungi să ai cu 7% în 10 ani?</h3>
-          <label class="quick-label" for="q-compusa-suma">Sumă inițială (lei)</label>
-          <input class="quick-input" id="q-compusa-suma" type="number" min="0" step="100" value="10000" inputmode="decimal">
-          <p class="quick-result">≈ <strong id="q-compusa-rez">—</strong></p>
-          <button class="chip" type="button" data-goto="compusa" data-prefill="comp-suma:q-compusa-suma">Deschide în tabul complet</button>
-        </div>
-        <div class="quick-card" data-quick="fond">
-          <h3>Câte luni acoperă rezerva?</h3>
-          <label class="quick-label" for="q-fond-suma">Rezervă (lei)</label>
-          <input class="quick-input" id="q-fond-suma" type="number" min="0" step="500" value="30000" inputmode="decimal">
-          <p class="quick-result">≈ <strong id="q-fond-rez">—</strong></p>
-          <button class="chip" type="button" data-goto="fond" data-prefill="fu-suma:q-fond-suma">Deschide în tabul complet</button>
-        </div>
-        <div class="quick-card" data-quick="datorii">
-          <h3>Cât costă un credit de 100.000 lei?</h3>
-          <label class="quick-label" for="q-datorii-suma">Sumă împrumutată (lei)</label>
-          <input class="quick-input" id="q-datorii-suma" type="number" min="0" step="1000" value="100000" inputmode="decimal">
-          <p class="quick-result">≈ <strong id="q-datorii-rez">—</strong></p>
-          <button class="chip" type="button" data-goto="datorii" data-prefill="dt-suma:q-datorii-suma">Deschide în tabul complet</button>
-        </div>
-      </div>
       <h2 class="home-h2">Știai că...?</h2>
       <p class="lead">Douăsprezece fapte scurte, cu sursă, pentru a înțelege banii în context.</p>
       <div class="facts-grid">

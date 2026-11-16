@@ -198,6 +198,7 @@ function resetAll() {
   renderDiversificare();
 
   // Toate taburile se recalculează cu noile valori.
+  renderQuick();
   renderSimulator();
   renderDeflator();
   renderTimp();
@@ -4019,6 +4020,7 @@ function initBiase() {
 
 /* Render-ul panoului destinație, pentru salturile cu prefill. */
 const TAB_RENDERERS = {
+  compusa: renderCompusa,
   timp: renderTimp,
   fond: renderFond,
   buget: renderBuget,
@@ -4027,6 +4029,7 @@ const TAB_RENDERERS = {
   diversificare: renderDiversificare,
   stres: renderStres,
   suma: renderSuma,
+  regula72: renderRegula72,
   impozitare: renderImpozitare,
   datorii: renderDatorii,
   dca: renderDca,
@@ -4605,29 +4608,30 @@ function renderQuick() {
     }
   }
 
-  const f = document.getElementById('q-fond-suma');
-  if (f) {
-    const rezerva = Math.max(0, readNumber(f));
-    const rez = document.getElementById('q-fond-rez');
+  const r72 = document.getElementById('q-r72-rata');
+  if (r72) {
+    const rata = Math.max(0, readNumber(r72));
+    const rez = document.getElementById('q-r72-rez');
     if (rez) {
-      if (rezerva <= 0) rez.textContent = '—';
-      else {
-        const luni = rezerva / 3600;
-        rez.textContent = luni.toLocaleString(LOCALE, { maximumFractionDigits: 1 }) + (luni === 1 ? ' lună' : ' luni');
-      }
+      const r = computeRegula72(rata, 0);
+      rez.textContent = r ? fmtAni(r.aniRegola) : '—';
     }
   }
 
-  const d = document.getElementById('q-datorii-suma');
-  if (d) {
-    const suma = Math.max(0, readNumber(d));
-    const rez = document.getElementById('q-datorii-rez');
-    if (rez) rez.textContent = suma > 0 ? fmtLei(rataAnuitate(suma, 0.07 / 12, 240)) + '/lună' : '—';
+  const tinta = document.getElementById('q-suma-tinta');
+  if (tinta) {
+    const sumaDorita = Math.max(0, readNumber(tinta));
+    const rez = document.getElementById('q-suma-rez');
+    if (rez) {
+      // Aceleași ipoteze ca în tabul complet: 10% pe an, 15 ani, fără capital inițial.
+      const r = sumaDorita > 0 ? computeSuma(0.10, 15, 0, sumaDorita) : null;
+      rez.textContent = r ? fmtLei(r.economie) + '/lună' : '—';
+    }
   }
 }
 
 function initHome() {
-  ['q-compusa-suma', 'q-fond-suma', 'q-datorii-suma'].forEach((id) => {
+  ['q-compusa-suma', 'q-r72-rata', 'q-suma-tinta'].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', renderQuick);
   });
@@ -4637,10 +4641,17 @@ function initHome() {
       const id = btn.getAttribute('data-goto');
       const valori = {};
       const prefill = btn.getAttribute('data-prefill');
+      // Perechi multiple, separate prin virgulă: „dest:sursă,dest2:sursă2”.
+      // Sursa poate fi id-ul unui input de pe Acasă sau o constantă numerică
+      // (ex. 7 pentru rată) — tabul complet pornește exact cu ipotezele cardului.
       if (prefill) {
-        const [dest, sursa] = prefill.split(':');
-        const s = document.getElementById(sursa);
-        if (s) valori[dest] = s.value;
+        prefill.split(',').forEach((pereche) => {
+          const [dest, sursa] = pereche.split(':');
+          if (!dest || sursa === undefined) return;
+          const el = sursa ? document.getElementById(sursa) : null;
+          if (el) valori[dest] = el.value;
+          else if (/^-?\d+(?:\.\d+)?$/.test(sursa.trim())) valori[dest] = sursa.trim();
+        });
       }
       goToTab(id, valori);
     });
@@ -7029,6 +7040,9 @@ function init() {
   // ca rezultatele afișate să corespundă cu inputurile arătate.
   persistRestore();
 
+  // Simulatoarele rapide se recalculează după restaurarea valorilor salvate,
+  // ca rezultatul afișat să corespundă cu inputul văzut pe „Acasă".
+  renderQuick();
   renderSimulator();
   renderFood();
   renderInflationChart('all');

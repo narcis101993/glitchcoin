@@ -44,7 +44,7 @@ test('Acasă — panoul există, are 6 carduri de categorii și 3 simulatoare', 
   const home = html.split('id="panel-acasa"')[1];
   assert.equal((home.match(/class="home-card"/g) || []).length, 6, 'carduri de categorie');
   assert.equal((home.match(/class="quick-card"/g) || []).length, 3, 'simulatoare rapide');
-  for (const id of ['q-compusa-suma', 'q-fond-suma', 'q-datorii-suma']) {
+  for (const id of ['q-compusa-suma', 'q-r72-rata', 'q-suma-tinta']) {
     assert.ok(home.includes(`id="${id}"`), `lipsește #${id}`);
   }
   // Acasă NU este numărăt ca tab-panel (nu are clasa `tab-panel`).

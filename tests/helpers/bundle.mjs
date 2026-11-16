@@ -50,8 +50,8 @@ const src =
   'globalThis.__gc = { GLITCHCOIN_DATA, AN_CURENT, IMPOZIT_TIPURI, NUAM_DEFAULTS, COST_DEFAULTS, ' +
   'TIMP_ZILE_LUNA, TIMP_ZILE_LUCRATOARE_AN_DEFAULT, computeNuAm, deflatorValue, computeTimp, ' +
   'computeRandament, computeProfit, computeCompusa, ' +
-  'computeRandamentReal, computeIstoricReal, computeRegula72, computeDublareInAni, ' +
-  'economieNecesara, timpPanaLaTinta, computeFond, computeOportunitate, R72_PRESETS, ' +
+  'computeRandamentReal, computeIstoricReal, computeRegula72, computeDublareInAni, fmtAni, ' +
+  'computeSuma, economieNecesara, timpPanaLaTinta, computeFond, computeOportunitate, R72_PRESETS, ' +
   'computeBuget, computeSanatate, stareRataEconomii, stareDatoriiVenit, ' +
   'stareRezerva, stareNetWorth, goToTab, TAB_RENDERERS, fmtNum, fmtPctSafe, fmtDeviereLei, ' +
   'computeDiversificare, simuleazaDiversificare, DV_DEFAULTS, DV_SEED, DV_SIMULATII, ' +

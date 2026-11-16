@@ -189,6 +189,12 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
 | `app.js` | Toate calculele, interactivitatea, navigarea, comutatorul de temă, modul Concentrare, drawer-ul, back-to-top, persistența inputurilor și exportul CSV |
 | `tests/` | Testele automate (`node --test tests/`): corecțiile C1–C12, conceptele noi N1–N15, scheletul (Etapa 1), interactivitatea (Etapa 3) și datele din `data.js` |
 | `favicon.svg` / `favicon.png` / `favicon-180.png` | Icoana aplicației (vector + PNG, apple-touch) |
+| `docs/` | Documentația internă de proces (audit UI/UX, propuneri de redesign și conținut, revizuire financiară, context proiect) — nu e servită de GitHub Pages |
+
+## Documentație
+
+Documentația de proces (auditul UI/UX, propunerile de redesign și conținut, revizuirea financiară,
+contextul proiectului) e în `docs/`. Partea de documentație pentru utilizator e acest `README`.
 
 ## Teste
 

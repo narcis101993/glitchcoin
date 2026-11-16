@@ -3,7 +3,7 @@
 **Status:** propunere — **nimic nu a fost implementat** (conform cerinței cardului `t_33013f1a`)
 **Autor:** dev · **Data:** 2026-11-16
 **Versiune analizată:** GlitchCoin **v2.13** (24 de taburi), folderul permanent
-`/Users/narciscriveanu/Hermes Projects/GlitchCoin`
+rădăcina repository-ului
 **Metodă:** citire integrală a `index.html` (3.219 linii), `styles.css` (1.492), `app.js` (5.642),
 `README.md`, `CONTEXT.md`, `AUDIT-UI-UX.md` + probe reale în browser (`file://`) și probe statice
 (`node`, `grep`). Nimic din cod nu a fost modificat.
@@ -361,17 +361,17 @@ L251, L254, L425.
 5. **CSV:** menționarea Excelului e legitimă (e un caz de utilizare real), dar cu alternative.
 6. **`README.md`:** se restructurează pe categorii; secțiunea „De unde vin datele" menționează
    proveniența istorică a valorilor implicite **fără** path local absolut
-   (`/Users/narciscriveanu/Library/...` e date personale — se scoate oricum).
+   (path-ul local absolut e date personale — se scoate oricum).
 
 ### 6.4 Checklist de verificare
 
 ```bash
-cd "/Users/narciscriveanu/Hermes Projects/GlitchCoin"
+cd <rădăcina proiectului>
 # 1. zero „Excel" în textul vizibil (nu în comentarii):
 grep -in excel index.html            # doar în comentarii HTML, acceptabile
 grep -in "Excel" app.js | grep -v "//\|/\*"   # 0 rezultate
 # 2. zero path-uri personale în README:
-grep -n "/Users/narciscriveanu" README.md     # 0 rezultate
+grep -n "/Users/" README.md                # 0 rezultate
 # 3. textul din UI se citește natural (revizuit manual, tab cu tab)
 ```
 

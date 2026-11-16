@@ -10,7 +10,7 @@ Aplicație web de educație financiară, derivată dintr-un Excel de învățare
 
 ## Surse pe disc (verificate 2026-11-11)
 
-- **Excel sursă:** `/Users/narciscriveanu/Library/CloudStorage/OneDrive-Personal/Educatie financiara/GlitchCoin.xlsx` (24.09.2025) — **9 taburi**, dintre care unul ascuns:
+- **Excel sursă:** documentul sursă Excel (`GlitchCoin.xlsx`, 24.09.2025) — **9 taburi**, dintre care unul ascuns:
   1. Inflație — simulator, prețuri alimente 2020–2025, deflator 1991–2025
   2. Timp vs dorințe
   3. Calculul dobânzii
@@ -130,7 +130,64 @@ Aplicație web de educație financiară, derivată dintr-un Excel de învățare
   390px, toate cele 15 taburi, zero erori JS, zero overflow, localStorage + „Resetează tot”
   funcționale, 97 de tooltip-uri accesibile, tastatură în taburi, cele 5 legături între taburi,
   export CSV pentru taburile noi).
-- **v2:** toate cele 15 taburi, **navigare cu taburi** (decizie Narcis 2026-11-11), share public la final.
+- **v2.10 (concepte noi 3): LIVE și testat** — implementat 2026-11-16
+  (card `t_dd0e718a`, folder permanent). Trei taburi noi la finalul barei: „Diversificare și
+  riscul” (N3 — portofoliu cu active configurabile, randament/volatilitate/corelație, randament
+  ajustat la risc, simulare Monte Carlo 5.000×5 ani cu seed fix, scenarii −3σ…+3σ, tabel
+  comparativ portofoliu vs activul cu randamentul maxim), „Asigurări” (N8 — primă vs
+  auto-asigurare, cost total cu dobândă, pierdere așteptată, probabilitatea de cel puțin un
+  eveniment, tabel comparativ, trei riscuri ilustrative: sănătate/casă/mașină) și „Stress test”
+  (N15 — buget sub stres, active sub stres, randament de revenire, trei scenarii + valoarea
+  așteptată, scenarii predefinite). Plus 5 legături noi între taburi (Diversificare → Randament,
+  Stress test → Buget/Sănătate, Buget/Sănătate → Stress test).
+  Verificare: `node --test tests/` (82 teste, din care 22 noi în `tests/concepte-3.test.mjs`) +
+  browser real `file://` (desktop 1200px și 390px, toate cele 18 taburi, zero erori JS, zero
+  overflow, localStorage + „Resetează tot” funcționale, 134 de tooltip-uri cu `aria-describedby`
+  valid, tastatură în taburi, cele 5 legături noi cu prefill, export CSV, tabel dinamic de
+  active, valori recalculate independent în Python — `scratch/recalc-concepte3.py`).
+- **v2.11 (concepte noi 4): LIVE și testat** — implementat 2026-11-16
+  (card `t_fb5f36fc`, folder permanent). Două taburi noi la finalul barei: „Pensie / Pilon III”
+  (N6 — contribuție lunară, orizont 20–30 de ani, randament brut vs costul comisioanelor,
+  impozit doar pe câștig, valoare reală, tabel evolutie pe ani, scenarii Istoric/Conservator/
+  Optimist) și „Impozitare pe investiții” (N7 — tabel cu rate reale 2025→2026 pentru dobânzi,
+  dividende, valori mobiliare, broker străin/crypto, imobiliare, chiriile și pensia privată,
+  cu baza de impozitare, „cum se aplică” și linkuri către surse, plus un calculator cu
+  comparator 2025 ↔ 2026). Plus 4 legături noi între taburi (Pensie → Sumă dorită,
+  Randament/Profit → Impozitare, Impozitare → Randament).
+  Verificare: `node --test tests/` (104 teste, din care 23 noi în `tests/concepte-4.test.mjs`,
+  inclusiv un test „smoke” care rulează renderer-el în Node) + browser real `file://`
+  (desktop 1200px și 390px, toate cele 20 taburi, zero erori JS, zero overflow, localStorage
+  + „Resetează tot” funcționale, 161 de tooltip-uri cu `aria-describedby` valid, tastatură
+  în taburi, legăturile cu prefill, export CSV pentru taburile noi, valori recalculate
+  independent în Python — `scratch/recalc-concepte4.py`).
+- **v2.12 (concepte noi 5): LIVE și testat** — implementat 2026-11-16
+  (card `t_72fafaff`, folder permanent). Două taburi noi la finalul barei: „Datorii bune vs rele”
+  (N9 — rata lunară a anuității, costul total al creditului, dobânda economisită prin anticipare
+  vs câștigul net din economisire, prag de indiferență, arbitraj, tabel evoluție pe ani și
+  clasificare datorii bune/rele) și „Scalarea în timp (DCA)” (N12 — patru căi deterministe ale
+  prețului, costul mediu de achiziție vs prețul mediu, comparație DCA vs investire o dată, tabel
+  evoluție lunară). Plus 4 legături noi între taburi (Datorii → Costul oportunității,
+  Dobânda vs inflație → Datorii, Costul mediu ↔ DCA).
+  Verificare: `node --test tests/` (126 teste, din care 22 noi în `tests/concepte-5.test.mjs`,
+  inclusiv test „smoke”) + browser real `file://` (desktop 1200px și 390px, toate cele 22 de
+  taburi, zero erori JS, zero overflow, localStorage + „Resetează tot” funcționale, 191 de
+  tooltip-uri cu `aria-describedby` valid, tastatură în taburi, legăturile cu prefill, export CSV
+  pentru taburile noi, valori recalculate independent în Python —
+  `scratch/recalc-concepte5.py`).
+- **v2.13 (concepte noi 6): LIVE și testat** — implementat 2026-11-16
+  (card `t_3917ffbb`, folder permanent). Două taburi noi la finalul barei: „Curs de schimb”
+  (N11 — randament în valută vs randament în RON, compunerea cu aprecierea cursului, randament
+  real după inflație, impozit pe câștig, inflația importată pentru un coș de bunuri, tabel
+  evoluție pe ani) și „Biaseuri comportamentale” (N14 — ancorarea, contul mental, aversiunea la
+  pierdere, FOMO și efectul de cadru, cu semne și antidoturi, un test rapid de cinci întrebări
+  cu scor și tabel de referință). Plus 2 legături noi între taburi (Dobânda vs inflație → Curs
+  de schimb, Curs de schimb → Costul oportunității).
+  Verificare: `node --test tests/` (145 teste, din care 19 noi în `tests/concepte-6.test.mjs`,
+  inclusiv test „smoke”) + browser real `file://` (desktop 1200px și 390px, toate cele 24 de
+  taburi, zero erori JS, zero overflow, localStorage + „Resetează tot” funcționale, tooltip-uri
+  cu `aria-describedby` valid, tastatură în taburi, legăturile cu prefill, export CSV pentru
+  taburile noi, valori recalculate independent în Python — `scratch/recalc-concepte6.py`).
+- **v2:** toate cele 24 de taburi, **navigare cu taburi** (decizie Narcis 2026-11-11), share public la final.
 
 ## Carduri Kanban (board `glitchcoin`)
 
@@ -203,9 +260,9 @@ toate corecțiile și toate conceptele noi (2026-11-12).**
 | `t_35151f97` | Implementare corecții C1–C12 (workspace permanent) | ✓ done — verificare + documentație |
 | `t_88a8e0a3` | Concepte noi 1: fond de urgență · dobândă vs inflație · costul oportunității · regula 72 | ✓ done (implementat și verificat de dev, 2026-11-15) |
 | `t_41410e1b` | Concepte noi 2: buget personal 50/30/20 · sănătatea financiară | blocked |
-| `t_dd0e718a` | Concepte noi 3: diversificare și riscul · asigurări · stress test | blocked |
+| `t_dd0e718a` | Concepte noi 3: diversificare și riscul · asigurări · stress test | ✓ done (2026-11-16) |
 | `t_fb5f36fc` | Concepte noi 4: pensie / Pilon III · impozitare pe investiții | blocked |
-| `t_72fafaff` | Concepte noi 5: datorii bune vs rele · DCA | blocked |
+| `t_72fafaff` | Concepte noi 5: datorii bune vs rele · DCA | ✓ done (2026-11-16) |
 | `t_3917ffbb` | Concepte noi 6: curs de schimb / riscul valutar · biaseuri comportamentale | blocked |
 | `t_5ce2d4f5` | C5: zile lucrătoare ca input (parametrizare) — cerință Narcis | ✓ done (independent) |
 
@@ -222,10 +279,10 @@ C11 (30,44), C12 (3,5%). Sursa: secțiunea „Surse" în tabul Inflație.
 
 ## Următorul pas
 
-Conceptele noi 1 și 2 sunt gata și verificate pe disc (`t_88a8e0a3`, `t_41410e1b`, 2026-11-15).
-Următoarele concepte din `REVIEW-FINANCIAR.md` (secțiunea D) rămân de implementat: N3 diversificare
-și risc, N6 pensie/Pilon III, N7 impozitare, N8 asigurări, N9 datorii bune vs rele, N11 curs valutar,
-N12 DCA, N14 biaseuri, N15 scenarii/stress test. Publicarea (v2.5) e amânată.
+Conceptele noi 1, 2 și 3 sunt gata și verificate pe disc (`t_88a8e0a3`, `t_41410e1b`,
+`t_dd0e718a`, 2026-11-15/16). Următoarele concepte din `REVIEW-FINANCIAR.md` (secțiunea D) rămân
+de implementat: N6 pensie/Pilon III, N7 impozitare, N9 datorii bune vs rele, N11 curs valutar,
+N12 DCA, N14 biaseuri. Publicarea (v2.5) e amânată.
 
 ## Verificare concepte noi 1 (dev, 2026-11-15)
 
@@ -253,3 +310,91 @@ lipsa 5.500,00 lei), browser real `file://` desktop 1200px + 390px (toate cele 1
 JS, zero overflow orizontal, localStorage și „Resetează tot” funcționale, 97 de tooltip-uri cu
 `aria-describedby` valid, deschidere/inchidere tooltip cu click + Escape, tastatură în taburi,
 cele 5 legături între taburi cu prefill, export CSV pentru taburile noi).
+
+## Verificare concepte noi 3 (dev, 2026-11-16)
+
+Trei taburi noi implementate în folderul permanent și verificate pe disc: `node --test tests/`
+(82/82, din care 22 noi în `tests/concepte-3.test.mjs`), valori recalculate independent în Python
+(`scratch/recalc-concepte3.py` — replică exact `mulberry32` + Box-Muller + Cholesky, deci și
+simularea Monte Carlo se verifică la zecimale: mediană portofoliu 13.247,56 lei, p5 9.238,02 lei,
+drawdown mediu 5,68% vs 16,53% la acțiuni; N8 cost total primă 23.462,79 lei, pierdere așteptată
+1.600,00 lei/an; N15 venit 4.000,00 lei, cheltuieli 2.750,00 lei, active 16.000,00 lei,
+valoarea așteptată 19.500,00 lei), browser real `file://` desktop 1200px + 390px (toate cele 18
+taburi, zero erori JS, zero overflow orizontal, localStorage și „Resetează tot” funcționale, 134
+de tooltip-uri cu `aria-describedby` valid, tastatură în taburi, cele 5 legături noi cu prefill,
+export CSV, tabel dinamic de active cu adăugare/ștergere/reset, presetele de scenarii și de
+risc).
+
+## Redesign complet (2026-11-16, aprobat de Narcis)
+
+Propunerile: `REDESIGN-PROPUNERE.md` (dev) + `CONTINUT-PROPUNERE.md` (finance). Implementare în 7 etape, în lanț:
+
+| Etapă | Card | Ce face |
+|-------|------|---------|
+| 0 | `t_d38b22bf` | siguranță: backup + `git init` + branch `redesign` |
+| 1 | `t_11078e9b` | fundația vizuală: 6 categorii, „Acasă", back-to-top |
+| 2 | `t_33ef5406` | navigare: breadcrumb, `⌘K`, hash cu fallback |
+| 3 | `t_f747b29e` | interactivitate: pas cu pas (cu banner), alerte, copiere, animații |
+| 4 | `t_ae179204` | conținut: 24 lead-uri, glosar, FAQ, mituri, disclaimer |
+| 5 | `t_9dd90cca` | identitate: favicon/titlu/meta, eliminarea Excelului, README |
+| 6 | `t_9461f4a6` | verificare + livrare |
+| — | `t_7571199d` | **curățenie finală** (înainte de publicare) → apoi `t_c175a2f8` |
+
+Decizii Narcis: 6 categorii · prima deschidere „Acasă" · paletă verde „registru" · font Inter · interactivitate
+completă · pas cu pas cu banner · toate cele 3 secțiuni globale în sidebar · disclaimer profesional
+(nu oferim sfaturi financiare; proiect educațional) · publicare după ce aplicația e utilizabilă.
+
+## Etapa 1 finalizată (dev, 2026-11-16)
+
+Fundația vizuală implementată și verificată în browser real (`file://`):
+
+- Tokeni verzi „registru" (`--accent:#0b7a55`, `--bg:#f6f7f4`), Inter self-hosted (`fonts.css` +
+  `fonts/*.woff2`, latin + latin-ext), cifre tabulare, ritm 8 px, colțuri 12 px.
+- Header 56 px sticky + breadcrumb `Acasă › Categorie › Tab`.
+- Sidebar 260 px cu 24 de taburi grupate pe 6 categorii, pliabile.
+- Prima deschidere „Acasă" (6 carduri de categorii + 3 simulatoare rapide); dacă există un tab salvat
+  în `localStorage`, se deschide tabul respectiv.
+- Mobil (< 1024 px): drawer cu overlay, `Esc`, focus trap; mod **Concentrare** (toggle în header + `F`).
+- **Back-to-top** în colțul din dreapta jos (apare după ~400 px de derulare).
+- Panourile taburilor **nu au fost modificate** (verificate byte-identic); au fost doar reordonate în DOM
+  ca să corespundă cu ordinea din sidebar (testele cereau `tabIds == panelIds`).
+- Verificare: **155/155** teste (145 de bază + 10 noi în `tests/shell.test.mjs`); 24/24 taburi deschise;
+  zero erori JS; 390 px și 1440 px fără overflow; contrast AA; print ascunde scheletul.
+
+## Etapa 2 finalizată (dev, 2026-11-16)
+
+Navigare pe categorii implementată și verificată în browser real (`file://`):
+
+- **Hash `#categorie/tab`** (ex. `#investitii/randament`) cu **fallback** la hash-urile vechi `#tab`
+  (`#randament`) și la `#acasa`; hash-urile vechi se normalizează automat la formă canonică.
+- **Breadcrumb clickabil**: `Acasă › Categorie › Tab`, categoria duce la primul tab al categoriei.
+- **Căutare `⌘K` / `Ctrl+K`**: paletă cu input focalizat, 24 de rezultate, filtrare diacritic-insensibilă
+  după nume sau categorie, săgeți ↑/↓, Enter deschide, Esc închide; fundal inert + focus trap.
+- **Săgeți Precedent/Următor** sub panou, cu numele tabului de destinație; se mișcă în categorie,
+  la limită trec o singură categorie mai departe (wrap complet) — nu sar categorii neintenționat.
+- **Badge de categorie** în panoul fiecărui tab (iconiță + nume + număr de taburi), injectat din JS.
+- Săgețile din tastatură (←/→, Home, End) urmează aceeași logică de categorie.
+- Verificare: **170/170** teste (155 + 15 noi în `tests/navigare.test.mjs`, din care unele execută
+  `parseHash`/`stepTab`/`normalizeText` real); 24/24 taburi; 20/20 legături cu prefill; zero erori JS;
+  back/forward funcțional; 390 px și 1440 px fără overflow; print ascunde panoul de navigare și paleta.
+
+## Etapa 3 finalizată (dev, 2026-11-16)
+
+Interactivitate implementată și verificată în browser real (`file://`):
+
+- **Căutare** — filtru separat (`filterSearchItems`) și testat pentru toate cele 24 de taburi: găsește
+  orice tab din primele 3 caractere; diacritic-insensibilă; prioritate prefix > conținut > categorie.
+- **Centru de alerte** — `renderAlerts` înregistrează alertele celor 10 taburi cu alarme; header cu
+  contor, badge pe fiecare categorie din sidebar, dialog `aria-modal` cu grupare pe categorii,
+  focus trap, săgeți, `Esc`; click pe o alertă deschide tabul. Se actualiză live la recalcul.
+- **Mod pas cu pas** — banner sticky cu iconița 🪙, pasuri generate din câmpurile panoului activ
+  (instruțiuni curate în `STEP_TEXT`), evidențiere pe wrapper-ul `.field`, ecuță „Pasul X” plasată
+  lângă câmp, `Anterior`/`Următor` cu wrap, `←`/`→`, `Esc` oprește; pe „Acasă” butonul e dezactivat;
+  la schimbarea tabului pasurile se reconstruiesc. Layout-ul panoului nu se schimbă.
+- **Copiere rezultat** — 136 de butoane mici (unul per `.stat-value`), Clipboard API cu fallback
+  `execCommand`, feedback vizual „Copiat” + regiune `aria-live`.
+- **Animații discrete** — count-up pe valori la recalcul (MutationObserver + parsare ro-RO),
+  tranziție de panou, puls pe badge-ul de alerte; toate cu `prefers-reduced-motion: reduce`.
+- Verificare: **182/182** teste (170 + 12 noi în `tests/interactivitate.test.mjs`); zero erori JS;
+  24/24 taburi; 390 px și 1440 px fără overflow; print ascunde noile controale; copiere verificată
+  cu clic real; alerte live (5 → 8 la schimbarea venitului); mod pas cu pas pe cost/biase (pasuri speciale).

@@ -3,7 +3,7 @@
 > **Status:** propunere — **nimic nu a fost implementat** (conform cerinței cardului `t_b8379653`).
 > **Autor:** finance · **Data:** 2026-11-16
 > **Versiune analizată:** GlitchCoin **v2.13** (24 de taburi), folderul permanent
-> `/Users/narciscriveanu/Hermes Projects/GlitchCoin`
+> Rădăcina repository-ului (folderul proiectului).
 > **Metodă:** citire integrală a `index.html` (3.219 linii), `app.js`, `README.md`, `CONTEXT.md`,
 > `REDESIGN-PROPUNERE.md`, `AUDIT-UI-UX.md` + verificare independentă a surselor pe web
 > (`web_search`, 2026-11-16). **Nicio modificare de cod, nicio implementare.**
@@ -618,7 +618,7 @@ Această secțiune descrie **cum** se va aplica propunerea, ca referință pentr
 5. **Footer:** „Sursă date: GlitchCoin.xlsx, 9 taburi (septembrie 2025)" → „Date publice:
    INS și BNR · Valorile implicite sunt alese ca exerciții, nu sunt date personale."
 6. **README:** restructurat pe categorii; fără path-uri personale
-   (`/Users/narciscriveanu/...` se elimină).
+   (se elimină).
 7. **Glosar + FAQ + Mituri** ca secțiuni globale noi (nu taburi separate), cu linkuri către
    taburile relevante.
 8. **Verificare la implementare:** `grep -in excel index.html` (doar comentarii),

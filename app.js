@@ -2,7 +2,9 @@
    Totul se calculează în browser, pe acest calculator. Fără backend, fără conturi. */
 'use strict';
 
-const LOCALE = 'ro-RO';
+/* Format internațional: virgulă pentru mii, punct pentru zecimale
+   (5,000.00 lei / 0.3% / 1.10x). Nu mai folosim ro-RO, care dădea 5.000,00. */
+const LOCALE = 'en-US';
 const AN_CURENT = 2025; // anul "prezent" pentru care suma actuală este introdusă
 
 /* ── Formatare ────────────────────────────────────────── */
@@ -382,6 +384,8 @@ function foodGrowth(product) {
 }
 
 function renderFood() {
+  const chart = document.getElementById('food-chart');
+  clearChartTips(chart);
   document.getElementById('food-table-body').innerHTML = GLITCHCOIN_DATA.food.map((p) => `
     <tr>
       <td>${escapeHtml(p.name)}</td>
@@ -393,7 +397,6 @@ function renderFood() {
   const min = Math.min(...GLITCHCOIN_DATA.food.map(foodGrowth));
   const prodMax = GLITCHCOIN_DATA.food.find((p) => foodGrowth(p) === max);
   const prodMin = GLITCHCOIN_DATA.food.find((p) => foodGrowth(p) === min);
-  const chart = document.getElementById('food-chart');
   chart.innerHTML = GLITCHCOIN_DATA.food.map((p) => {
     const growth = foodGrowth(p);
     const latime = (growth / max) * 100;
@@ -406,23 +409,36 @@ function renderFood() {
   }).join('');
   chart.setAttribute('aria-label',
     `Creștere 2025 vs 2020, pe produs. Maxim: ${fmtPct(max)} la ${prodMax.name}; minim: ${fmtPct(min)} la ${prodMin.name}.`);
+
+  // Tooltip cu cifrele reale pentru fiecare bară (hover + focus).
+  [...chart.querySelectorAll('.bar-row')].forEach((row, i) => {
+    const p = GLITCHCOIN_DATA.food[i];
+    const growth = foodGrowth(p);
+    const pret2020 = fmtLei(p.prices[2020]);
+    const pret2025 = fmtLei(p.prices[2025]);
+    attachChartTip(row,
+      `${p.name}: creștere ${fmtPct(growth)}, preț 2020 ${pret2020}, preț 2025 ${pret2025}`,
+      `<strong>${escapeHtml(p.name)}</strong><span class="tip-text">Creștere 2025 vs 2020: <b>${fmtPct(growth)}</b>` +
+      `<br>Preț 2020: ${pret2020}<br>Preț 2025: ${pret2025}</span>`);
+  });
 }
 
 /* ═══ 3. Inflația 1991–2026 ═════════════════════════════ */
 
 function renderInflationChart(range = 'all') {
+  const chart = document.getElementById('inflation-chart');
+  clearChartTips(chart);
   const date = GLITCHCOIN_DATA.inflation.filter((d) => (range === 'recent' ? d.year >= 2000 : true));
   const maxAbs = Math.max(...date.map((d) => Math.abs(d.rate)));
   const labelMod = range === 'recent' ? 0 : 1; // 1991, 1996, … / 2000, 2005, …
 
-  const chart = document.getElementById('inflation-chart');
   chart.innerHTML = date.map((d) => {
     const pozitiv = d.rate >= 0;
     const inaltime = (Math.abs(d.rate) / maxAbs) * 100;
     const bara = `<div class="vbar ${pozitiv ? 'vbar-pos' : 'vbar-neg'}" aria-hidden="true" style="height:${inaltime.toFixed(2)}%"></div>`;
     const eticheta = d.year % 5 === labelMod ? d.year : '';
     return `
-      <div class="vcol" title="${d.year}: ${fmtPct(d.rate)}">
+      <div class="vcol">
         <div class="vhalf vhalf-top">${pozitiv ? bara : ''}</div>
         <div class="vzero" aria-hidden="true"></div>
         <div class="vhalf vhalf-bot">${pozitiv ? '' : bara}</div>
@@ -437,6 +453,14 @@ function renderInflationChart(range = 'all') {
   chart.setAttribute('aria-label',
     `Inflație anuală ${date[0].year}–${date[date.length - 1].year}. Maxim: ${fmtPct(chartMax.rate)} în ${chartMax.year}; ` +
     `minim: ${fmtPct(chartMin.rate)} în ${chartMin.year}; medie: ${fmtPct(chartMedie)}.`);
+
+  // Tooltip cu rata fiecărui an (hover + focus), în loc de title-ul nativ.
+  [...chart.querySelectorAll('.vcol')].forEach((col, i) => {
+    const d = date[i];
+    attachChartTip(col,
+      `${d.year}: inflație ${fmtPct(d.rate)}`,
+      `<strong>${d.year}</strong><span class="tip-text">Rată anuală: <b>${fmtPct(d.rate)}</b></span>`);
+  });
 
   const rate = GLITCHCOIN_DATA.inflation.map((d) => d.rate);
   const medie = rate.reduce((a, b) => a + b, 0) / rate.length;
@@ -5731,8 +5755,8 @@ function initCopyButtons() {
    pe badge-ul de alerte. Toate respectă prefers-reduced-motion
    (verificare în JS + regula globală din CSS). */
 
-/* Extrage numărul dintr-o valoare formatată (ro-RO): „1.234,56 lei”,
-   „12,34%”, „1.234”, „12,5x”. Returnează {value, decimals, prefix, suffix}
+/* Extrage numărul dintr-o valoare formatată (en-US): „5,000.00 lei”,
+   „0.3%”, „1,234”, „12.5x”. Returnează {value, decimals, prefix, suffix}
    sau null dacă textul nu conține un număr. */
 function parseFormattedNumber(text) {
   const s = String(text == null ? '' : text).trim();
@@ -5748,14 +5772,16 @@ function parseFormattedNumber(text) {
   let numStr;
   let decimals = 0;
   if (hasComma && hasDot) {
-    decimals = token.length - token.indexOf(',') - 1;
-    numStr = token.replace(/\./g, '').replace(',', '.');
-  } else if (hasComma) {
-    decimals = token.length - token.indexOf(',') - 1;
-    numStr = token.replace(',', '.');
+    // en-US: virgula separă miile, punctul desparte zecimalele.
+    decimals = token.length - token.indexOf('.') - 1;
+    numStr = token.replace(/,/g, '');
   } else if (hasDot) {
-    // În ro-RO punctul e separator de mii (zecimalele sunt cu virgulă).
-    numStr = token.replace(/\./g, '');
+    // Doar punct: separator zecimal (ex. „0.3", „12.5").
+    decimals = token.length - token.indexOf('.') - 1;
+    numStr = token;
+  } else if (hasComma) {
+    // Doar virgule: separator de mii (ex. „1,234"), fără zecimale.
+    numStr = token.replace(/,/g, '');
   } else {
     numStr = token;
   }
@@ -5770,7 +5796,7 @@ function parseFormattedNumber(text) {
 }
 
 function formatStatValue(value, decimals) {
-  return value.toLocaleString('ro-RO', {
+  return value.toLocaleString(LOCALE, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
@@ -6807,6 +6833,88 @@ function initFormulaTips() {
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') closeFormulaTips();
 });
+
+/* ── Tooltip-uri cu cifre pe grafice (Detalii 2) ─────────────
+   Aceeași familie de panouri `role="tooltip"` ca și tooltip-urile
+   „?", dar poziționate `fixed` în <body>: graficele au overflow,
+   deci un panou `absolute` ar fi tăiat. Barele/coloanele devin
+   focusabile (tabindex 0), iar panoul se deschide la hover SI la
+   focus și se închide la blur / mouseleave / Escape — deci e
+   folosibil și din tastatură. */
+
+const chartTips = [];
+let chartTipCounter = 0;
+
+/* Graficele se re-renderizează (ex. schimbarea intervalului la
+   inflație): eliminăm panourile vechi ca să nu rămână în <body>. */
+function clearChartTips(container) {
+  for (let i = chartTips.length - 1; i >= 0; i--) {
+    const entry = chartTips[i];
+    // Ștergem doar tooltip-urile graficului re-renderizat; celelalte
+    // grafice își păstrează panourile (altfel rămân cu aria-describedby
+    // către un element eliminat).
+    if (container && !container.contains(entry.host)) continue;
+    entry.host.removeAttribute('aria-describedby');
+    if (typeof entry.panel.remove === 'function') entry.panel.remove();
+    chartTips.splice(i, 1);
+  }
+}
+
+function attachChartTip(host, label, html) {
+  const panel = document.createElement('span');
+  const panelId = 'chart-tip-' + (++chartTipCounter);
+  panel.id = panelId;
+  panel.className = 'tip chart-tip';
+  panel.setAttribute('role', 'tooltip');
+  panel.hidden = true;
+  panel.innerHTML = html;
+  document.body.appendChild(panel);
+
+  host.classList.add('chart-tip-host');
+  host.tabIndex = 0;
+  host.setAttribute('aria-label', label);
+  host.setAttribute('aria-describedby', panelId);
+  chartTips.push({ host, panel });
+
+  function position() {
+    const r = host.getBoundingClientRect();
+    const p = panel.getBoundingClientRect();
+    const margin = 12;
+    let left = r.left + r.width / 2 - p.width / 2;
+    left = Math.max(margin, Math.min(left, window.innerWidth - p.width - margin));
+    let top = r.top - p.height - 10; // deasupra barei, dacă e loc
+    if (top < margin) top = r.bottom + 10;
+    if (top + p.height > window.innerHeight - margin) {
+      top = Math.max(margin, window.innerHeight - p.height - margin);
+    }
+    panel.style.left = left + 'px';
+    panel.style.top = top + 'px';
+  }
+
+  function show() {
+    panel.hidden = false;
+    position();
+  }
+  function hide() {
+    panel.hidden = true;
+  }
+
+  host.addEventListener('mouseenter', show);
+  host.addEventListener('mouseleave', hide);
+  host.addEventListener('focus', show);
+  host.addEventListener('blur', hide);
+  host.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      hide();
+    }
+  });
+  // Panoul e fixed: la scroll îl repoziționăm, ca să urmeze bara/coloana
+  // (scroll-behavior: smooth face ca un hide imediat să închidă tooltipul
+  // chiar când utilizatorul ajunge la el din tastatură).
+  window.addEventListener('scroll', () => { if (!panel.hidden) position(); }, { passive: true });
+  window.addEventListener('resize', () => { if (!panel.hidden) position(); });
+}
 
 /* ═══ Export CSV (P5) ══════════════════════════════════
    Butonul „Descarcă CSV" (bara de taburi) exportă tabelele

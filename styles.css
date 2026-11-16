@@ -784,7 +784,9 @@ td.is-bad { color: var(--neg-strong); font-weight: 700; }
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  z-index: 50;
+  /* Deasupra oricărui alt element (header 100, drawer 90,
+     bara de taburi 60, tabele etc.) — tooltipul nu trebuie tăiat. */
+  z-index: 1000;
   width: max-content;
   max-width: min(300px, calc(100vw - 32px));
   padding: 10px 12px;
@@ -814,6 +816,24 @@ td.is-bad { color: var(--neg-strong); font-weight: 700; }
   text-decoration: underline;
   text-underline-offset: 2px;
   word-break: break-word;
+}
+
+/* Tooltipurile de pe grafice (Detalii 2) sunt aceleași panouri .tip,
+   dar mutate în <body> și poziționate fixed, ca să nu fie tăiate de
+   overflow-ul graficelor. Moștenesc z-indexul mare de mai sus. */
+.chart-tip {
+  position: fixed;
+  pointer-events: none;
+}
+
+.chart-tip-host {
+  cursor: default;
+}
+
+.chart-tip-host:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* Culori semnificative pentru valori (setate din JS după semn). */

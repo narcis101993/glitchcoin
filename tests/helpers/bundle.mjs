@@ -66,7 +66,8 @@ const src =
   'FORMULA_TIPS, parseHash, hashForTab, stepTab, normalizeText, ' +
   'filterSearchItems, scoreSearchItem, collectAlerts, ' +
   'buildSearchItems, GLOBAL_PANELS, GLOBAL_IDS, globalName, ' +
-  'buildStepsFromFields, stepTextFor, parseFormattedNumber, formatStatValue };';
+  'buildStepsFromFields, stepTextFor, parseFormattedNumber, formatStatValue, ' +
+  'fmtLei, fmtPct, fmtPctSmart, fmtX, fmtInt, LOCALE, attachChartTip, clearChartTips };';
 
 vm.runInContext(src, ctx, { filename: 'glitchcoin-bundle.js' });
 

@@ -161,23 +161,23 @@ test('Animații — count-up, tranziție de panou, prefers-reduced-motion', () =
   includes(css, '@keyframes badge-pulse', 'puls badge');
 });
 
-test('parseFormattedNumber — formate ro-RO (mii, zecimale, sufixe)', () => {
-  const p = gc.parseFormattedNumber('1.234,56 lei');
+test('parseFormattedNumber — formate en-US (mii, zecimale, sufixe)', () => {
+  const p = gc.parseFormattedNumber('1,234.56 lei');
   assert.equal(p.value, 1234.56);
   assert.equal(p.decimals, 2);
   assert.equal(p.prefix, '');
   assert.equal(p.suffix, ' lei');
 
-  const proc = gc.parseFormattedNumber('12,34%');
+  const proc = gc.parseFormattedNumber('12.34%');
   assert.equal(proc.value, 12.34);
   assert.equal(proc.decimals, 2);
   assert.equal(proc.suffix, '%');
 
-  assert.equal(gc.parseFormattedNumber('-1.234,56 lei').value, -1234.56);
-  assert.equal(gc.parseFormattedNumber('1.234').value, 1234, 'punct = mii în ro-RO');
-  assert.equal(gc.parseFormattedNumber('1.234').decimals, 0);
-  assert.equal(gc.parseFormattedNumber('1.234.567').value, 1234567);
-  assert.equal(gc.parseFormattedNumber('12,5x').value, 12.5);
+  assert.equal(gc.parseFormattedNumber('-1,234.56 lei').value, -1234.56);
+  assert.equal(gc.parseFormattedNumber('1,234').value, 1234, 'virgulă = mii în en-US');
+  assert.equal(gc.parseFormattedNumber('1,234').decimals, 0);
+  assert.equal(gc.parseFormattedNumber('1,234,567').value, 1234567);
+  assert.equal(gc.parseFormattedNumber('12.5x').value, 12.5);
   assert.equal(gc.parseFormattedNumber('—'), null, 'valoare vidă');
   assert.equal(gc.parseFormattedNumber(''), null);
 });

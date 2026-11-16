@@ -82,7 +82,7 @@ test('N2 — economii sub 10% declanșează alarma „bad”', () => {
   near(r.ramas, 700);
   const nivele = [...r.alertes.map((a) => a.nivel)];
   assert.deepEqual(nivele, ['warn', 'bad']);
-  assert.ok(r.alertes[1].text.includes('6,00%'));
+  assert.ok(r.alertes[1].text.includes('6.00%'));
 });
 
 test('N2 — venit zero: procentele sunt nule și există o singură atenționare', () => {
@@ -135,7 +135,7 @@ test('N13 — scenariul de risc: alarme pe toți indicatorii, net worth negativ'
   assert.equal(r.scorOk, 0);
   const nivele = [...r.alarme.map((a) => a.nivel)];
   assert.deepEqual(nivele, ['bad', 'warn', 'bad', 'bad']);
-  assert.ok(r.alarme[3].text.includes('-23.000') || r.alarme[3].text.includes('23.000'));
+  assert.ok(r.alarme[3].text.includes('-23,000') || r.alarme[3].text.includes('23,000'));
 });
 
 test('N13 — venit zero: ratele devin nule, rezerva rămâne calculabilă', () => {
@@ -171,15 +171,15 @@ test('N13 — pragurile pe fiecare indicator', () => {
 /* ══ Formatare ══ */
 
 test('Formatare — fmtNum / fmtPctSafe / fmtDeviereLei', () => {
-  assert.equal(fmtNum(6.2), '6,20');
+  assert.equal(fmtNum(6.2), '6.20');
   assert.equal(fmtNum(null), '—');
   assert.equal(fmtNum(undefined), '—');
   assert.equal(fmtNum(Number.NaN), '—');
-  assert.equal(fmtPctSafe(0.2), '20,00%');
+  assert.equal(fmtPctSafe(0.2), '20.00%');
   assert.equal(fmtPctSafe(null), '—');
   assert.equal(fmtDeviereLei(0), 'la țintă');
-  assert.equal(fmtDeviereLei(500), 'peste țintă cu 500,00 lei');
-  assert.equal(fmtDeviereLei(-200), 'sub țintă cu 200,00 lei');
+  assert.equal(fmtDeviereLei(500), 'peste țintă cu 500.00 lei');
+  assert.equal(fmtDeviereLei(-200), 'sub țintă cu 200.00 lei');
   assert.equal(fmtDeviereLei(null), '—');
 });
 

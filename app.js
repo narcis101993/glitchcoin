@@ -4011,7 +4011,9 @@ const TAB_RENDERERS = {
   cost: updateCostOutputs,
 };
 
-/* Listează alarmele în container, cu culoarea corespunzătoare nivelului. */
+/* Listează alarmele în container, cu culoarea corespunzătoare nivelului.
+   În același timp le înregistrează pentru Centrul de alerte (I5),
+   ca cele 10 taburi cu alarme să fie vizibile și într-un singur loc. */
 function renderAlerts(containerId, alertes) {
   const box = document.getElementById(containerId);
   if (!box) return;
@@ -4022,6 +4024,11 @@ function renderAlerts(containerId, alertes) {
     p.textContent = a.text;
     box.appendChild(p);
   });
+  const tabId = ALERT_CONTAINERS[containerId];
+  if (tabId) {
+    ALERTS_BY_TAB[tabId] = alertes.map((a) => ({ nivel: a.nivel, text: a.text }));
+    updateAlertCenter();
+  }
 }
 
 /* Salt dintr-un tab în altul, cu prefill: setează inputurile, recalculă panoul
@@ -4171,6 +4178,8 @@ function activateTab(id, { focus = false, focusPanel = false, scroll = false, hi
   if (homePanel) homePanel.hidden = true;
 
   updateChrome(id);
+  if (stepMode) retargetStepMode(id);
+  updateStepTriggerState();
 }
 
 /* Numele tabului din antetul de tipărire (P5). */
@@ -4284,6 +4293,8 @@ function activateHome({ focusPanel = false, history: historyMode = 'replace' } =
   renderBreadcrumbHome();
   updatePanelNav(null);
   updatePrintTabName();
+  if (stepMode) stopStepMode();
+  updateStepTriggerState();
 
   if (focusPanel && home) {
     home.focus({ preventScroll: true });
@@ -4693,22 +4704,29 @@ function buildSearchItems() {
   });
 }
 
-function filteredSearch(query) {
+function scoreSearchItem(item, q) {
+  const name = normalizeText(item.name);
+  const cat = normalizeText(item.category);
+  if (name.startsWith(q)) return 0;
+  if (name.includes(q)) return 1;
+  if (cat.includes(q)) return 2;
+  return -1;
+}
+
+/* Filtrul propriu-zis, separat de DOM: testele îl pot apela cu o listă
+   de itemuri, iar paleta îl apelează cu `buildSearchItems()`. */
+function filterSearchItems(items, query) {
   const q = normalizeText(query);
-  if (!q) return buildSearchItems();
-  return buildSearchItems()
-    .map((item) => {
-      const name = normalizeText(item.name);
-      const cat = normalizeText(item.category);
-      let score = -1;
-      if (name.startsWith(q)) score = 0;
-      else if (name.includes(q)) score = 1;
-      else if (cat.includes(q)) score = 2;
-      return { item, score };
-    })
+  if (!q) return items.slice();
+  return items
+    .map((item) => ({ item, score: scoreSearchItem(item, q) }))
     .filter((r) => r.score !== -1)
     .sort((a, b) => a.score - b.score)
     .map((r) => r.item);
+}
+
+function filteredSearch(query) {
+  return filterSearchItems(buildSearchItems(), query);
 }
 
 function renderSearchResults(query) {
@@ -4766,12 +4784,12 @@ function setSearchActive(index) {
   }
 }
 
-/* Fundalul devine inert când paleta e deschisă (suport nativ),
+/* Fundalul devine inert când o paletă/dialog e deschis (suport nativ),
    ca focusul să nu ajungă în spatele dialogului. */
-const SEARCH_INERT = ['#sidebar', '#main-content', '.app-header', '.footer'];
-function setSearchInert(on) {
+const BACKGROUND_INERT = ['#sidebar', '#main-content', '.app-header', '.footer'];
+function setBackgroundInert(on) {
   if (typeof HTMLElement === 'undefined' || !('inert' in HTMLElement.prototype)) return;
-  SEARCH_INERT.forEach((sel) => document.querySelectorAll(sel).forEach((el) => {
+  BACKGROUND_INERT.forEach((sel) => document.querySelectorAll(sel).forEach((el) => {
     if (on) el.setAttribute('inert', '');
     else el.removeAttribute('inert');
   }));
@@ -4786,7 +4804,7 @@ function openSearch() {
   searchOpen = true;
   overlay.hidden = false;
   document.body.classList.add('is-search-open');
-  setSearchInert(true);
+  setBackgroundInert(true);
   input.value = '';
   renderSearchResults('');
   input.focus();
@@ -4801,7 +4819,7 @@ function closeSearch(restoreFocus = true) {
   searchOpen = false;
   overlay.hidden = true;
   document.body.classList.remove('is-search-open');
-  setSearchInert(false);
+  setBackgroundInert(false);
   if (restoreFocus && trigger) {
     trigger.setAttribute('aria-expanded', 'false');
     trigger.focus();
@@ -4880,6 +4898,773 @@ function initSearch() {
     if (!option) return;
     const idx = searchResults.findIndex((item) => item.id === option.dataset.tab);
     if (idx !== -1 && idx !== searchActive) setSearchActive(idx);
+  });
+}
+
+/* ═══ 28. Interactivitate (Etapa 3) ═══════════════════════
+   I1 căutare (filtru pur, testabil) · I4 mod pas cu pas ·
+   I5 centru de alerte · I7 copiere rezultat · I8 animații
+   discrete (cu prefers-reduced-motion). */
+
+/* ── I5 · Centru de alerte ────────────────────────────────
+   Cele 10 taburi cu alarme își au containerul (`bg-alerte` etc.).
+   `renderAlerts` le înregistrează pentru tabul respectiv, iar
+   centru le adună pe toate, grupate pe categorii, cu badge
+   pe categorie în sidebar și contor în header. */
+const ALERT_CONTAINERS = {
+  'bg-alerte': 'buget',
+  'sf-alerte': 'sanatate',
+  'dc-alerte': 'dca',
+  'cs-alerte': 'curs',
+  'dv-alerte': 'diversificare',
+  'as-alerte': 'asigurari',
+  'st-alerte': 'stres',
+  'dt-alerte': 'datorii',
+  'pn-alerte': 'pensie',
+  'tx-alerte': 'impozitare',
+};
+const ALERTS_BY_TAB = {};
+let alertsOpen = false;
+let alertsCount = 0;
+
+/* Funcție pură: adună alertele non-ok din registru, în ordinea
+   taburilor din sidebar (deci grupate natural pe categorii). */
+function collectAlerts(registry) {
+  const items = [];
+  TABS.forEach((tabId) => {
+    const list = registry[tabId] || [];
+    list.forEach((a) => {
+      if (a && a.nivel !== 'ok') {
+        items.push({ tabId, nivel: a.nivel, text: String(a.text == null ? '' : a.text) });
+      }
+    });
+  });
+  return items;
+}
+
+function updateAlertCenter() {
+  const items = collectAlerts(ALERTS_BY_TAB);
+  const badge = document.getElementById('alerts-badge');
+  const trigger = document.getElementById('alerts-trigger');
+
+  if (badge) {
+    badge.textContent = String(items.length);
+    badge.hidden = items.length === 0;
+    if (items.length > alertsCount) {
+      badge.classList.remove('is-pulse');
+      void badge.offsetWidth; // reia animația de puls
+      badge.classList.add('is-pulse');
+    }
+  }
+  if (trigger) {
+    trigger.setAttribute('aria-label', items.length
+      ? `Centru de alerte (${items.length})`
+      : 'Centru de alerte');
+  }
+  alertsCount = items.length;
+
+  // Badge cu numărul de alerte pe fiecare categorie din sidebar.
+  const byCat = {};
+  items.forEach((it) => {
+    const cat = TAB_CATEGORY[it.tabId];
+    if (cat) byCat[cat.id] = (byCat[cat.id] || 0) + 1;
+  });
+  CATEGORIES.forEach((cat) => {
+    const el = document.querySelector(`[data-cat-badge="${cat.id}"]`);
+    if (!el) return;
+    const n = byCat[cat.id] || 0;
+    el.textContent = String(n);
+    el.hidden = n === 0;
+  });
+
+  if (alertsOpen) renderAlertList();
+}
+
+function renderAlertList() {
+  const list = document.getElementById('alerts-list');
+  if (!list) return;
+  const empty = document.getElementById('alerts-empty');
+  const items = collectAlerts(ALERTS_BY_TAB);
+
+  const groups = new Map();
+  items.forEach((it) => {
+    const cat = TAB_CATEGORY[it.tabId];
+    const key = cat ? cat.id : 'altele';
+    if (!groups.has(key)) groups.set(key, { nume: cat ? cat.nume : 'Altele', items: [] });
+    groups.get(key).items.push(it);
+  });
+
+  list.replaceChildren();
+  groups.forEach((g) => {
+    const h = document.createElement('h3');
+    h.className = 'alerts-cat';
+    const name = document.createElement('span');
+    name.textContent = g.nume;
+    const count = document.createElement('span');
+    count.className = 'alerts-cat-count';
+    count.textContent = String(g.items.length);
+    h.append(name, count);
+    list.appendChild(h);
+
+    g.items.forEach((it) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'alert-item is-' + it.nivel;
+      btn.dataset.tab = it.tabId;
+      const text = document.createElement('span');
+      text.className = 'alert-item-text';
+      text.textContent = it.text;
+      const meta = document.createElement('span');
+      meta.className = 'alert-item-meta';
+      meta.textContent = tabName(it.tabId) + ' →';
+      btn.append(text, meta);
+      list.appendChild(btn);
+    });
+  });
+
+  if (empty) empty.hidden = items.length > 0;
+}
+
+function openAlerts() {
+  const overlay = document.getElementById('alerts-overlay');
+  if (!overlay) return;
+  alertsOpen = true;
+  overlay.hidden = false;
+  setBackgroundInert(true);
+  renderAlertList();
+  const trigger = document.getElementById('alerts-trigger');
+  if (trigger) trigger.setAttribute('aria-expanded', 'true');
+  const first = overlay.querySelector('.alert-item') || overlay.querySelector('[data-alerts-close]');
+  if (first) first.focus();
+}
+
+function closeAlerts(restoreFocus = true) {
+  const overlay = document.getElementById('alerts-overlay');
+  if (!overlay) return;
+  alertsOpen = false;
+  overlay.hidden = true;
+  setBackgroundInert(false);
+  const trigger = document.getElementById('alerts-trigger');
+  if (trigger) {
+    trigger.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) trigger.focus();
+  }
+}
+
+function initAlerts() {
+  // Badge-uri de alertă pe cele 6 categorii din sidebar.
+  CATEGORIES.forEach((cat) => {
+    const group = document.querySelector(`.side-group[data-cat="${cat.id}"] .side-cat`);
+    if (!group) return;
+    const badge = document.createElement('span');
+    badge.className = 'side-cat-badge';
+    badge.dataset.catBadge = cat.id;
+    badge.hidden = true;
+    badge.textContent = '0';
+    const chev = group.querySelector('.side-cat-chev');
+    if (chev) group.insertBefore(badge, chev);
+    else group.appendChild(badge);
+  });
+
+  const trigger = document.getElementById('alerts-trigger');
+  if (trigger) {
+    trigger.addEventListener('click', () => {
+      if (alertsOpen) closeAlerts();
+      else openAlerts();
+    });
+  }
+
+  const overlay = document.getElementById('alerts-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', (event) => {
+      if (event.target.closest('[data-alerts-close]')) closeAlerts();
+    });
+
+    overlay.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') { event.preventDefault(); closeAlerts(); return; }
+      if (event.key === 'Tab') {
+        const focusables = overlay.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        return;
+      }
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        const items = Array.from(overlay.querySelectorAll('.alert-item'));
+        if (!items.length) return;
+        event.preventDefault();
+        const idx = items.indexOf(document.activeElement);
+        const next = event.key === 'ArrowDown'
+          ? (idx + 1) % items.length
+          : (idx <= 0 ? items.length - 1 : idx - 1);
+        items[next].focus();
+      }
+    });
+
+    const list = document.getElementById('alerts-list');
+    if (list) {
+      list.addEventListener('click', (event) => {
+        const item = event.target.closest('.alert-item');
+        if (!item) return;
+        closeAlerts(false);
+        activateTab(item.dataset.tab, { focusPanel: true, history: 'push' });
+        persistSave();
+      });
+    }
+  }
+
+  updateAlertCenter();
+}
+
+/* ── I4 · Mod pas cu pas ──────────────────────────────────
+   Un strat vizual peste panoul activ: evidențiază câmp cu
+   câmp, cu banner vizibil (🪙) și navigare Anterior/Următor.
+   Layout-ul panoului nu se schimbă — doar se adaugă o
+   evidențiere și un banner sticky. */
+const STEP_TEXT = {
+  'sim-suma': 'Începe cu suma care îți definește momentul de acum — punctul de plecare al simulării.',
+  'sim-rata': 'Setează inflația anuală medie. 5% e o premisă realistă pentru planificare.',
+  'def-suma': 'Introdu suma actuală pe care vrei să o traduci în putere de cumpărare.',
+  'def-year': 'Alege anul pentru care vrei deflatorul (anul curent e 2025).',
+  'dob-suma': 'Introdu suma depusă la bancă.',
+  'dob-rata': 'Setează dobânda anuală brută, înainte de impozit.',
+  'dob-zile': 'Numărul de zile pe care banii stau depuși.',
+  'dob-impozit': 'Impozitul pe dobândă (10% în România).',
+  'comp-suma': 'Introdu suma inițială investită.',
+  'comp-contributie': 'Adaugă contribuția lunară, dacă e cazul.',
+  'comp-rata': 'Setează randamentul anual așteptat.',
+  'di-suma': 'Introdu suma pe care o investești sau o economisești.',
+  'di-randament': 'Randamentul nominal anual al investiției.',
+  'di-inflatie': 'Inflația anuală cu care compari.',
+  'r72-rata': 'Setează randamentul anual — regula 72 îți spune în câți ani se dublează.',
+  'r72-suma': 'Introdu suma inițială, ca să vezi dublarea în lei.',
+  'r72-ani': 'Numărul de ani în care vrei să vezi evoluția.',
+  'timp-venit': 'Introdu venitul lunar net — el transformă prețul în timp de muncă.',
+  'timp-pret': 'Prețul dorinței pe care vrei să o achiziționezi.',
+  'timp-zile-lucratore': 'Zile lucrătoare pe an (248 e valoarea obișnuită).',
+  'nuam-venit': 'Introdu venitul lunar net.',
+  'nuam-zi': 'Ziua din lună când primești venitul — pentru fluxul zilnic.',
+  'nuam-inflatie': 'Inflația cu care comparăm ce economisești.',
+  'nuam-economii': 'Suma pe care o adaugi lunar în economii.',
+  'nuam-rata': 'Dobânda oferită de bancă.',
+  'bg-venit': 'Introdu venitul lunar net — de la el pleacă toate celelalte câmpuri.',
+  'bg-nevoi': 'Cheltuielile esențiale: locuință, alimente, utilități, transport, rate.',
+  'bg-dorinte': 'Cheltuielile pentru plăcere: restaurante, hobby, călătorii, abonamente.',
+  'bg-economii': 'Ce rămâne neatins la final de lună.',
+  'fu-cheltuieli': 'Cheltuielile lunare esențiale pe care le-ai acoperi dacă venitul s-ar opri.',
+  'fu-luni': 'Perioada acoperită de fond (3–6 luni e zona obișnuită).',
+  'fu-dobanda': 'Dobânda la depozit, pentru cei bani deja acumulați.',
+  'fu-impozit': 'Impozitul pe dobândă.',
+  'fu-suma': 'Suma deja acumulată.',
+  'fu-economie': 'Economia lunară cu care completezi fondul.',
+  'sf-venit': 'Introdu venitul lunar net.',
+  'sf-cheltuieli': 'Cheltuielile esențiale lunare.',
+  'sf-economii': 'Economiile lunare.',
+  'sf-datorii-lunar': 'Rățile lunare la datorii.',
+  'sf-rezerva': 'Rezerva de urgență pe care o ai acum.',
+  'sf-active': 'Activele investite, fără rezerva de urgență.',
+  'sf-datorii': 'Datoriile totale.',
+  'rand-suma': 'Suma pe care o investești.',
+  'rand-randament': 'Randamentul nominal anual.',
+  'rand-tip-venit': 'Alege tipul de venit — impozitul implicit se setez singur.',
+  'rand-impozit': 'Impozitul pe veniturile din investiții.',
+  'rand-comisioane': 'Comisioanele anuale totale.',
+  'rand-inflatie': 'Inflația cu care traducem totul în putere de cumpărare.',
+  'prof-suma': 'Suma investită inițial.',
+  'prof-pret-init': 'Prețul inițial sau mediu de achiziție.',
+  'prof-pret-vanzare': 'Prețul la care vinzi.',
+  'prof-tip-venit': 'Alege tipul de venit — impozitul implicit se setez singur.',
+  'prof-impozit': 'Impozitul pe câștig.',
+  'prof-comisioane': 'Comisioanele de tranzacționare.',
+  'prof-inflatie': 'Inflația cu care comparăm prețul real.',
+  'suma-randament': 'Randamentul anual așteptat.',
+  'suma-ani': 'Numărul de ani până la țintă.',
+  'suma-initiala': 'Suma pe care o ai deja.',
+  'suma-dorita': 'Suma țintă pe care vrei să o atingi.',
+  'co-suma': 'Suma pe care o lupți sau o investești.',
+  'co-ani': 'Durata în ani.',
+  'co-randament': 'Randamentul nominal anual al investiției alternative.',
+  'co-impozit': 'Impozitul pe câștig.',
+  'co-comisioane': 'Comisioanele anuale.',
+  'co-inflatie': 'Inflația anuală.',
+  'dc-scenariu': 'Alege scenariul de preț (lator, lateral, volatil).',
+  'dc-suma': 'Suma totală pe care ai vrea să o investești.',
+  'dc-luni': 'Numărul de luni de scalare.',
+  'dc-randament': 'Randamentul anual așteptat.',
+  'dc-volatilitate': 'Volatilitatea anuală a activului.',
+  'cs-curs': 'Cursul RON/valută la momentul de start.',
+  'cs-apreciere': 'Aprecierea anuală a valutei față de RON.',
+  'cs-ani': 'Perioada analysată.',
+  'cs-inflatie': 'Inflația anuală în RON.',
+  'cs-suma': 'Suma investită, în valută.',
+  'cs-randament': 'Randamentul anual al activului, în valută.',
+  'cs-impozit': 'Impozitul pe câștig.',
+  'cs-pret-import': 'Prețul unui coș importat, în valută.',
+  'dv-suma': 'Suma investită în portofoliu.',
+  'dv-corelare': 'Corelația dintre active (0 = independente).',
+  'dv-rf': 'Rată fără risc, pentru indicele Sharpe.',
+  'as-tip': 'Alege tipul de risc asigurat.',
+  'as-prima': 'Prima anuală plătită pentru asigurare.',
+  'as-suma': 'Suma asigurată, adică costul pierderii.',
+  'as-probabilitate': 'Probabilitatea anuală a evenimentului.',
+  'as-ani': 'Numărul de ani pentru comparație.',
+  'as-dobanda': 'Dobânda la economii, pentru auto-asigurare.',
+  'st-scenariu': 'Alege un scenariu de stres sau setează valori proprii.',
+  'st-venit': 'Venitul lunar net în perioada de stres.',
+  'st-cheltuieli': 'Cheltuielile esențiale lunare.',
+  'st-economii': 'Economiile lunare.',
+  'st-rezerva': 'Rezerva de urgență actuală.',
+  'st-active': 'Activele investite.',
+  'st-luni': 'Durata stresului, în luni.',
+  'st-inflatie': 'Inflația anuală.',
+  'st-scadere': 'Scăderea venitului, în procente.',
+  'st-randament': 'Randamentul activelor în perioada de stres.',
+  'dt-suma': 'Suma împrumutată.',
+  'dt-dobanda': 'Dobânda anuală a creditului.',
+  'dt-durata': 'Durata creditului, în luni.',
+  'dt-economie': 'Dobânda anuală la economii.',
+  'dt-impozit': 'Impozitul pe dobânda economiilor.',
+  'dt-avans': 'Suma lunară suplimentară pentru anticipare.',
+  'pn-scenariu': 'Alege un scenariu de contributie.',
+  'pn-varsta': 'Vârsta ta acum.',
+  'pn-pensionare': 'Vârsta la care vrei să te pensionezi.',
+  'pn-contributie': 'Contribuția lunară la Pilon III.',
+  'pn-suma': 'Suma deja acumulată.',
+  'pn-randament': 'Randamentul anual brut.',
+  'pn-comision': 'Comisionul anual total.',
+  'pn-impozit': 'Impozitul pe câștig la retragere.',
+  'pn-inflatie': 'Inflația anuală.',
+  'tx-tip': 'Alege tipul de venit — rata reală se setez singură.',
+  'tx-an': 'Alege anul de aplicare (2025 sau 2026).',
+  'tx-castig': 'Introdu câștigul brut.',
+};
+
+const STEP_SPECIAL = {
+  cost: [
+    { sel: '#cost-table', text: 'Tranșele cumpărate se adaugă aici, cu preț și cantitate.' },
+    { sel: '#cost-add', text: 'Apasă „+ Adaugă rând” pentru a introduce o tranșă nouă.' },
+    { sel: '#cost-reset', text: 'Resetează la valorile implicite dacă vrei să reiei de la zero.' },
+  ],
+  biase: [
+    { sel: '#bq-quiz', text: 'Răspunde la cele cinci întrebări — opțiunea ta se bifează aici.' },
+    { sel: '#bq-reset', text: 'Apasă „Resetează testul” pentru a reîncerca.' },
+  ],
+};
+
+function stepTextFor(field) {
+  const override = STEP_TEXT[field.id];
+  if (override) return override;
+  const label = String(field.label || '').replace(/\s+/g, ' ').trim();
+  if (!label) return 'Completează acest câmp.';
+  if (field.tag === 'select') return `Alege „${label}”.`;
+  if (field.type === 'checkbox' || field.type === 'radio') return `Bifează „${label}”.`;
+  return `Introdu „${label}”.`;
+}
+
+/* Pur: listează câmpurile data și construiește pasurile. */
+function buildStepsFromFields(fields) {
+  return fields.map((f) => ({ sel: '#' + f.id, text: stepTextFor(f) }));
+}
+
+function fieldsForTab(tabId) {
+  const panel = document.getElementById('panel-' + tabId);
+  if (!panel) return [];
+  const fields = [];
+  panel.querySelectorAll('.field').forEach((wrap) => {
+    const input = wrap.querySelector('input, select, textarea');
+    if (!input || !input.id) return;
+    const label = wrap.querySelector('label');
+    fields.push({
+      id: input.id,
+      label: label ? label.textContent.trim() : input.id,
+      tag: input.tagName.toLowerCase(),
+      type: input.type || '',
+    });
+  });
+  return fields;
+}
+
+function stepsForTab(tabId) {
+  if (STEP_SPECIAL[tabId]) return STEP_SPECIAL[tabId];
+  return buildStepsFromFields(fieldsForTab(tabId));
+}
+
+let stepMode = false;
+let stepActiveTab = null;
+let stepIndex = 0;
+let stepList = [];
+let stepChipEl = null;
+
+function reducedMotionQuery() {
+  return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function clearStepTarget() {
+  document.querySelectorAll('.is-step-target').forEach((el) => el.classList.remove('is-step-target'));
+}
+
+function stepTargetElement(step) {
+  if (!step || !step.sel) return null;
+  return document.querySelector(step.sel);
+}
+
+/* Elementul vizat pentru evidențiere și ecuță: wrapper-ul `.field`
+   (dacă există), ca să nu acopere eticheta câmpului. */
+function stepFocusTarget(step) {
+  const el = stepTargetElement(step);
+  return el ? (el.closest('.field') || el) : null;
+}
+
+function currentStepFocus() {
+  return stepFocusTarget(stepList[stepIndex]);
+}
+
+function highlightStepTarget(step) {
+  clearStepTarget();
+  const el = stepTargetElement(step);
+  if (!el) return null;
+  const wrap = el.closest('.field') || el;
+  wrap.classList.add('is-step-target');
+  return el;
+}
+
+function ensureStepChip() {
+  if (stepChipEl) return stepChipEl;
+  stepChipEl = document.createElement('div');
+  stepChipEl.className = 'step-chip';
+  stepChipEl.id = 'step-chip';
+  stepChipEl.hidden = true;
+  stepChipEl.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(stepChipEl);
+  return stepChipEl;
+}
+
+function positionStepChip(target) {
+  const chip = stepChipEl;
+  if (!chip) return;
+  if (!stepMode || !target) { chip.hidden = true; return; }
+  const r = target.getBoundingClientRect();
+  if (!r.width && !r.height) { chip.hidden = true; return; }
+  const chipH = chip.offsetHeight || 24;
+  let top = r.top - chipH - 8;
+  if (top < 64) top = r.bottom + 8; // sub header altfel
+  const vw = window.innerWidth || document.documentElement.clientWidth;
+  const left = Math.max(70, Math.min(vw - 70, r.left + r.width / 2));
+  chip.style.left = left + 'px';
+  chip.style.top = top + 'px';
+  chip.hidden = false;
+}
+
+function applyStep() {
+  const step = stepList[stepIndex];
+  const count = document.getElementById('step-count');
+  const text = document.getElementById('step-text');
+  const bar = document.getElementById('step-progress-bar');
+  if (count) count.textContent = `Pasul ${stepIndex + 1} din ${stepList.length}`;
+  if (text) text.textContent = step ? step.text : '';
+  if (bar) bar.style.width = (stepList.length ? ((stepIndex + 1) / stepList.length) * 100 : 0) + '%';
+
+  const el = highlightStepTarget(step);
+  const target = el ? (el.closest('.field') || el) : null;
+  if (target) {
+    target.scrollIntoView({
+      block: 'center', inline: 'nearest',
+      behavior: reducedMotionQuery() ? 'auto' : 'smooth',
+    });
+  }
+  const chip = ensureStepChip();
+  if (chip) {
+    chip.textContent = 'Pasul ' + (stepIndex + 1);
+    requestAnimationFrame(() => positionStepChip(target));
+  }
+
+  const prev = document.getElementById('step-prev');
+  const next = document.getElementById('step-next');
+  if (prev) prev.disabled = stepList.length < 2;
+  if (next) next.disabled = stepList.length < 2;
+}
+
+function renderStepBanner() {
+  const banner = document.getElementById('step-banner');
+  if (!banner) return;
+  banner.hidden = false;
+  applyStep();
+}
+
+function goStep(dir) {
+  if (!stepList.length) return;
+  stepIndex = (stepIndex + dir + stepList.length) % stepList.length;
+  applyStep();
+}
+
+function startStepMode() {
+  const id = activeTabId();
+  if (!id) return;
+  stepActiveTab = id;
+  stepList = stepsForTab(id);
+  if (!stepList.length) return;
+  stepMode = true;
+  stepIndex = 0;
+  document.body.classList.add('is-step-mode');
+  const trigger = document.getElementById('step-trigger');
+  if (trigger) trigger.setAttribute('aria-pressed', 'true');
+  renderStepBanner();
+}
+
+function stopStepMode() {
+  stepMode = false;
+  stepActiveTab = null;
+  stepList = [];
+  stepIndex = 0;
+  document.body.classList.remove('is-step-mode');
+  const banner = document.getElementById('step-banner');
+  if (banner) banner.hidden = true;
+  clearStepTarget();
+  if (stepChipEl) stepChipEl.hidden = true;
+  const trigger = document.getElementById('step-trigger');
+  if (trigger) trigger.setAttribute('aria-pressed', 'false');
+}
+
+/* Schimbarea tabului în timpul modului pas cu pas: pasurile
+   se reconstruiesc pentru noul tab. */
+function retargetStepMode(tabId) {
+  if (!stepMode) return;
+  stepActiveTab = tabId;
+  stepIndex = 0;
+  stepList = stepsForTab(tabId);
+  if (!stepList.length) { stopStepMode(); return; }
+  renderStepBanner();
+}
+
+/* Pe „Acasă" nu există panou cu câmpuri: declanșatorul e dezactivat. */
+function updateStepTriggerState() {
+  const trigger = document.getElementById('step-trigger');
+  if (trigger) trigger.disabled = !activeTabId();
+}
+
+function initStepMode() {
+  const trigger = document.getElementById('step-trigger');
+  if (trigger) {
+    trigger.addEventListener('click', () => {
+      if (stepMode) stopStepMode();
+      else startStepMode();
+    });
+  }
+  updateStepTriggerState();
+
+  const prev = document.getElementById('step-prev');
+  const next = document.getElementById('step-next');
+  const stop = document.getElementById('step-stop');
+  if (prev) prev.addEventListener('click', () => goStep(-1));
+  if (next) next.addEventListener('click', () => goStep(1));
+  if (stop) stop.addEventListener('click', stopStepMode);
+
+  const banner = document.getElementById('step-banner');
+  if (banner) {
+    banner.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') { event.preventDefault(); goStep(-1); }
+      else if (event.key === 'ArrowRight') { event.preventDefault(); goStep(1); }
+    });
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !stepMode) return;
+    if (searchOpen || alertsOpen) return;
+    event.preventDefault();
+    stopStepMode();
+    const t = document.getElementById('step-trigger');
+    if (t) t.focus();
+  });
+
+  window.addEventListener('scroll', () => {
+    if (stepMode) positionStepChip(currentStepFocus());
+  }, { passive: true });
+  window.addEventListener('resize', () => {
+    if (stepMode) positionStepChip(currentStepFocus());
+  });
+}
+
+/* ── I7 · Copiere rezultat ─────────────────────────────────
+   Fiecare indicator (.stat-value) primește un buton mic care
+   copiază valoarea formatată. */
+const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+function announceCopy(message) {
+  const live = document.getElementById('copy-live');
+  if (live) live.textContent = message;
+}
+
+function copyFallback(text) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+function copyStatValue(btn, value) {
+  const text = (value.textContent || '').trim();
+  if (!text || text === '—') {
+    announceCopy('Nicio valoare de copiat.');
+    return;
+  }
+  const done = (ok) => {
+    announceCopy(ok ? 'Copiat: ' + text : 'Nu s-a putut copia.');
+    btn.classList.toggle('is-copied', ok);
+    btn.innerHTML = ok ? CHECK_ICON : COPY_ICON;
+    window.setTimeout(() => {
+      btn.classList.remove('is-copied');
+      btn.innerHTML = COPY_ICON;
+    }, 1400);
+  };
+  if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => done(true), () => done(copyFallback(text)));
+  } else {
+    done(copyFallback(text));
+  }
+}
+
+function initCopyButtons() {
+  document.querySelectorAll('.stat-value').forEach((value) => {
+    if (!value.id) return;
+    if (value.closest('.stat-value-wrap')) return;
+    const stat = value.closest('.stat');
+    const labelEl = stat ? stat.querySelector('.stat-label') : null;
+    const label = labelEl ? labelEl.textContent.trim() : 'Valoare';
+
+    const wrap = document.createElement('span');
+    wrap.className = 'stat-value-wrap';
+    value.parentNode.insertBefore(wrap, value);
+    wrap.appendChild(value);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.dataset.copyOf = value.id;
+    btn.setAttribute('aria-label', 'Copiază valoarea „' + label + '”');
+    btn.title = 'Copiază valoarea';
+    btn.innerHTML = COPY_ICON;
+    wrap.appendChild(btn);
+  });
+
+  document.addEventListener('click', (event) => {
+    const btn = event.target && event.target.closest ? event.target.closest('.copy-btn') : null;
+    if (!btn) return;
+    const value = document.getElementById(btn.dataset.copyOf);
+    if (value) copyStatValue(btn, value);
+  });
+}
+
+/* ── I8 · Animații discrete ────────────────────────────────
+   Count-up pe valori la recalcul, tranziție de panou și puls
+   pe badge-ul de alerte. Toate respectă prefers-reduced-motion
+   (verificare în JS + regula globală din CSS). */
+
+/* Extrage numărul dintr-o valoare formatată (ro-RO): „1.234,56 lei”,
+   „12,34%”, „1.234”, „12,5x”. Returnează {value, decimals, prefix, suffix}
+   sau null dacă textul nu conține un număr. */
+function parseFormattedNumber(text) {
+  const s = String(text == null ? '' : text).trim();
+  if (!s) return null;
+  const m = s.match(/-?\d[\d.,]*/);
+  if (!m) return null;
+  const raw = m[0];
+  let token = raw.replace(/\s/g, '');
+  const neg = token.charAt(0) === '-';
+  token = token.replace(/^-/, '');
+  const hasComma = token.indexOf(',') !== -1;
+  const hasDot = token.indexOf('.') !== -1;
+  let numStr;
+  let decimals = 0;
+  if (hasComma && hasDot) {
+    decimals = token.length - token.indexOf(',') - 1;
+    numStr = token.replace(/\./g, '').replace(',', '.');
+  } else if (hasComma) {
+    decimals = token.length - token.indexOf(',') - 1;
+    numStr = token.replace(',', '.');
+  } else if (hasDot) {
+    // În ro-RO punctul e separator de mii (zecimalele sunt cu virgulă).
+    numStr = token.replace(/\./g, '');
+  } else {
+    numStr = token;
+  }
+  const value = Number(numStr);
+  if (!Number.isFinite(value)) return null;
+  return {
+    value: neg ? -value : value,
+    decimals,
+    prefix: s.slice(0, m.index),
+    suffix: s.slice(m.index + raw.length),
+  };
+}
+
+function formatStatValue(value, decimals) {
+  return value.toLocaleString('ro-RO', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
+function animateStatValue(el) {
+  const prev = el.dataset.statPrev;
+  const cur = el.textContent;
+  el.dataset.statPrev = cur;
+  if (el.__animating || prev === cur) return;
+  if (reducedMotionQuery()) return;
+  const a = parseFormattedNumber(prev);
+  const b = parseFormattedNumber(cur);
+  if (!a || !b) return;
+  if (Math.abs(a.value - b.value) < 1e-9) return;
+
+  el.__animating = true;
+  const duration = 380;
+  const start = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  const tick = (now) => {
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const v = a.value + (b.value - a.value) * eased;
+    el.textContent = b.prefix + formatStatValue(v, b.decimals) + b.suffix;
+    if (t < 1) el.__raf = requestAnimationFrame(tick);
+    else {
+      el.textContent = cur;
+      el.__animating = false;
+    }
+  };
+  el.__raf = requestAnimationFrame(tick);
+}
+
+function initCountUp() {
+  if (typeof MutationObserver === 'undefined') return;
+  const observer = new MutationObserver((mutations) => {
+    const seen = new Set();
+    mutations.forEach((mutation) => {
+      let el = mutation.target;
+      if (el && el.nodeType === 3) el = el.parentNode;
+      if (el && el.classList && el.classList.contains('stat-value')) seen.add(el);
+      else if (el && el.closest) {
+        const v = el.closest('.stat-value');
+        if (v) seen.add(v);
+      }
+    });
+    seen.forEach((el) => animateStatValue(el));
+  });
+  document.querySelectorAll('.stat-value').forEach((el) => {
+    observer.observe(el, { childList: true, characterData: true, subtree: true });
   });
 }
 
@@ -5969,6 +6754,10 @@ function init() {
   initTabs();
   initShell();
   initSearch();
+  initAlerts();
+  initStepMode();
+  initCopyButtons();
+  initCountUp();
   initFormulaTips();
   populateYearSelect();
 

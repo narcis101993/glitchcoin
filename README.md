@@ -119,6 +119,23 @@ inflație” → „Curs de schimb” (suma convertită în valută, randamentul
 schimb” → „Costul oportunității” (suma în RON și randamentul nominal). Butoanele sunt
 chip-uri în panoul sursă; inputurile se salvează în continuare în `localStorage`.
 
+## Interactivitate (Etapa 3)
+
+- **Căutare `⌘K`** — găsește orice tab din primele 3 caractere (după nume sau categorie, cu
+  diacritice ignorate); `↑`/`↓` selectează, `Enter` deschide, `Esc` închide.
+- **Centru de alerte** — butonul „Alerte” din header adună alarmele din cele 10 taburi cu alarme,
+  grupate pe categorii, cu contor în header și badge cu numărul de alerte pe fiecare categorie din
+  sidebar. Click pe o alertă deschide tabul respectiv; `Esc` închide și focusul rămâne în dialog.
+- **Mod pas cu pas** — butonul „🪙 Pas cu pas” din header afișează un banner sticky (cu iconița 🪙)
+  care marchează câmp cu câmp panoul activ, cu `Anterior`/`Următor`, bară de progres și ecuță
+  „Pasul X” lângă câmpul evidențiat. `←`/`→` navighează, `Esc` oprește. Pe „Acasă” butonul e
+  dezactivat; la schimbarea tabului pasurile se reconstruiesc. Layout-ul panoului nu se schimbă.
+- **Copiere rezultat** — fiecare indicator are un buton mic care copiază valoarea formatată
+  (Clipboard API, cu fallback `execCommand`); feedback vizual „Copiat” și anunț pentru cititorul
+  de ecran.
+- **Animații discrete** — count-up pe valori la recalcul, tranziție de panou și puls pe badge-ul de
+  alerte. Toate se opresc cu `prefers-reduced-motion: reduce`.
+
 ## Tipărire și export CSV
 
 - **Tipărire (Cmd+P / „Salvează ca PDF”)** — se tipărește doar tabul deschis, fără header, sidebar,
@@ -148,10 +165,16 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
   pe coloane, deci antetele sunt asociate formal cu tabelul.
 - **Contrast WCAG AA** — și pentru textul dezactivat (`--disabled` ≥ 4,5:1) în ambele teme.
 - **Tooltips accesibile pentru formule** — lângă etichetele și valorile cheie apare un declanșator
-  „?" (buton focusabil). Panelul are `role="tooltip"` și e legat prin `aria-describedby`; se deschide
+  „?” (buton focusabil). Panelul are `role="tooltip"` și e legat prin `aria-describedby`; se deschide
   la focus, hover sau click și se închide cu **Escape**, la click în afara sau la pierderea focusului.
   Pe mobil poziționarea se adaptează pentru a rămâne în ecran. Nu se folosește `title` nativ
   (invizibil la tastatură și pe ecrane tactil).
+- **Centru de alerte** — dialog `aria-modal` cu focus trap, `Esc`, navigare cu săgeți și elemente
+  buton reale (nu doar `<div>` clickabile).
+- **Mod pas cu pas** — toate controalele noi sunt butoane focusabile; bannerul sticky nu acoperă
+  câmpul evidențiat (ecuța se poziționează deasupra sau dedesubt).
+- **Copiere rezultat** — butoane cu `aria-label` clar; rezultatul copierii e anunțat într-o regiune
+  `aria-live`.
 - **Deflația evidențiată cu roșu și în tabel** — anii cu inflație negativă (2015, 2016) au rândul
   colorat în roșu în tabelul inflației, nu doar în grafic.
 
@@ -164,7 +187,7 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
 | `fonts.css` + `fonts/` | Inter self-hosted (woff2, latin + latin-ext), cu fallback de sistem |
 | `data.js` | Datele brute: inflația 1991–2026 (INS, IPC național) și prețurile alimentelor 2020–2026 |
 | `app.js` | Toate calculele, interactivitatea, navigarea, comutatorul de temă, modul Concentrare, drawer-ul, back-to-top, persistența inputurilor și exportul CSV |
-| `tests/` | Testele automate (`node --test tests/`): corecțiile C1–C12, conceptele noi N1–N15, scheletul (Etapa 1) și datele din `data.js` |
+| `tests/` | Testele automate (`node --test tests/`): corecțiile C1–C12, conceptele noi N1–N15, scheletul (Etapa 1), interactivitatea (Etapa 3) și datele din `data.js` |
 | `favicon.svg` / `favicon.png` / `favicon-180.png` | Icoana aplicației (vector + PNG, apple-touch) |
 
 ## Teste
@@ -194,6 +217,10 @@ node --test tests/
   cele trei renderer-e.
 - `tests/static.test.mjs` — verifică structura HTML și prezența opțiunilor/tooltip-urilor pentru
   impozit, comisioane și dobândă.
+- `tests/interactivitate.test.mjs` — verifică căutarea din 3 caractere pentru toate cele 24 de
+  taburi, centrul de alerte, modul pas cu pas (banner 🪙), copierea și animațiile.
+- `tests/navigare.test.mjs` — verifică hash-ul `#categorie/tab` (cu fallback), săgețile
+  Precedent/Următor, breadcrumb-ul și paleta de căutare.
 - `tests/helpers/bundle.mjs` — încarcă `data.js` + `app.js` într-un context Node (DOM minim,
   cu elemente fals-pentru-smoke) pentru a apela funcțiile de calcul fără browser.
 

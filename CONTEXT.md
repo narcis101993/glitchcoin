@@ -377,3 +377,24 @@ Navigare pe categorii implementată și verificată în browser real (`file://`)
 - Verificare: **170/170** teste (155 + 15 noi în `tests/navigare.test.mjs`, din care unele execută
   `parseHash`/`stepTab`/`normalizeText` real); 24/24 taburi; 20/20 legături cu prefill; zero erori JS;
   back/forward funcțional; 390 px și 1440 px fără overflow; print ascunde panoul de navigare și paleta.
+
+## Etapa 3 finalizată (dev, 2026-11-16)
+
+Interactivitate implementată și verificată în browser real (`file://`):
+
+- **Căutare** — filtru separat (`filterSearchItems`) și testat pentru toate cele 24 de taburi: găsește
+  orice tab din primele 3 caractere; diacritic-insensibilă; prioritate prefix > conținut > categorie.
+- **Centru de alerte** — `renderAlerts` înregistrează alertele celor 10 taburi cu alarme; header cu
+  contor, badge pe fiecare categorie din sidebar, dialog `aria-modal` cu grupare pe categorii,
+  focus trap, săgeți, `Esc`; click pe o alertă deschide tabul. Se actualiză live la recalcul.
+- **Mod pas cu pas** — banner sticky cu iconița 🪙, pasuri generate din câmpurile panoului activ
+  (instruțiuni curate în `STEP_TEXT`), evidențiere pe wrapper-ul `.field`, ecuță „Pasul X” plasată
+  lângă câmp, `Anterior`/`Următor` cu wrap, `←`/`→`, `Esc` oprește; pe „Acasă” butonul e dezactivat;
+  la schimbarea tabului pasurile se reconstruiesc. Layout-ul panoului nu se schimbă.
+- **Copiere rezultat** — 136 de butoane mici (unul per `.stat-value`), Clipboard API cu fallback
+  `execCommand`, feedback vizual „Copiat” + regiune `aria-live`.
+- **Animații discrete** — count-up pe valori la recalcul (MutationObserver + parsare ro-RO),
+  tranziție de panou, puls pe badge-ul de alerte; toate cu `prefers-reduced-motion: reduce`.
+- Verificare: **182/182** teste (170 + 12 noi în `tests/interactivitate.test.mjs`); zero erori JS;
+  24/24 taburi; 390 px și 1440 px fără overflow; print ascunde noile controale; copiere verificată
+  cu clic real; alerte live (5 → 8 la schimbarea venitului); mod pas cu pas pe cost/biase (pasuri speciale).

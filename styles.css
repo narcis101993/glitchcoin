@@ -1360,6 +1360,8 @@ td.strong { color: var(--accent-strong); font-weight: 700; }
               border-color var(--speed) var(--ease);
 }
 .header-btn:hover { background: var(--surface-2); color: var(--ink); }
+.header-btn:disabled { opacity: .45; cursor: not-allowed; }
+.header-btn:disabled:hover { background: transparent; color: var(--ink-soft); }
 .header-btn svg { width: 18px; height: 18px; flex: 0 0 auto; }
 .header-btn[aria-pressed="true"] {
   background: var(--accent-soft);
@@ -1889,6 +1891,319 @@ body.is-search-open { overflow: hidden; }
   .panel-nav-btn { font-size: .82rem; padding: 9px 12px; }
 }
 
+/* ── Responsive: ecran foarte îngust (390 px) ────────────── */
+@media (max-width: 560px) {
+  /* Eliberăm loc în header pentru „Alerte” și „Pas cu pas”:
+     monograma rămâne, numele se ascunde. */
+  .brand-name { display: none; }
+  /* Contorul de alerte devine un badge suprapus, ca să nu
+     lățească butonul pe ecranele de 390 px. */
+  #alerts-trigger { position: relative; }
+  #alerts-trigger .alerts-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 15px;
+    padding: 0 4px;
+    font-size: .6rem;
+    line-height: 1.4;
+  }
+  .alerts-overlay { padding: 12px; }
+  .alerts-dialog { max-height: 88vh; }
+  .step-banner { top: 56px; }
+}
+
+/* ═══ Etapa 3 · Interactivitate ═══════════════════════════
+   Centru de alerte, mod pas cu pas, copiere rezultat și
+   animații discrete. Toate controalele noi sunt butoane
+   focusabile; mișcarea se oprește cu prefers-reduced-motion. */
+
+/* ── Centru de alerte ───────────────────────────────────── */
+.alerts-badge {
+  min-width: 18px;
+  padding: 1px 5px;
+  border-radius: var(--radius-pill);
+  background: var(--neg);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+}
+.alerts-badge[hidden] { display: none; }
+.alerts-badge.is-pulse { animation: badge-pulse 600ms var(--ease); }
+@keyframes badge-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.side-cat-badge {
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--neg);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.side-cat-badge[hidden] { display: none; }
+
+.alerts-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8vh var(--space-3) var(--space-3);
+}
+.alerts-overlay[hidden] { display: none; }
+.alerts-dialog {
+  width: 100%;
+  max-width: 560px;
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+.alerts-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.alerts-head-text { flex: 1 1 auto; min-width: 0; }
+.alerts-head h2 { margin: 0; font-size: 1.05rem; }
+.alerts-sub { margin: 2px 0 0; font-size: .82rem; color: var(--muted); }
+.alerts-list {
+  display: grid;
+  gap: 8px;
+  overflow-y: auto;
+  min-height: 0;
+}
+.alerts-cat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 0;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.alerts-cat:first-child { margin-top: 0; }
+.alerts-cat-count {
+  padding: 1px 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  font-size: .68rem;
+}
+.alert-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: .88rem;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--speed) var(--ease),
+              background-color var(--speed) var(--ease);
+}
+.alert-item:hover { background: var(--surface-2); }
+.alert-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.alert-item.is-warn { border-color: var(--warn-fill); background: var(--warn-soft); color: var(--warn); }
+.alert-item.is-bad { border-color: var(--neg-fill); background: var(--neg-soft); color: var(--neg-strong); }
+.alert-item-text { flex: 1 1 auto; min-width: 0; }
+.alert-item-meta { flex: 0 0 auto; font-size: .75rem; font-weight: 700; color: var(--muted); }
+.alerts-empty { margin: 0; color: var(--muted); font-size: .9rem; }
+.alerts-empty[hidden] { display: none; }
+.alerts-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .78rem;
+}
+.alerts-foot kbd,
+.search-foot kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface-2);
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+/* ── Mod pas cu pas ──────────────────────────────────────── */
+.step-banner {
+  position: sticky;
+  top: 56px;
+  z-index: 40;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--accent-line);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  box-shadow: var(--shadow-sm);
+}
+.step-banner[hidden] { display: none; }
+.step-banner-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.step-coin { font-size: 1.05rem; line-height: 1; }
+.step-banner-title { font-size: .9rem; font-weight: 700; }
+.step-banner-count {
+  padding: 1px 8px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--accent-strong);
+  font-size: .78rem;
+  font-weight: 700;
+}
+.step-close {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--accent-strong);
+  cursor: pointer;
+}
+.step-close:hover { background: var(--surface-2); }
+.step-close svg { width: 16px; height: 16px; }
+.step-text {
+  margin: 6px 0 0;
+  font-size: .92rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.step-progress {
+  height: 4px;
+  margin-top: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  overflow: hidden;
+}
+.step-progress > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width var(--speed) var(--ease);
+}
+.step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Evidențierea câmpului curent (se adaugă pe wrapper-ul `.field`). */
+.field.is-step-target,
+.is-step-target {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+}
+
+/* Ecuța plasată lângă câmpul evidențiat. */
+.step-chip {
+  position: fixed;
+  z-index: 45;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: .72rem;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.step-chip[hidden] { display: none; }
+
+/* ── Copiere rezultat ────────────────────────────────────── */
+.stat-value-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.stat-value-wrap .stat-value { flex: 1 1 auto; min-width: 0; }
+.copy-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--muted);
+  cursor: pointer;
+  opacity: .75;
+  transition: opacity var(--speed) var(--ease),
+              color var(--speed) var(--ease),
+              border-color var(--speed) var(--ease),
+              background-color var(--speed) var(--ease);
+}
+.copy-btn:hover,
+.copy-btn:focus-visible {
+  opacity: 1;
+  color: var(--accent-strong);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.copy-btn.is-copied {
+  opacity: 1;
+  color: var(--pos-strong);
+  border-color: var(--pos-fill);
+  background: var(--pos-soft);
+}
+.copy-btn svg { width: 14px; height: 14px; }
+
+/* ── Animații discrete ───────────────────────────────────── */
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.tab-panel.is-active,
+.home-panel.is-active { animation: panel-in 220ms var(--ease); }
+
 /* ═══ Tipărire (P5) ═══════════════════════════════════════
    La Cmd+P / „Salvează ca PDF" se tipărește doar panoul activ:
    fără bara de taburi, hero, subnavigare, comutator de temă,
@@ -1980,6 +2295,12 @@ body.is-search-open { overflow: hidden; }
   .breadcrumb,
   .panel-nav,
   .search-overlay,
+  .alerts-overlay,
+  .step-banner,
+  .step-chip,
+  .copy-btn,
+  #copy-live,
+  .side-cat-badge,
   .hero,
   .tabs-bar,
   .subnav,

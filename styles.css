@@ -2332,7 +2332,11 @@ body.is-search-open { overflow: hidden; }
   /* Doar panoul activ se tipărește (și Acasă, dacă e activ). */
   .tab-panel[hidden] { display: none !important; }
   .home-panel[hidden] { display: none !important; }
+  .global-panel[hidden] { display: none !important; }
   .tab-panel { padding-top: 0; }
+  .global-panel { padding-top: 0; }
+  /* Răspunsurile din FAQ se tipăresc și dacă <details> e închis. */
+  .faq-item > *:not(summary) { display: block !important; }
   .section { padding: 14px 0 4px; }
   .section h2 { font-size: 1.25rem; break-after: avoid; }
   .section h3 { font-size: 1rem; break-after: avoid; }
@@ -2415,3 +2419,194 @@ body.is-search-open { overflow: hidden; }
     padding: 12px 0 0;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   Etapa 4 · conținut educațional
+   Lead-uri, „De ce contează pentru tine”, surse, panouri globale
+   (glosar, FAQ, mituri), fapte „Știai că...?”, disclaimer.
+   ═══════════════════════════════════════════════════════════ */
+
+.global-panel { padding-top: 8px; scroll-margin-top: 72px; }
+.global-panel[hidden] { display: none; }
+.global-panel:focus { outline: none; }
+.global-panel > h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+  letter-spacing: -.02em;
+}
+
+/* Link text simplu (glosar, FAQ). */
+.text-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--accent-ink);
+  font-size: .82rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.text-link:hover { color: var(--accent-strong); }
+
+/* ── Bloc „De ce contează pentru tine” ──────────────────── */
+.why-card {
+  margin: 22px 0 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--accent-line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+}
+.why-card h3 {
+  margin: 0 0 6px;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+.why-card p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--ink-soft); }
+
+/* ── Surse la finalul tabului ───────────────────────────── */
+.panel-sources {
+  margin: 18px 0 4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.panel-sources h3 {
+  margin: 0 0 8px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.panel-sources .info-list { font-size: .85rem; }
+.panel-sources .info-list a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Sidebar · secțiuni globale ─────────────────────────── */
+.side-global {
+  border-top: 1px solid var(--line);
+  margin-top: 6px;
+  padding-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.side-global-link {
+  display: flex;
+  align-items: center;
+  padding: 7px 10px 7px 12px;
+  border-left: 2px solid transparent;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--ink-soft);
+  font-size: .88rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color var(--speed) var(--ease),
+              color var(--speed) var(--ease),
+              border-color var(--speed) var(--ease);
+}
+.side-global-link:hover { background: var(--surface-2); color: var(--ink); }
+.side-global-link[aria-current="page"] {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+/* ── Glosar ─────────────────────────────────────────────── */
+.glossary-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.glossary-item {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.glossary-item h3 { margin: 0 0 4px; font-size: .95rem; color: var(--ink); }
+.glossary-item p { margin: 0; font-size: .85rem; line-height: 1.45; color: var(--muted); }
+
+/* ── FAQ ────────────────────────────────────────────────── */
+.faq-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.faq-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.faq-item summary {
+  padding: 12px 14px;
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.faq-item summary::-webkit-details-marker { color: var(--accent); }
+.faq-item > p {
+  margin: 0;
+  padding: 0 14px;
+  font-size: .88rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.faq-item .text-link { margin: 10px 14px 14px; }
+
+/* ── Mituri ─────────────────────────────────────────────── */
+.myth-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.myth-item {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--neg);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.myth-item h3 { margin: 0 0 6px; font-size: .95rem; color: var(--ink); }
+.myth-item p { margin: 0; font-size: .88rem; line-height: 1.5; color: var(--ink-soft); }
+.myth-source { margin-top: 8px !important; font-size: .8rem !important; color: var(--muted) !important; }
+.myth-source a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── Fapte „Știai că...?” ───────────────────────────────── */
+.facts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: 18px;
+}
+.fact-card {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.fact-card p { margin: 0; font-size: .87rem; line-height: 1.5; color: var(--ink-soft); }
+.fact-source {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Disclaimer ─────────────────────────────────────────── */
+.disclaimer-note {
+  margin: 0 0 18px;
+  font-size: .82rem;
+  color: var(--muted);
+}
+.disclaimer {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.disclaimer strong { color: var(--ink); }

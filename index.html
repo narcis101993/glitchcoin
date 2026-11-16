@@ -77,6 +77,11 @@
 <aside class="sidebar" id="sidebar" aria-label="Navigare principală">
     <nav class="side-nav">
       <a class="side-home" id="nav-acasa" href="#acasa" aria-current="page">Acasă</a>
+      <div class="side-global">
+        <a class="side-global-link" id="nav-glosar" href="#glosar" data-global="glosar">Glosar</a>
+        <a class="side-global-link" id="nav-faq" href="#faq" data-global="faq">Întrebări frecvente</a>
+        <a class="side-global-link" id="nav-mituri" href="#mituri" data-global="mituri">Mituri și adevăruri</a>
+      </div>
       <div class="side-group" data-cat="fundamente">
         <button class="side-cat" type="button" aria-expanded="true" aria-controls="cat-fundamente">
           <span class="side-cat-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span>
@@ -195,6 +200,7 @@
 
 <section id="panel-acasa" class="home-panel" role="region" aria-labelledby="home-title" tabindex="-1">
       <p class="lead">GlitchCoin este un set de calculatoare locale pentru a înțelege banii: inflație, buget, investiții, risc, impozite și decizii. Rulează în browser, fără backend și fără date personale.</p>
+      <p class="disclaimer-note">Aplicația e educațională: nu oferă sfaturi, recomandări sau consultanță financiară. Calculatoarele arată scenarii, nu rezultate garantate.</p>
 
       <div class="home-grid">
       <a class="home-card" href="#fundamente/inflatie" data-goto="inflatie" data-cat="fundamente">
@@ -272,10 +278,62 @@
           <button class="chip" type="button" data-goto="datorii" data-prefill="dt-suma:q-datorii-suma">Deschide în tabul complet</button>
         </div>
       </div>
-    </section>
+      <h2 class="home-h2">Știai că...?</h2>
+      <p class="lead">Douăsprezece fapte scurte, cu sursă, pentru a înțelege banii în context.</p>
+      <div class="facts-grid">
+        <div class="fact-card">
+          <p>În 1991 inflația anuală a fost de 170,2%, iar în 2000 de 45,7%; în 2015 și 2016 a existat deflație (−0,6%, −1,5%).</p>
+          <a class="fact-source" href="https://insse.ro/cms/ro/content/ipc%E2%80%93serie-de-date-anuala" target="_blank" rel="noopener">Sursă: INS — IPC, serie anuală</a>
+        </div>
+        <div class="fact-card">
+          <p>Din 1.000 lei din 2000, în 2025 ai avea nevoie de aproape 8.653 lei pentru aceeași putere de cumpărare.</p>
+          <a class="fact-source" href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">Sursă: calculat din seria INS</a>
+        </div>
+        <div class="fact-card">
+          <p>Regula 72 apare prima dată scrisă în 1494, la Luca Pacioli, în Summa de arithmetica — și nici atunci nu a fost demonstrată, ci doar enunțată.</p>
+          <a class="fact-source" href="https://en.wikipedia.org/wiki/Rule_of_72" target="_blank" rel="noopener">Sursă: Rule of 72</a>
+        </div>
+        <div class="fact-card">
+          <p>La 7% pe an, banii se dublează în ~10,3 ani — și regula 72 dă același rezultat (72 ÷ 7 ≈ 10,3).</p>
+          <a class="fact-source" href="#fundamente/regula72" data-goto-tab="regula72">Vezi în tabul „Regula 72”</a>
+        </div>
+        <div class="fact-card">
+          <p>Fondul de urgență recomandat acoperă 3–6 luni de cheltuieli esențiale, nu venituri.</p>
+          <a class="fact-source" href="https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/" target="_blank" rel="noopener">Sursă: CFPB</a>
+        </div>
+        <div class="fact-card">
+          <p>DAE-ul (dobânda anuală efectivă) include toate costurile creditului, nu doar dobânda de bază — de aceea e singura cifră comparabilă între oferte.</p>
+          <a class="fact-source" href="https://www.anpc.ro/anpcftp/legislatie/100609/anexa2_inf_standard_credit_consumatori.pdf" target="_blank" rel="noopener">Sursă: ANPC</a>
+        </div>
+        <div class="fact-card">
+          <p>Investirea integrală a depășit cost averaging în 61,6–73,7% din cazuri pe date Vanguard 1976–2022 — dar DCA reduce riscul psihologic de a abandona planul.</p>
+          <a class="fact-source" href="https://investor.vanguard.com/investor-resources-education/online-trading/dollar-cost-averaging-vs-lump-sum" target="_blank" rel="noopener">Sursă: Vanguard Research</a>
+        </div>
+        <div class="fact-card">
+          <p>În Pilonul III poți contribui cu până la 15% din venitul brut lunar.</p>
+          <a class="fact-source" href="https://asfromania.ro/app.php/ro/a/1686/ghiduri-pensii-private" target="_blank" rel="noopener">Sursă: ASF — ghiduri pensii private</a>
+        </div>
+        <div class="fact-card">
+          <p>Corelația redusă între active reduce riscul portofiliului fără a reduce neapărat randamentul așteptat.</p>
+          <a class="fact-source" href="https://www.nobelprize.org/prizes/economic-sciences/1990/press-release/" target="_blank" rel="noopener">Sursă: Nobel Prize 1990 — Markowitz</a>
+        </div>
+        <div class="fact-card">
+          <p>Din 2026, impozitul pe câștigul din valori mobiliare prin broker RO cu deținere ≥ 365 zile e de 3% (era 1% în 2025). Verifică sursa oficială înainte de decizie.</p>
+          <a class="fact-source" href="https://taxsummaries.pwc.com/romania/individual/significant-developments" target="_blank" rel="noopener">Sursă: PwC Tax Summaries</a>
+        </div>
+        <div class="fact-card">
+          <p>Ancorarea: primul preț văzut devine punct de referință, chiar dacă e complet arbitrar.</p>
+          <a class="fact-source" href="https://www.nobelprize.org/prizes/economic-sciences/2002/popular-information/" target="_blank" rel="noopener">Sursă: Nobel Prize 2002 — Kahneman &amp; Tversky</a>
+        </div>
+        <div class="fact-card">
+          <p>DAE-ul se bazează pe valoarea actualizată a tuturor fluxurilor (trageri, rambursări, costuri) pe un an.</p>
+          <a class="fact-source" href="https://www.anpc.ro/anpcftp/legislatie/100609/anexa2_inf_standard_credit_consumatori.pdf" target="_blank" rel="noopener">Sursă: ANPC</a>
+        </div>
+      </div>
+</section>
 
 <section id="panel-inflatie" class="tab-panel is-active" role="tabpanel" aria-labelledby="tab-inflatie" tabindex="-1">
-      <p class="lead">Tabul Inflație este gata: simulator, prețuri alimente, inflația 1991–2026 și deflatorul sumelor.</p>
+      <p class="lead">Banii își pierd valoarea în timp: același coș de cumpărături costă din ce în ce mai mult. Vezi prețul la 10 alimente de bază între 2020 și 2026, inflația anuală din 1991 până astăzi și cât îi va trebui peste câțiva ani pentru a cumpara aceleași lucruri.</p>
 
       <nav class="subnav" aria-label="Secțiuni din tabul Inflație">
         <div class="subnav-row">
@@ -481,14 +539,23 @@
           </ul>
         </div>
       </section>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://insse.ro/cms/ro/content/ipc%E2%80%93serie-de-date-anuala" target="_blank" rel="noopener">INS — IPC, serie anuală</a></li>
+          <li><a href="https://ec.europa.eu/eurostat/databrowser/product/view/prc_hicp_aind" target="_blank" rel="noopener">Eurostat — HICP România</a></li>
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — Raportul asupra inflației</a></li>
+          <li><a href="https://infocons.ro/" target="_blank" rel="noopener">InfoCons — prețuri alimente</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Dacă inflația e 5% și dobânda la depozit e 3%, îți scade puterea de cumpărare cu ~2% pe an. Nu e o teorie: se vede în prețurile de la magazin.</p>
+      </div>
+</section>
 
 <section id="panel-dobanda" class="tab-panel" role="tabpanel" aria-labelledby="tab-dobanda" tabindex="-1" hidden>
-      <p class="lead">
-        Dobânda este prețul plătit pentru banii împrumutați. Calculează dobânda brută și netă
-        pentru o sumă, o rată anuală și un număr de zile — la fel ca în tabul „Calculul dobânzii"
-        din <code>GlitchCoin.xlsx</code>.
-      </p>
+      <p class="lead">Dobânda este prețul banilor împrumutați: ce primești când depozitezi, și ce plătești când iei credit. Introdu sumă, rată anuală și numărul de zile — calculează dobânda brută și netă după impozit.</p>
 
       <div class="card inputs">
         <div class="field">
@@ -542,14 +609,21 @@
           </tbody>
         </table>
       </div>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — statistici și politica monetară</a></li>
+          <li><a href="https://www.anpc.ro/anpcftp/legislatie/100609/anexa2_inf_standard_credit_consumatori.pdf" target="_blank" rel="noopener">ANPC — informații standard pentru creditul de consumatori (DAE)</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Fără această formulă nu poți compara depozite, credite sau obligațiuni. Diferența dintre brut și net este exact ce rămâne în buzunar.</p>
+      </div>
+</section>
 
 <section id="panel-compusa" class="tab-panel" role="tabpanel" aria-labelledby="tab-compusa" tabindex="-1" hidden>
-      <p class="lead">
-        Dobânda compusă: în fiecare perioadă dobânda se calculează la suma inițială <strong>plus dobânzile
-        acumulate până atunci</strong>. Vezi evoluția pe 20 de ani, cu și fără contribuție lunară —
-        la fel ca în tabul „Dobânda compusă" din <code>GlitchCoin.xlsx</code>.
-      </p>
+      <p class="lead">La compunere, dobânda de fiecare perioadă se adaugă la sumă și ea însăși produce dobândă. Introdu sumă inițială, contribuție lunară și rată anuală — vezi evoluția pe 20 de ani, cu și fără aport lunar.</p>
 
       <div class="card inputs">
         <div class="field">
@@ -616,14 +690,20 @@
           totale față de <strong>suma totală</strong> din anul anterior (ea începe din anul 2).
         </p>
       </section>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — politica monetară și dobânzi</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Diferența dintre randament și compunere devine vizibilă abia pe orizont lung. Timpul e ingredientul decisiv: un an în plus poate valora mai mult decât o rată în plus.</p>
+      </div>
+</section>
 
 <section id="panel-di" class="tab-panel" role="tabpanel" aria-labelledby="tab-di" tabindex="-1" hidden>
-      <p class="lead">
-        Randamentul nominal spune cu câți bani mai mulți termini; randamentul real spune ce poți
-        cumpăra mai mult. Completează tabul „Randament": află ce rămâne după inflație,
-        cu exemple reale din 2000–2025.
-      </p>
+      <p class="lead">Randamentul nominal spune cu câți bani mai mulți termini; randamentul real spune ce poți cumpăra mai mult. Introdu randamentul și inflația — află ce rămâne după inflație, cu exemple reale din 2000–2025 și comparația cash vs investiție pe 26 de ani.</p>
 
       <div class="card inputs">
         <div class="field">
@@ -754,13 +834,22 @@
         2000–2025. Formulele sunt identice cu cele din tabul „Randament": randamentul real e exact
         (Fisher): (1 + nominal) ÷ (1 + inflație) − 1.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS — IPC</a></li>
+          <li><a href="https://data.ecb.europa.eu/data/datasets/HICP/HICP.M.RO.N.000000.4D0.ANR" target="_blank" rel="noopener">ECB Data Portal — HICP România</a></li>
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Inflația e inamicul tăcut al economiilor — un randament nominal bun poate fi un randament real negativ. Aici vezi clar câți bani poți cumpăra mai mult.</p>
+      </div>
+</section>
 
 <section id="panel-regula72" class="tab-panel" role="tabpanel" aria-labelledby="tab-regula72" tabindex="-1" hidden>
-      <p class="lead">
-        Regula 72 este o scurtătură mentală: împarte 72 la rata de randament și obții numărul de ani
-        necesari pentru a-ți dubla banii. E complementară tabului „Dobânda compusă".
-      </p>
+      <p class="lead">O scurtătură mentală cu 500 de ani: împarte 72 la rata anuală de randament și obții numărul aproximativ de ani în care îți dublezi banii. Setează rata și suma — vezi dublarea exactă și estimarea prin regulă, pentru rate de la 1% la 15%.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -852,13 +941,21 @@
           La rate negative banii nu se dublează — se micșorează.
         </p>
       </section>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://en.wikipedia.org/wiki/Rule_of_72" target="_blank" rel="noopener">Luca Pacioli, Summa de arithmetica (1494) — „Rule of 72”</a></li>
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — dobânzi</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Îți dă rapid ce rată ai nevoie pentru un obiectiv, fără calcule complicate. 72 ÷ 7 ≈ 10,3 ani — același rezultat cu dublarea exactă.</p>
+      </div>
+</section>
 
 <section id="panel-timp" class="tab-panel" role="tabpanel" aria-labelledby="tab-timp" tabindex="-1" hidden>
-      <p class="lead">
-        Vezi cât timp trebuie să muncești pentru o dorință, pornind de la venitul tău lunar net.
-        Calculele sunt identice cu tabul „Timp vs dorințe" din <code>GlitchCoin.xlsx</code>.
-      </p>
+      <p class="lead">Cât timp trebuie să muncești pentru ceea ce îți dorești? Introdu venitul lunar net și prețul dorinței — primești minute, ore și zile din viața ta (24 de ore pe zi) sau ore și zile lucrate (8 ore pe zi).</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -976,13 +1073,21 @@
       <div class="presets">
         <button type="button" class="chip" id="timp-go-buget">Vezi venitul în „Buget 50/30/20”</button>
       </div>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://insse.ro/cms/en/content/earnings-1938-annual-series-0" target="_blank" rel="noopener">INS — câștiguri salariale, serie anuală</a></li>
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — studii și date economice</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Vei vedea câte zile lucrate costă o dorință — adesea mult mai multe decât prețul în lei lasă să se înțeleagă. Comparația ajute la decizie, nu la frustrare.</p>
+      </div>
+</section>
 
 <section id="panel-nuam" class="tab-panel" role="tabpanel" aria-labelledby="tab-nuam" tabindex="-1" hidden>
-      <p class="lead">
-        Tabul ascuns din Excel: vezi ce se întâmplă cu banii la finalul lunii dacă îi adaugi în contul de
-        economii fix în ziua în care primești venitul și plătești facturile la scadență.
-      </p>
+      <p class="lead">Un scenariu avansat de flux de numerar: primești venitul într-o zi din lună și plătești facturile la scadență. Vezi soldul zilnic, cum acționează inflația și dobânda și dacă la final rămâi cu un rest sau cu un deficit.</p>
 
       <div class="card inputs">
         <div class="field">
@@ -1150,14 +1255,21 @@
         dobândă 3,5% (intervalul real 3–4%). Rezultatele: 2.570,00 lei fără CE, 2.577,41 lei cu CE,
         profit 7,41 lei (0,1482%) — cu CE rămâi cu mai mulți bani, la fel ca în desfășuratorul zilnic.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.anpc.ro/anpcftp/legislatie/100609/anexa2_inf_standard_credit_consumatori.pdf" target="_blank" rel="noopener">ANPC — drepturi și obligații la credit</a></li>
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — dobânzi și statistici</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Arată că contul nu e doar suma de pe hârtie — momentul în care intră și iese banul contează. Poți vedea deficitul înainte să se întâmple.</p>
+      </div>
+</section>
 
 <section id="panel-buget" class="tab-panel" role="tabpanel" aria-labelledby="tab-buget" tabindex="-1" hidden>
-      <p class="lead">
-        Regula 50/30/20 împarte venitul lunar net în trei categorii: <strong>50% nevoi</strong>,
-        <strong>30% dorințe</strong>, <strong>20% economii</strong>. Introdu ce cheltuiești efectiv
-        și vezi abaterile față de țintă, cu alarmele bugetului.
-      </p>
+      <p class="lead">Regula 50/30/20 împarte venitul lunar net în trei categorii: 50% nevoi, 30% dorințe, 20% economii. Introdu ce cheltuiești efectual — vezi abaterile față de țintă, alarmele bugetului și câte zile și ore lucrate costă fiecare dorință.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -1291,14 +1403,21 @@
         Surse: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>,
         <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.prudential.com/financial-education/budgeting-50-30-20-rule" target="_blank" rel="noopener">Elizabeth Warren &amp; Amelia Warren Tyagi, „All Your Worth” (2005) — explicat de Prudential</a></li>
+          <li><a href="https://insse.ro/cms/en/content/earnings-1938-annual-series-0" target="_blank" rel="noopener">INS — câștiguri salariale</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Îți dă o imagine rapidă asupra echilibrului din viața ta financiară, nu doar un buget pe hârtie. Câte zile lucrate costă fiecare dorință — decizia devine concretă.</p>
+      </div>
+</section>
 
 <section id="panel-fond" class="tab-panel" role="tabpanel" aria-labelledby="tab-fond" tabindex="-1" hidden>
-      <p class="lead">
-        Fondul de urgență acoperă 3–6 luni de cheltuieli esențiale dacă venitul se oprește:
-        primul pas obligatoriu în orice plan financiar. Află cât să acumulezi, cât îți aduce
-        dobânda și cât timp îți ia până la țintă.
-      </p>
+      <p class="lead">Rezerva de 3–6 luni de cheltuieli esențiale te protejează dacă venitul se oprește. Introdu cheltuielile lunare esențiale și perioada acoperită — calculează ținta, cât îți aduce dobânda și cât timp îți ia până la ea, cu un tabel comparativ unde o poți ține.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -1412,13 +1531,21 @@
         pe dobândi e 10%. Pe fondul de urgență dobânda e un bonus, nu scopul principal — scopul e
         lichiditatea. Surse: <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/" target="_blank" rel="noopener">CFPB — ghid pentru fondul de urgență</a></li>
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — dobânzi</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Fără rezervă, o reparație de mașină sau un diagnostic neprevăzut devine credit. Cu rezervă, rămâne o cheltuială neplăcută, nu o datorie.</p>
+      </div>
+</section>
 
 <section id="panel-sanatate" class="tab-panel" role="tabpanel" aria-labelledby="tab-sanatate" tabindex="-1" hidden>
-      <p class="lead">
-        Patru indicatori care îți dau o imagine de ansamblu: rată de economii, datorii raportate la
-        venit, rezerva de 3–6 luni și net worth. Fiecare are un prag și o alarmă.
-      </p>
+      <p class="lead">Patru indicatori care îți dau o imagine de ansamblu: rată de economii, datorii raportate la venit, rezerva de 3–6 luni și net worth (averea ta). Fiecare are un prag și o alarmă, cu legături rapide către fondul de urgență și buget.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -1565,14 +1692,22 @@
         financiară personalizată. Surse: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>,
         <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bnr.ro/uploads/2026-07-06raportasuprastabilitatiifinanciare-iunie2026_documentpdf_545_1783339608.pdf" target="_blank" rel="noopener">BNR — Raport asupra stabilității financiare, iunie 2026</a></li>
+          <li><a href="https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/" target="_blank" rel="noopener">CFPB — emergency fund</a></li>
+          <li><a href="https://insse.ro/cms/en/content/earnings-1938-annual-series-0" target="_blank" rel="noopener">INS — venituri</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>E tabloul de bord personal — îți arată dacă mergi bine sau dacă ai un punct slab, fără să te îndatorări pentru asta.</p>
+      </div>
+</section>
 
 <section id="panel-randament" class="tab-panel" role="tabpanel" aria-labelledby="tab-randament" tabindex="-1" hidden>
-      <p class="lead">
-        Randamentul este procentul de profit (sau pierdere) pe care-l obțin banii investiți.
-        Calculează randamentul brut, net (după impozit și comisioane) și real (după inflație) —
-        la fel ca în tabul „Randament" din <code>GlitchCoin.xlsx</code>.
-      </p>
+      <p class="lead">Randamentul spune cu cât s-a multiplicat banul investit. Calculează randamentul brut, net (după impozit și comisioane) și real (în raport cu inflația) — și alege tipul de venit pentru o impozitare corectă.</p>
 
       <div class="card inputs">
         <div class="field">
@@ -1664,14 +1799,22 @@
       <div class="presets">
         <button type="button" class="chip" id="rand-go-impozitare">Deschide „Impozitare pe investiții”</button>
       </div>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bvb.ro/" target="_blank" rel="noopener">BVB — Bursa de Valori București</a></li>
+          <li><a href="https://taxsummaries.pwc.com/romania/individual/significant-developments" target="_blank" rel="noopener">PwC Tax Summaries — România</a></li>
+          <li><a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro — brokeri autorizați</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Randamentul real, nu cel nominal, decide dacă ai câștigat cu adevărat. 7% nominal cu 5% inflație înseamnă ~1,9% real.</p>
+      </div>
+</section>
 
 <section id="panel-profit" class="tab-panel" role="tabpanel" aria-labelledby="tab-profit" tabindex="-1" hidden>
-      <p class="lead">
-        Profitul este suma de bani câștigată (sau pierdută) dintr-o investiție. Calculează valoarea finală,
-        profitul brut și net, randamentul brut, net și real (după inflație) —
-        la fel ca în tabul „Profit" din <code>GlitchCoin.xlsx</code>.
-      </p>
+      <p class="lead">Profitul este diferența dintre prețul de vânzare și prețul de achiziție. Introdu suma investită, prețul inițial/mediu și prețul de vânzare — obții valoarea finală, profitul brut și net și randamentul real.</p>
 
       <div class="card inputs">
         <div class="field">
@@ -1788,14 +1931,22 @@
       <div class="presets">
         <button type="button" class="chip" id="prof-go-impozitare">Deschide „Impozitare pe investiții”</button>
       </div>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bvb.ro/FinancialInstruments/Markets/Shares" target="_blank" rel="noopener">BVB — acțiuni</a></li>
+          <li><a href="https://www.ey.com/en_gl/technical/tax-alerts/romanian-tax-changes-introduced-by-new-fiscal-and-budgetary-measures" target="_blank" rel="noopener">EY — romanian tax changes</a></li>
+          <li><a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS — inflație</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Arată ce rămâne efectiv în buzunar după o tranzacție, nu doar „pe hârtie”. Profitul net ține cont de impozit și comisioane.</p>
+      </div>
+</section>
 
 <section id="panel-cost" class="tab-panel" role="tabpanel" aria-labelledby="tab-cost" tabindex="-1" hidden>
-      <p class="lead">
-        Costul mediu de achiziție este prețul mediu ponderat plătit pentru un activ cumpărat în mai multe
-        tranșe. Adaugă sau șterge rânduri și vezi imediat rezultatul — la fel ca în tabul
-        „Costul mediu" din <code>GlitchCoin.xlsx</code>.
-      </p>
+      <p class="lead">Când cumperi în mai multe tranșe, prețul contabil nu e ultimul preț, ci media ponderată a tuturor achizițiilor. Adaugă rânduri cu preț, cantitate și comision — vezi costul mediu și valoarea totală plătită.</p>
 
       <div class="card table-wrap">
         <table class="cost-table" id="cost-table">
@@ -1852,13 +2003,22 @@
         Formula: (Σ preț × cantitate + Σ preț × cantitate × comision) / Σ cantitate —
         comisionul fiecărei tranșe se adaugă la valoarea ei, ca în Excel.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bvb.ro/" target="_blank" rel="noopener">BVB — tranzacționare și statistici</a></li>
+          <li><a href="https://www.wall-street.ro/articol/Money/201325/cat-te-costa-sa-cumperi-actiuni-pe-bursa-si-care-sunt-sumele-minime-de-care-ai-nevoie.html" target="_blank" rel="noopener">wall-street.ro — costul tranzacțiilor</a></li>
+          <li><a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro — brokeri autorizați</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Determină câștigul/pierderea reală la vânzare și arată cât te costă comisionul. Un „preț mediu” greșit te face să crezi că ești în câștig când nu e așa.</p>
+      </div>
+</section>
 
 <section id="panel-suma" class="tab-panel" role="tabpanel" aria-labelledby="tab-suma" tabindex="-1" hidden>
-      <p class="lead">
-        Stabilește o sumă țintă și află cât trebuie să economisești în fiecare lună pentru a o atinge,
-        la fel ca în tabul „Sumă dorită" din <code>GlitchCoin.xlsx</code>.
-      </p>
+      <p class="lead">Stabilește o sumă țintă și află cât trebuie să economisești în fiecare lună pentru a o atinge. Introdu randamentul anual, numărul de ani, suma inițială și ținta — primești rata lunară necesară și cât din ea e economisit vs. dobândă.</p>
 
       <div class="card inputs">
         <div class="field">
@@ -1924,13 +2084,21 @@
         Formula: <code>-PMT(randament/12, ani×12, sumă inițială, sumă dorită)</code> —
         identică cu <code>D9</code> din tabul „Sumă dorită" din Excel.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — politica monetară și dobânzi</a></li>
+          <li><a href="https://asfromania.ro/app.php/ro/a/1686/ghiduri-pensii-private" target="_blank" rel="noopener">ASF — ghiduri pensii private</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Convertește un obiectiv numeric într-o obligație lunară reală; e prima formă de planificare pe termen lung. Rata lunară îți arată dacă ținta e realizabilă.</p>
+      </div>
+</section>
 
 <section id="panel-oportunitate" class="tab-panel" role="tabpanel" aria-labelledby="tab-oportunitate" tabindex="-1" hidden>
-      <p class="lead">
-        Costul oportunității arată ce primești și ce pierzi când alegi o opțiune în locul alteia:
-        cash în cont curent vs bani investiți. Completează tabul „Nu am bani" cu contrapartida de investiție.
-      </p>
+      <p class="lead">Fiecare alegere are un preț ascuns: ceea ce renunți să faci cu acea sumă. Compară bani în cont curent cu bani investiți — randament net compus, putere de cumpărare și costul de oportunitate pe care îl plătește cash-ul.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -2030,14 +2198,21 @@
         Surse: <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>,
         <a href="https://taxsummaries.pwc.com/romania/individual/significant-developments" target="_blank" rel="noopener">PwC</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.econlib.org/library/Topics/College/opportunitycost.html" target="_blank" rel="noopener">Econlib — opportunity cost</a></li>
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — dobânzi</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Îți arată că „a ține cash” nu e gratis — inflația și randamentul renunțat au un cost, uneori mai mare decât riscul investiției.</p>
+      </div>
+</section>
 
 <section id="panel-dca" class="tab-panel" role="tabpanel" aria-labelledby="tab-dca" tabindex="-1" hidden>
-      <p class="lead">
-        Scalarea în timp (DCA, <em>dollar-cost averaging</em>) înseamnă să investești o sumă fixă în
-        fiecare lună, indiferent de preț. Compară cu investirea integrală din start: vezi prețul mediu
-        pe care îl plătești, volatilitatea și cât câștigă fiecare strategie în patru scenarii de preț.
-      </p>
+      <p class="lead">Scalarea în timp (DCA, dollar-cost averaging) înseamnă să investești o sumă fixă în fiecare lună, indiferent de preț. Compară cu investirea integrală din start: vezi prețul mediu pe care îl plătești, volatilitatea și câștigul fiecărei strategii în patru scenarii de preț.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -2151,14 +2326,21 @@
         <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>,
         <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://investor.vanguard.com/investor-resources-education/online-trading/dollar-cost-averaging-vs-lump-sum" target="_blank" rel="noopener">Vanguard Research — DCA vs. investire integrală</a></li>
+          <li><a href="https://www.bvb.ro/" target="_blank" rel="noopener">BVB — date de tranzacționare</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>E o decizie mai mult psihologică decât matematică — DCA reduce teama de a intra la vârf, dar poate costa randament pe termen lung. Vezi câștigul fiecărei strategii în patru scenarii.</p>
+      </div>
+</section>
 
 <section id="panel-curs" class="tab-panel" role="tabpanel" aria-labelledby="tab-curs" tabindex="-1" hidden>
-      <p class="lead">
-        Un activ în valută străină are două surse de randament: performanța activului și evoluția
-        cursului. Acesta arată cum devine randamentul când îl schimbi în RON, ce rămâne după
-        inflație — și cum o depreciere a leului atinge prețurile importurilor.
-      </p>
+      <p class="lead">Un activ în valută străină are două surse de randament: performanța activului și evoluția cursului. Acesta arată cum devine randamentul când îl schimbi în RON, ce rămâne după inflație — și cum o depreciere a leului atinge prețurile importurilor.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -2329,15 +2511,21 @@
         <a href="https://www.federalreserve.gov/releases/h10/default.htm" target="_blank" rel="noopener">Federal Reserve — H.10</a>,
         <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS — inflație</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bnr.ro/report?cid=668&amp;type=1" target="_blank" rel="noopener">BNR — cursul de schimb, serii zilnice</a></li>
+          <li><a href="https://data.ecb.europa.eu/data/datasets/HICP/HICP.M.RO.N.000000.4D0.ANR" target="_blank" rel="noopener">ECB Data Portal — date HICP România</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Dacă ai bani în valută sau cheltuiești pe importuri, cursul e al treilea factor al randamentului tău real. O depreciere a leului se vede imediat în prețurile de la magazin.</p>
+      </div>
+</section>
 
 <section id="panel-diversificare" class="tab-panel" role="tabpanel" aria-labelledby="tab-diversificare" tabindex="-1" hidden>
-      <p class="lead">
-        Diversificarea înseamnă să nu pui toți banii într-o singură acțiune. Combinând active cu
-        randamente și volatilități diferite, portofoliul poate avea aceeași rentabilitate cu o
-        volatilitate mai mică. Introdu activele, ponderile și corelația dintre ele — și vezi
-        portofoliul comparat cu un singur activ.
-      </p>
+      <p class="lead">Nu pune toți banii într-o singură acțiune. Introdu active, ponderi și corelația dintre ele — vezi randamentul, volatilitatea, randamentul ajustat la risc și o simulare Monte Carlo pe 5 ani, cu scenarii de la −3σ la +3σ.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -2502,17 +2690,24 @@
         volatilității, nu o predicție. Simularea e deterministă (seed fix) și folosește randamente
         normale — realitatea are cozi mai groase. Nu e recomandare financiară personalizată.
         Surse: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>,
-        <a href="https://asf.ro/" target="_blank" rel="noopener">ASF — educație investiții</a>,
+        <a href="https://www.asfromania.ro/" target="_blank" rel="noopener">ASF — educație investiții</a>,
         <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.nobelprize.org/prizes/economic-sciences/1990/press-release/" target="_blank" rel="noopener">Nobel Prize 1990 — Harry Markowitz, teoria portofoliului</a></li>
+          <li><a href="https://m.bvb.ro/FinancialInstruments/Indices/IndicesProfiles.aspx?i=BET-XT" target="_blank" rel="noopener">BVB — componența BET-XT</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Riscul unei investiții nu se măsoară doar prin volatilitatea ei, ci prin contribuția ei la riscul întregului portofoliu. Corelația mică reduce volatilitatea fără să taie neapărat randamentul.</p>
+      </div>
+</section>
 
 <section id="panel-asigurari" class="tab-panel" role="tabpanel" aria-labelledby="tab-asigurari" tabindex="-1" hidden>
-      <p class="lead">
-        Asigurarea e transferul unui risc către o altă parte, contra unei prime. Auto-asigurarea
-        înseamnă că îți rezervi banii pentru o pierdere posibilă. Compară cele două și vezi când
-        are sens să plătești prima, iar când să reții riscul.
-      </p>
+      <p class="lead">Asigurarea e transferul unui risc către altcineva, contra unei prime; auto-asigurarea înseamnă că îți rezervi banii pentru o pierdere posibilă. Compară cele două pentru sănătate, casă și mașină — vezi costul total cu dobândă și probabilitatea de cel puțin un eveniment.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -2639,18 +2834,25 @@
           profil, franshiză, istoric și asigurator. Probabilitățile sunt aproximări pe scara anuală.
           Principiul e universal: <strong>asigură riscurile care te pot ruina, auto-asigură pe cele
           pe care ți le poți permite</strong> din rezervă. Surse:
-          <a href="https://asf.ro/" target="_blank" rel="noopener">ASF</a>,
+          <a href="https://www.asfromania.ro/" target="_blank" rel="noopener">ASF</a>,
           <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>.
         </p>
       </section>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.asfromania.ro/ro/a/159/autorizare-societ%C4%83%C8%9Bi-de-asigurare-%C8%99i/-sau-reasigurare" target="_blank" rel="noopener">ASF — reglementarea asigurărilor (Legea nr. 237/2015)</a></li>
+          <li><a href="https://www.anpc.ro/" target="_blank" rel="noopener">ANPC — drepturi ale consumatorilor</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Îți arată când are sens să plătești prima și când să reții riscul — decizia depinde de probabilitate, nu de emoție.</p>
+      </div>
+</section>
 
 <section id="panel-stres" class="tab-panel" role="tabpanel" aria-labelledby="tab-stres" tabindex="-1" hidden>
-      <p class="lead">
-        Un calcul optimist spune cât poți câștiga; un stress test spune cât poți pierde. Introdu
-        venitul, cheltuielile, rezerva și activele, apoi aplică scenarii dure — inflație 10%,
-        scădere a venitului, randament negativ — și vezi unde se rupe planul.
-      </p>
+      <p class="lead">Un calcul optimist spune cât poți câștiga; un stress test spune cât poți pierde. Introdu venitul, cheltuielile, rezerva și activele, apoi aplică scenarii dure — inflație 10%, scădere a venitului, randament negativ — și vezi unde se rupe planul.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -2781,14 +2983,21 @@
         Surse: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>,
         <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.bnr.ro/uploads/2026-07-06raportasuprastabilitatiifinanciare-iunie2026_documentpdf_545_1783339608.pdf" target="_blank" rel="noopener">BNR — Raport asupra stabilității financiare, iunie 2026</a></li>
+          <li><a href="https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/" target="_blank" rel="noopener">CFPB — fond de urgență</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Îți pregătește bugetul și portofoliul pentru scenarii care vor veni, dar nu știi când. Un plan care se rupe doar în scenariu rău e un plan incomplet.</p>
+      </div>
+</section>
 
 <section id="panel-datorii" class="tab-panel" role="tabpanel" aria-labelledby="tab-datorii" tabindex="-1" hidden>
-      <p class="lead">
-        O datorie nu e automat „rea": contează dobânda față de randamentul pe care ți-l poți face
-        altfel. Introdu creditul și dobânda la economii — vezi costul total al creditului, dobânda pe
-        care o economisești anticipând și cât ai câștiga punând aceeași sumă la economii.
-      </p>
+      <p class="lead">O datorie nu e automat „rea”: contează dobânda față de randamentul pe care ți-l poți face altfel. Introdu creditul și dobânda la economii — vezi costul total al creditului, dobânda pe care o economisești anticipând și cât ai câștiga punând aceeași sumă la economii.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -2954,14 +3163,21 @@
         <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS — inflație</a>,
         <a href="https://www.investor.gov/" target="_blank" rel="noopener">Investor.gov — educație pentru investitori</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.anpc.ro/anpcftp/legislatie/100609/anexa2_inf_standard_credit_consumatori.pdf" target="_blank" rel="noopener">ANPC — informații standard pentru creditul de consumatori (DAE)</a></li>
+          <li><a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR — dobânzi și statistici</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Există un prag clar de indiferență — sub el, anticiparea are sens; deasupra, poate fi mai bine să plătești mai încet. Decizia se ia cu cifrele, nu cu emoția.</p>
+      </div>
+</section>
 
 <section id="panel-pensie" class="tab-panel" role="tabpanel" aria-labelledby="tab-pensie" tabindex="-1" hidden>
-      <p class="lead">
-        Pilonul III e pensie facultativă, pe un orizont de 20–30 de ani: contribuții lunare, randament
-        compus, comisioane de administrare și impozit doar pe câștig la retragere. Introdu contribuția
-        și randamentul — vezi cât se acumulează, cât costă timpul și cât mănâncă comisioanele ascunse.
-      </p>
+      <p class="lead">Pilonul III e pensie facultativă, pe un orizont de 20–30 de ani: contribuții lunare, randament compus, comisioane de administrare și impozit doar pe câștig la retragere. Introdu contribuția și randamentul — vezi cât se acumulează, cât costă timpul și cât mănâncă comisioanele.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -3101,14 +3317,22 @@
         <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>,
         <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://asfromania.ro/en/a/1380/pilon-iii" target="_blank" rel="noopener">ASF — Pilonul III (Legea nr. 204/2006)</a></li>
+          <li><a href="https://asfromania.ro/app.php/ro/a/1686/ghiduri-pensii-private" target="_blank" rel="noopener">ASF — ghiduri pensii private</a></li>
+          <li><a href="https://asfromania.ro/files/pilon_III.pdf" target="_blank" rel="noopener">ASF — document Pilon III</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Un leuc în plus pe lună, la 7% pe 25 de ani, aduce zeci de mii de lei în plus la pensionare. Diferența de 1–2% în comisioane sau randament valorează ani de muncă.</p>
+      </div>
+</section>
 
 <section id="panel-impozitare" class="tab-panel" role="tabpanel" aria-labelledby="tab-impozitare" tabindex="-1" hidden>
-      <p class="lead">
-        Câți bani îți ia statul din fiecare tip de venit din investiții — și cum se aplică. Tabelul e
-        factual (România, 2025 → 2026), nu o recomandare. Alege venitul, anul și introducte câștigul
-        pentru a vedea impozitul și ce rămâne net.
-      </p>
+      <p class="lead">Câți bani îți ia statul din fiecare tip de venit din investiții — și cum se aplică. Tabelul e factual (România, 2025 → 2026), nu o recomandare: alege venitul, anul și introdu câștigul pentru a vedea impozitul și ce rămâne net.</p>
 
       <div class="card inputs align-top">
         <div class="field">
@@ -3206,14 +3430,22 @@
         <a href="https://asfromania.ro/files/pilon_III.pdf" target="_blank" rel="noopener">ASF — Pilonul III</a>,
         <a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro — comisioane brokeri</a>.
       </p>
-    </section>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="http://static.anaf.ro/static/10/Anaf/legislatie/L_227_2015.htm" target="_blank" rel="noopener">ANAF — Codul fiscal, Legea nr. 227/2015</a></li>
+          <li><a href="https://taxsummaries.pwc.com/romania/individual/significant-developments" target="_blank" rel="noopener">PwC Tax Summaries — România</a></li>
+          <li><a href="https://www.ey.com/en_gl/technical/tax-alerts/romanian-tax-changes-introduced-by-new-fiscal-and-budgetary-measures" target="_blank" rel="noopener">EY — romanian tax changes</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Impozitul reduce randamentul real; aici vezi exact cât plătești înainte să iei decizia. Cunoașterea bazei de impozitare te ajută să nu plătești mai mult decât trebuie.</p>
+      </div>
+</section>
 
 <section id="panel-biase" class="tab-panel" role="tabpanel" aria-labelledby="tab-biase" tabindex="-1" hidden>
-      <p class="lead">
-        Calculele „grele" de până acum dau greș adesea nu din cauza cifrelor, ci din cauza
-        reflexelor. Aceste cinci tendințe explică de ce deciziile financiare se îndepărtează de
-        rațional — și ce poți face ca să le reduci.
-      </p>
+      <p class="lead">Calculele „grele” dau greș adesea nu din cauza cifrelor, ci din cauza reflexelor. Aceste cinci tendințe explică de ce deciziile financiare se îndepărtează de rațional — și ce poți face ca să le reduci.</p>
 
       <div class="bias-grid">
         <article class="bias-card">
@@ -3320,9 +3552,341 @@
         <a href="https://en.wikipedia.org/wiki/Framing_effect_(psychology)" target="_blank" rel="noopener">Framing effect</a>,
         <a href="https://www.investor.gov/" target="_blank" rel="noopener">Investor.gov — educație pentru investitori</a>.
       </p>
+          <div class="panel-sources">
+        <h3>Surse</h3>
+        <ul class="info-list">
+          <li><a href="https://www.nobelprize.org/prizes/economic-sciences/2002/popular-information/" target="_blank" rel="noopener">Nobel Prize 2002 — Kahneman &amp; Tversky, teoria perspectivii</a></li>
+          <li><a href="https://www.nobelprize.org/prizes/economic-sciences/1990/press-release/" target="_blank" rel="noopener">Nobel Prize 1990 — teoria portofoliului</a></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <h3>De ce contează pentru tine</h3>
+        <p>Recunoașterea bias-ului e primul pas pentru decizii mai bune; testul rapid îți arată unde ești expus. Nu le poți elimina, dar le poți numi și întârzia decizia.</p>
+      </div>
+</section>
+
+<section id="panel-glosar" class="global-panel" role="region" aria-labelledby="glosar-title" tabindex="-1" hidden>
+      <h2 id="glosar-title">Glosar</h2>
+      <p class="lead">Termenii folosiți în aplicație, explicați pe scurt, cu tabul unde îi vezi aplicați.</p>
+      <div class="glossary-list">
+      <div class="glossary-item" data-search data-search-id="g-dobanda" data-search-cat="Glosar" data-search-target="dobanda">
+        <h3>Dobândă</h3>
+        <p>Plata pentru folosirea banilor împrumutați.</p>
+        <a class="text-link" href="#fundamente/dobanda" data-goto-tab="dobanda">Vezi în tabul „Calculul dobânzii”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-dobanda-compusa" data-search-cat="Glosar" data-search-target="compusa">
+        <h3>Dobândă compusă</h3>
+        <p>Dobânda calculată și pe dobânda anterioară.</p>
+        <a class="text-link" href="#fundamente/compusa" data-goto-tab="compusa">Vezi în tabul „Dobânda compusă”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-deflator" data-search-cat="Glosar" data-search-target="inflatie">
+        <h3>Deflator</h3>
+        <p>Factor care aduce o sumă veche la prețurile de astăzi.</p>
+        <a class="text-link" href="#fundamente/inflatie" data-goto-tab="inflatie">Vezi în tabul „Inflație”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-inflatie" data-search-cat="Glosar" data-search-target="inflatie">
+        <h3>Inflație</h3>
+        <p>Creșterea generală a prețurilor, în % pe an.</p>
+        <a class="text-link" href="#fundamente/inflatie" data-goto-tab="inflatie">Vezi în tabul „Inflație”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-randament-nominal" data-search-cat="Glosar" data-search-target="di">
+        <h3>Randament nominal</h3>
+        <p>Procentul de creștere a banilor, fără inflație.</p>
+        <a class="text-link" href="#fundamente/di" data-goto-tab="di">Vezi în tabul „Dobânda vs inflație”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-randament-real" data-search-cat="Glosar" data-search-target="di">
+        <h3>Randament real</h3>
+        <p>Randamentul după inflație; ce poți cumpăra efectiv.</p>
+        <a class="text-link" href="#fundamente/di" data-goto-tab="di">Vezi în tabul „Dobânda vs inflație”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-randament-ajustat-la-risc" data-search-cat="Glosar" data-search-target="diversificare">
+        <h3>Randament ajustat la risc</h3>
+        <p>Randament raportat la volatilitate.</p>
+        <a class="text-link" href="#risc/diversificare" data-goto-tab="diversificare">Vezi în tabul „Diversificare și riscul”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-volatilitate" data-search-cat="Glosar" data-search-target="diversificare">
+        <h3>Volatilitate</h3>
+        <p>Cât de mult și de repede variază prețul/randamentul.</p>
+        <a class="text-link" href="#risc/diversificare" data-goto-tab="diversificare">Vezi în tabul „Diversificare și riscul”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-corelatie" data-search-cat="Glosar" data-search-target="diversificare">
+        <h3>Corelație</h3>
+        <p>În ce măsură două active se mișcă împreună (0 = independent, 1 = identic).</p>
+        <a class="text-link" href="#risc/diversificare" data-goto-tab="diversificare">Vezi în tabul „Diversificare și riscul”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-simulare-monte-carlo" data-search-cat="Glosar" data-search-target="diversificare">
+        <h3>Simulare Monte Carlo</h3>
+        <p>Repetarea aceleiași situații cu valori aleatoare, de mii de ori.</p>
+        <a class="text-link" href="#risc/diversificare" data-goto-tab="diversificare">Vezi în tabul „Diversificare și riscul”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-drawdown" data-search-cat="Glosar" data-search-target="diversificare">
+        <h3>Drawdown</h3>
+        <p>Scăderea maximă de la un vârf la un punct jos.</p>
+        <a class="text-link" href="#risc/diversificare" data-goto-tab="diversificare">Vezi în tabul „Diversificare și riscul”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-dca" data-search-cat="Glosar" data-search-target="dca">
+        <h3>DCA</h3>
+        <p>Investirea unei sume fixe la intervale regulate.</p>
+        <a class="text-link" href="#investitii/dca" data-goto-tab="dca">Vezi în tabul „Scalarea în timp (DCA)”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-cost-mediu-de-achizitie" data-search-cat="Glosar" data-search-target="cost">
+        <h3>Cost mediu de achiziție</h3>
+        <p>Media ponderată a prețurilor plătite.</p>
+        <a class="text-link" href="#investitii/cost" data-goto-tab="cost">Vezi în tabul „Costul mediu de achiziție”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-comision" data-search-cat="Glosar" data-search-target="randament">
+        <h3>Comision</h3>
+        <p>Taxa brokerului/platformei pe tranzacție.</p>
+        <a class="text-link" href="#investitii/randament" data-goto-tab="randament">Vezi în tabul „Randament”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-net-worth-avere-neta" data-search-cat="Glosar" data-search-target="sanatate">
+        <h3>Net worth (avere netă)</h3>
+        <p>Active minus datorii.</p>
+        <a class="text-link" href="#buget/sanatate" data-goto-tab="sanatate">Vezi în tabul „Sănătate financiară”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-rata-de-economii" data-search-cat="Glosar" data-search-target="sanatate">
+        <h3>Rată de economii</h3>
+        <p>Ce parte din venitul lunar e economisită.</p>
+        <a class="text-link" href="#buget/sanatate" data-goto-tab="sanatate">Vezi în tabul „Sănătate financiară”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-datorii--venit" data-search-cat="Glosar" data-search-target="sanatate">
+        <h3>Datorii / venit</h3>
+        <p>Ponderea datoriilor în venit.</p>
+        <a class="text-link" href="#buget/sanatate" data-goto-tab="sanatate">Vezi în tabul „Sănătate financiară”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-fond-de-urgenta" data-search-cat="Glosar" data-search-target="fond">
+        <h3>Fond de urgență</h3>
+        <p>Rezerva de 3–6 luni de cheltuieli esențiale.</p>
+        <a class="text-link" href="#buget/fond" data-goto-tab="fond">Vezi în tabul „Fond de urgență”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-anuitate" data-search-cat="Glosar" data-search-target="datorii">
+        <h3>Anuitate</h3>
+        <p>Rata lunară fixă a unui credit.</p>
+        <a class="text-link" href="#risc/datorii" data-goto-tab="datorii">Vezi în tabul „Datorii bune vs rele”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-dae" data-search-cat="Glosar" data-search-target="datorii">
+        <h3>DAE</h3>
+        <p>Dobânda anuală efectivă — costul total al creditului, anualizat.</p>
+        <a class="text-link" href="#risc/datorii" data-goto-tab="datorii">Vezi în tabul „Datorii bune vs rele”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-rambursare-anticipata" data-search-cat="Glosar" data-search-target="datorii">
+        <h3>Rambursare anticipată</h3>
+        <p>Plata creditului mai devreme decât programat.</p>
+        <a class="text-link" href="#risc/datorii" data-goto-tab="datorii">Vezi în tabul „Datorii bune vs rele”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-cost-de-oportunitate" data-search-cat="Glosar" data-search-target="oportunitate">
+        <h3>Cost de oportunitate</h3>
+        <p>Valoarea celei mai bune alternative la care renunți.</p>
+        <a class="text-link" href="#investitii/oportunitate" data-goto-tab="oportunitate">Vezi în tabul „Costul oportunității”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-pilon-iii" data-search-cat="Glosar" data-search-target="pensie">
+        <h3>Pilon III</h3>
+        <p>Pensie facultativă, administrată privat, cu conturi individuale.</p>
+        <a class="text-link" href="#impozite/pensie" data-goto-tab="pensie">Vezi în tabul „Pensie / Pilon III”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-comisie-de-administrare" data-search-cat="Glosar" data-search-target="pensie">
+        <h3>Comisie de administrare</h3>
+        <p>Comisionul luat de fond pe an de administrare.</p>
+        <a class="text-link" href="#impozite/pensie" data-goto-tab="pensie">Vezi în tabul „Pensie / Pilon III”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-impozit-pe-castig" data-search-cat="Glosar" data-search-target="impozitare">
+        <h3>Impozit pe câștig</h3>
+        <p>Taxa statului pe venitul din investiții.</p>
+        <a class="text-link" href="#impozite/impozitare" data-goto-tab="impozitare">Vezi în tabul „Impozitare pe investiții”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-baza-de-impozitare" data-search-cat="Glosar" data-search-target="impozitare">
+        <h3>Baza de impozitare</h3>
+        <p>Partea venitului asupra căreia se aplică impozitul.</p>
+        <a class="text-link" href="#impozite/impozitare" data-goto-tab="impozitare">Vezi în tabul „Impozitare pe investiții”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-dividend" data-search-cat="Glosar" data-search-target="impozitare">
+        <h3>Dividend</h3>
+        <p>Partea din profitul unei companii distribuită acționarilor.</p>
+        <a class="text-link" href="#impozite/impozitare" data-goto-tab="impozitare">Vezi în tabul „Impozitare pe investiții”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-curs-de-schimb" data-search-cat="Glosar" data-search-target="curs">
+        <h3>Curs de schimb</h3>
+        <p>Câte lei pentru o unitate de valută străină.</p>
+        <a class="text-link" href="#investitii/curs" data-goto-tab="curs">Vezi în tabul „Curs de schimb”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-risc-valutar" data-search-cat="Glosar" data-search-target="curs">
+        <h3>Risc valutar</h3>
+        <p>Riscul ca cursul să varieze și să afecteze randamentul în RON.</p>
+        <a class="text-link" href="#investitii/curs" data-goto-tab="curs">Vezi în tabul „Curs de schimb”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-asigurare" data-search-cat="Glosar" data-search-target="asigurari">
+        <h3>Asigurare</h3>
+        <p>Transferul unui risc către asigurător contra unei prime.</p>
+        <a class="text-link" href="#risc/asigurari" data-goto-tab="asigurari">Vezi în tabul „Asigurări”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-auto-asigurare" data-search-cat="Glosar" data-search-target="asigurari">
+        <h3>Auto-asigurare</h3>
+        <p>Reținerea riscului pentru tine, cu o rezervă proprie.</p>
+        <a class="text-link" href="#risc/asigurari" data-goto-tab="asigurari">Vezi în tabul „Asigurări”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-prima-de-asigurare" data-search-cat="Glosar" data-search-target="asigurari">
+        <h3>Primă de asigurare</h3>
+        <p>Plata periodică pentru transferul riscului.</p>
+        <a class="text-link" href="#risc/asigurari" data-goto-tab="asigurari">Vezi în tabul „Asigurări”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-probabilitate-de-eveniment" data-search-cat="Glosar" data-search-target="asigurari">
+        <h3>Probabilitate de eveniment</h3>
+        <p>Șansele ca un risc să se materializeze.</p>
+        <a class="text-link" href="#risc/asigurari" data-goto-tab="asigurari">Vezi în tabul „Asigurări”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-ancorare" data-search-cat="Glosar" data-search-target="biase">
+        <h3>Ancorare</h3>
+        <p>Te agați de primul număr văzut și ajustezi greu.</p>
+        <a class="text-link" href="#psihologie/biase" data-goto-tab="biase">Vezi în tabul „Biaseuri comportamentale”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-cont-mental" data-search-cat="Glosar" data-search-target="biase">
+        <h3>Cont mental</h3>
+        <p>Banii din surse diferite par să aibă reguli diferite.</p>
+        <a class="text-link" href="#psihologie/biase" data-goto-tab="biase">Vezi în tabul „Biaseuri comportamentale”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-aversiune-la-pierdere" data-search-cat="Glosar" data-search-target="biase">
+        <h3>Aversiune la pierdere</h3>
+        <p>Suferința de la o pierdere e mai mare decât bucuria de la un câștig egal.</p>
+        <a class="text-link" href="#psihologie/biase" data-goto-tab="biase">Vezi în tabul „Biaseuri comportamentale”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-fomo" data-search-cat="Glosar" data-search-target="biase">
+        <h3>FOMO</h3>
+        <p>Teama de a rata o oportunitate.</p>
+        <a class="text-link" href="#psihologie/biase" data-goto-tab="biase">Vezi în tabul „Biaseuri comportamentale”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-efect-de-cadru" data-search-cat="Glosar" data-search-target="biase">
+        <h3>Efect de cadru</h3>
+        <p>Decizia schimbă în funcție de cum e prezentată opțiunea.</p>
+        <a class="text-link" href="#psihologie/biase" data-goto-tab="biase">Vezi în tabul „Biaseuri comportamentale”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-regula-72" data-search-cat="Glosar" data-search-target="regula72">
+        <h3>Regula 72</h3>
+        <p>Estimare a numărulor de ani de dublare a banilor.</p>
+        <a class="text-link" href="#fundamente/regula72" data-goto-tab="regula72">Vezi în tabul „Regula 72”</a>
+      </div>
+      <div class="glossary-item" data-search data-search-id="g-flux-de-numerar" data-search-cat="Glosar" data-search-target="nuam">
+        <h3>Flux de numerar</h3>
+        <p>Banii care intră și ies într-o perioadă; soldul zilnic.</p>
+        <a class="text-link" href="#buget/nuam" data-goto-tab="nuam">Vezi în tabul „Nu am bani”</a>
+      </div>
+      </div>
     </section>
 
-    <nav class="panel-nav" id="panel-nav" aria-label="Navigare între taburi" hidden>
+    <section id="panel-faq" class="global-panel" role="region" aria-labelledby="faq-title" tabindex="-1" hidden>
+      <h2 id="faq-title">Întrebări frecvente</h2>
+      <p class="lead">Răspunsuri scurte la întrebările care apar cel mai des la început.</p>
+      <div class="faq-list">
+      <details class="faq-item" id="faq-1" data-search data-search-id="f-1" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Cât de mult să am în fondul de urgență?</summary>
+        <p>3–6 luni de cheltuieli esențiale, deci 3–6 × cât cheltuiești lunar minim.</p>
+        <a class="text-link" href="#buget/fond" data-goto-tab="fond">Vezi în tabul „Fond de urgență”</a>
+      </details>
+      <details class="faq-item" id="faq-2" data-search data-search-id="f-2" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Să investesc acum sau să aștept?</summary>
+        <p>Nu există răspuns universal; istoric, investirea integrală a depășit DCA, dar DCA reduce teama de intrare.</p>
+        <a class="text-link" href="#investitii/dca" data-goto-tab="dca">Vezi în tabul „Scalarea în timp (DCA)”</a>
+      </details>
+      <details class="faq-item" id="faq-3" data-search data-search-id="f-3" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Ce înseamnă DAE?</summary>
+        <p>Costul total al creditului, anualizat, cu toate comisioanele incluse.</p>
+        <a class="text-link" href="#fundamente/dobanda" data-goto-tab="dobanda">Vezi în tabul „Calculul dobânzii”</a>
+      </details>
+      <details class="faq-item" id="faq-4" data-search data-search-id="f-4" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Înflația mă afectează dacă nu investesc?</summary>
+        <p>Da — cash-ul își pierde puterea de cumpărare cu inflația.</p>
+        <a class="text-link" href="#fundamente/di" data-goto-tab="di">Vezi în tabul „Dobânda vs inflație”</a>
+      </details>
+      <details class="faq-item" id="faq-5" data-search data-search-id="f-5" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Randament nominal vs real?</summary>
+        <p>Nominalul e procentul; realul scade inflația și spune ce poți cumpăra.</p>
+        <a class="text-link" href="#fundamente/di" data-goto-tab="di">Vezi în tabul „Dobânda vs inflație”</a>
+      </details>
+      <details class="faq-item" id="faq-6" data-search data-search-id="f-6" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Când merită rambursare anticipată?</summary>
+        <p>Când dobânda creditului e mai mare decât randamentul net pe care ți-l face altfel acea sumă.</p>
+        <a class="text-link" href="#risc/datorii" data-goto-tab="datorii">Vezi în tabul „Datorii bune vs rele”</a>
+      </details>
+      <details class="faq-item" id="faq-7" data-search data-search-id="f-7" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Ce taxe plătesc pe acțiuni?</summary>
+        <p>Pe dividend 10%/16%, pe câștig din vânzare 1%/3% (2025/2026, broker RO) — verifică norma.</p>
+        <a class="text-link" href="#impozite/impozitare" data-goto-tab="impozitare">Vezi în tabul „Impozitare pe investiții”</a>
+      </details>
+      <details class="faq-item" id="faq-8" data-search data-search-id="f-8" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Merită Pilonul III?</summary>
+        <p>Depinde de comisioane, randament și orizont; calculează cu scenariul conservator.</p>
+        <a class="text-link" href="#impozite/pensie" data-goto-tab="pensie">Vezi în tabul „Pensie / Pilon III”</a>
+      </details>
+      <details class="faq-item" id="faq-9" data-search data-search-id="f-9" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Cum îmi calculez averea netă?</summary>
+        <p>Active (conturi, bunuri) minus datorii.</p>
+        <a class="text-link" href="#buget/sanatate" data-goto-tab="sanatate">Vezi în tabul „Sănătate financiară”</a>
+      </details>
+      <details class="faq-item" id="faq-10" data-search data-search-id="f-10" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>De ce iau decizii proaste cu banii?</summary>
+        <p>Biaseuri cognitive; recunoașterea lor e primul pas.</p>
+        <a class="text-link" href="#psihologie/biase" data-goto-tab="biase">Vezi în tabul „Biaseuri comportamentale”</a>
+      </details>
+      <details class="faq-item" id="faq-11" data-search data-search-id="f-11" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Asigurarea e mereu obligatorie?</summary>
+        <p>Nu — depinde dacă reții riscul sau îl transferi, în funcție de probabilitate și impact.</p>
+        <a class="text-link" href="#risc/asigurari" data-goto-tab="asigurari">Vezi în tabul „Asigurări”</a>
+      </details>
+      <details class="faq-item" id="faq-12" data-search data-search-id="f-12" data-search-cat="Întrebări frecvente" data-search-target="faq">
+        <summary>Aplicația garantează rezultate?</summary>
+        <p>Nu — calculează scenarii și formule; decizia și riscurile sunt ale tale.</p>
+        <a class="text-link" href="#disclaimer">Vezi disclaimer-ul</a>
+      </details>
+      </div>
+    </section>
+
+    <section id="panel-mituri" class="global-panel" role="region" aria-labelledby="mituri-title" tabindex="-1" hidden>
+      <h2 id="mituri-title">Mituri frecvente, demontate</h2>
+      <p class="lead">Opt idei răspândite care costă bani, cu adevărul și sursa.</p>
+      <div class="myth-list">
+      <div class="myth-item" data-search data-search-id="m-1" data-search-cat="Mituri" data-search-target="mituri">
+        <h3>„Cash-ul e întotdeauna sigur.”</h3>
+        <p><strong>Adevăr:</strong> Cash-ul nu e gratis: inflația îi erodează puterea de cumpărare zilnic. Siguranța are un cost.</p>
+        <p class="myth-source">Sursă: <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a></p>
+      </div>
+      <div class="myth-item" data-search data-search-id="m-2" data-search-cat="Mituri" data-search-target="mituri">
+        <h3>„Trebuie să am o sumă mare ca să încep să investesc.”</h3>
+        <p><strong>Adevăr:</strong> Poți începe cu sume mici, consistente; DCA există tocmai pentru asta.</p>
+        <p class="myth-source">Sursă: <a href="https://investor.vanguard.com/investor-resources-education/online-trading/dollar-cost-averaging-vs-lump-sum" target="_blank" rel="noopener">Vanguard Research</a></p>
+      </div>
+      <div class="myth-item" data-search data-search-id="m-3" data-search-cat="Mituri" data-search-target="mituri">
+        <h3>„Dobânda compusă e magie.”</h3>
+        <p><strong>Adevăr:</strong> E matematică: necesită timp, răbdare și consistență, nu o formulă magică.</p>
+        <p class="myth-source">Sursă: <a href="https://en.wikipedia.org/wiki/Rule_of_72" target="_blank" rel="noopener">Rule of 72</a></p>
+      </div>
+      <div class="myth-item" data-search data-search-id="m-4" data-search-cat="Mituri" data-search-target="mituri">
+        <h3>„Asigurarea e mereu obligatorie.”</h3>
+        <p><strong>Adevăr:</strong> Depinde de riscul pe care îl reții vs îl transferi; probabilitate × impact, nu obiceiul.</p>
+        <p class="myth-source">Sursă: <a href="https://www.asfromania.ro/ro/a/159/autorizare-societ%C4%83%C8%9Bi-de-asigurare-%C8%99i/-sau-reasigurare" target="_blank" rel="noopener">ASF</a></p>
+      </div>
+      <div class="myth-item" data-search data-search-id="m-5" data-search-cat="Mituri" data-search-target="mituri">
+        <h3>„O datorie cu dobândă mică e mereu bună.”</h3>
+        <p><strong>Adevăr:</strong> Nu contează dobânda nominală, ci randamentul alternativ și pragul de indiferență.</p>
+        <p class="myth-source">Sursă: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a></p>
+      </div>
+      <div class="myth-item" data-search data-search-id="m-6" data-search-cat="Mituri" data-search-target="mituri">
+        <h3>„Impozitul se plătește pe tot câștigul din investiții.”</h3>
+        <p><strong>Adevăr:</strong> Se plătește pe câștig, cu baze și coti diferite per tip de venit.</p>
+        <p class="myth-source">Sursă: <a href="https://taxsummaries.pwc.com/romania/individual/significant-developments" target="_blank" rel="noopener">PwC</a></p>
+      </div>
+      <div class="myth-item" data-search data-search-id="m-7" data-search-cat="Mituri" data-search-target="mituri">
+        <h3>„Sănătatea financiară = să fii bogat.”</h3>
+        <p><strong>Adevăr:</strong> E un set de indicatori (economii, datorii, rezervă, avere), nu un număr magic.</p>
+        <p class="myth-source">Sursă: <a href="https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/" target="_blank" rel="noopener">CFPB</a></p>
+      </div>
+      <div class="myth-item" data-search data-search-id="m-8" data-search-cat="Mituri" data-search-target="mituri">
+        <h3>„Psihologia nu contează la bani.”</h3>
+        <p><strong>Adevăr:</strong> Deciziile financiare se iau cu emoție; bias-urile sunt documentate științific.</p>
+        <p class="myth-source">Sursă: <a href="https://www.nobelprize.org/prizes/economic-sciences/2002/popular-information/" target="_blank" rel="noopener">Nobel Prize 2002</a></p>
+      </div>
+      </div>
+    </section>
+
+        <nav class="panel-nav" id="panel-nav" aria-label="Navigare între taburi" hidden>
       <button class="panel-nav-btn" id="prev-tab" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         <span class="visually-hidden">Precedent:</span>
@@ -3384,6 +3948,12 @@
 
   <footer class="footer">
     <div class="container">
+      <p id="disclaimer" class="disclaimer">
+        <strong>Disclaimer:</strong> GlitchCoin este un proiect educațional. Nu oferă sfaturi, recomandări sau
+        consultanță financiară, fiscală sau de investiții. Calculatoarele prezintă scenarii ilustrative și formule,
+        nu rezultate garantate. Deciziile și riscurile financiare sunt ale tale; verifică sursele oficiale și,
+        dacă e cazul, consultă un specialist autorizat.
+      </p>
       <p>
         Sursă date: <code>GlitchCoin.xlsx</code>, 9 taburi (septembrie 2025) ·
         GlitchCoin v2.13 · aplicație locală, fără backend

@@ -4063,6 +4063,21 @@ const CATEGORIES = [
 const TAB_CATEGORY = {};
 CATEGORIES.forEach((c) => c.tabs.forEach((t) => { TAB_CATEGORY[t] = c; }));
 
+/* Secțiunile globale din sidebar (Etapa 4): glosar, FAQ, mituri.
+   Nu sunt taburi — nu au categorie, nu se numără în cele 24 și nu au
+   săgeți Precedent/Următor. Se deschide din sidebar sau din căutare. */
+const GLOBAL_PANELS = [
+  { id: 'glosar', nume: 'Glosar' },
+  { id: 'faq', nume: 'Întrebări frecvente' },
+  { id: 'mituri', nume: 'Mituri și adevăruri' },
+];
+const GLOBAL_IDS = GLOBAL_PANELS.map((g) => g.id);
+
+function globalName(id) {
+  const g = GLOBAL_PANELS.find((x) => x.id === id);
+  return g ? g.nume : id;
+}
+
 /* ── Hash `#categorie/tab` (cu fallback retro-compatibil `#tab`) ──
    Hash-ul canonic spune clar unde sta tabul: `#investitii/randament`.
    Hash-urile vechi (#randament) rămân valide pentru bookmark-uri și
@@ -4071,6 +4086,7 @@ function parseHash(raw) {
   const h = String(raw == null ? '' : raw).replace(/^#/, '');
   if (!h) return null;
   if (h === 'acasa') return { type: 'home' };
+  if (GLOBAL_IDS.includes(h)) return { type: 'global', id: h };
   const parts = h.split('/');
   if (parts.length >= 2 && TABS.includes(parts[parts.length - 1])) {
     return { type: 'tab', id: parts[parts.length - 1] };
@@ -4151,6 +4167,12 @@ function activateTab(id, { focus = false, focusPanel = false, scroll = false, hi
     else pnl.setAttribute('hidden', '');
   });
 
+  // Secțiunile globale (glosar/FAQ/mituri) se ascund când se deschide un tab.
+  GLOBAL_IDS.forEach((gid) => {
+    const p = document.getElementById('panel-' + gid);
+    if (p) { p.classList.remove('is-active'); p.setAttribute('hidden', ''); }
+  });
+
   // `aria-live` doar în panoul vizibil: regiunile live din panourile ascunse
   // nu anunță rezultate în timp ce utilizatorul e în altă parte a paginii.
   document.querySelectorAll('.tab-panel[hidden] [aria-live]').forEach((el) => {
@@ -4187,7 +4209,14 @@ function updatePrintTabName() {
   const el = document.getElementById('print-tab-name');
   if (!el) return;
   const id = activeTabId();
-  if (!id) { el.textContent = 'Acasă'; return; }
+  if (!id) {
+    const globalActiva = GLOBAL_IDS.find((gid) => {
+      const p = document.getElementById('panel-' + gid);
+      return p && p.classList.contains('is-active');
+    });
+    el.textContent = globalActiva ? globalName(globalActiva) : 'Acasă';
+    return;
+  }
   const tab = document.getElementById('tab-' + id);
   el.textContent = tab ? tab.textContent : '—';
 }
@@ -4198,6 +4227,11 @@ function updatePrintTabName() {
    breadcrumb și numele tabului din antetul de tipărire. */
 function updateChrome(id) {
   const cat = TAB_CATEGORY[id];
+
+  // Linkurile globale (glosar/FAQ/mituri) își actualizează `aria-current`.
+  document.querySelectorAll('.side-global-link').forEach((a) => {
+    a.setAttribute('aria-current', a.getAttribute('data-global') === id ? 'page' : 'false');
+  });
 
   document.querySelectorAll('.side-nav .tab').forEach((btn) => {
     const activ = btn.id === 'tab-' + id;
@@ -4236,6 +4270,15 @@ function renderBreadcrumb(id) {
   aHome.textContent = 'Acasă';
   liHome.appendChild(aHome);
   list.appendChild(liHome);
+
+  // Secțiune globală (glosar/FAQ/mituri): doar „Acasă / <nume>”, fără categorie.
+  if (GLOBAL_IDS.includes(id)) {
+    const liGlobal = document.createElement('li');
+    liGlobal.setAttribute('aria-current', 'page');
+    liGlobal.textContent = globalName(id);
+    list.appendChild(liGlobal);
+    return;
+  }
 
   if (cat) {
     const liCat = document.createElement('li');
@@ -4277,6 +4320,13 @@ function activateHome({ focusPanel = false, history: historyMode = 'replace' } =
     }
   });
 
+  // Secțiunile globale se ascund și ele când revii la „Acasă”.
+  GLOBAL_IDS.forEach((gid) => {
+    const p = document.getElementById('panel-' + gid);
+    if (p) { p.classList.remove('is-active'); p.setAttribute('hidden', ''); }
+  });
+  document.querySelectorAll('.side-global-link').forEach((a) => a.removeAttribute('aria-current'));
+
   const home = document.getElementById('panel-acasa');
   if (home) {
     home.classList.add('is-active');
@@ -4304,6 +4354,58 @@ function activateHome({ focusPanel = false, history: historyMode = 'replace' } =
   if (history.replaceState) {
     if (historyMode === 'push') history.pushState(null, '', '#acasa');
     else history.replaceState(null, '', '#acasa');
+  }
+}
+
+/* Deschide o secțiune globală (glosar / FAQ / mituri) din sidebar.
+   Ascunde taburile și „Acasă”, marchează linkul activ în sidebar și
+   actualizează breadcrumb-ul. Nu are săgeți Precedent/Următor. */
+function activateGlobal(id, { focusPanel = false, history: historyMode = 'replace' } = {}) {
+  const panel = document.getElementById('panel-' + id);
+  if (!panel || !GLOBAL_IDS.includes(id)) return;
+
+  TABS.forEach((tid) => {
+    const btn = document.getElementById('tab-' + tid);
+    const pnl = document.getElementById('panel-' + tid);
+    if (btn) { btn.classList.remove('is-active'); btn.setAttribute('aria-selected', 'false'); }
+    if (pnl) { pnl.classList.remove('is-active'); pnl.setAttribute('hidden', ''); }
+  });
+
+  const home = document.getElementById('panel-acasa');
+  if (home) { home.classList.remove('is-active'); home.hidden = true; }
+
+  GLOBAL_IDS.forEach((gid) => {
+    const p = document.getElementById('panel-' + gid);
+    if (!p) return;
+    const activ = gid === id;
+    p.classList.toggle('is-active', activ);
+    if (activ) p.removeAttribute('hidden');
+    else p.setAttribute('hidden', '');
+  });
+
+  document.querySelectorAll('.side-global-link').forEach((a) => {
+    a.setAttribute('aria-current', a.getAttribute('data-global') === id ? 'page' : 'false');
+  });
+
+  document.querySelectorAll('.tab-panel[hidden] [aria-live]').forEach((el) => {
+    el.removeAttribute('aria-live');
+  });
+
+  renderBreadcrumb(id);
+  updatePanelNav(null);
+  updatePrintTabName();
+  if (stepMode) stopStepMode();
+  updateStepTriggerState();
+
+  if (focusPanel && panel) {
+    panel.focus({ preventScroll: true });
+    panel.scrollIntoView({ block: 'start', inline: 'nearest' });
+  }
+
+  if (history.replaceState) {
+    const hash = '#' + id;
+    if (historyMode === 'push') history.pushState(null, '', hash);
+    else history.replaceState(null, '', hash);
   }
 }
 
@@ -4436,7 +4538,8 @@ function initDrawer() {
 
   // Alegerea unui tab în drawer: închide și lasă focusul în conținut.
   sidebar.addEventListener('click', (event) => {
-    if (event.target.closest('.side-tab') && sidebar.classList.contains('is-open')) {
+    const navigheaza = event.target.closest('.side-tab') || event.target.closest('.side-global-link');
+    if (navigheaza && sidebar.classList.contains('is-open')) {
       closeDrawer(false);
     }
   });
@@ -4547,6 +4650,28 @@ function initShell() {
     card.addEventListener('click', (event) => {
       event.preventDefault();
       activateTab(card.getAttribute('data-goto'), { focusPanel: true, history: 'push' });
+      persistSave();
+    });
+  });
+
+  // Secțiunile globale din sidebar (glosar, întrebări frecvente, mituri).
+  document.querySelectorAll('.side-global-link').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const id = link.getAttribute('data-global');
+      if (!GLOBAL_IDS.includes(id)) return;
+      activateGlobal(id, { focusPanel: true, history: 'push' });
+      persistSave();
+    });
+  });
+
+  // Legături către taburi din conținutul educațional (glosar, FAQ, fapte).
+  document.querySelectorAll('a[data-goto-tab]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const id = link.getAttribute('data-goto-tab');
+      if (!TABS.includes(id)) return;
+      activateTab(id, { focusPanel: true, history: 'push' });
       persistSave();
     });
   });
@@ -4670,11 +4795,12 @@ function initTabs() {
     const parsed = parseHash(location.hash);
     if (!parsed) return;
     if (parsed.type === 'tab') activateTab(parsed.id, { focusPanel: true });
+    else if (parsed.type === 'global') activateGlobal(parsed.id, { focusPanel: true });
     else activateHome({ focusPanel: true });
     persistSave();
   });
 
-  // Prima deschidere: „Acasă". Dacă există un tab salvat în localStorage
+  // Prima deschidere: „Acasă”. Dacă există un tab salvat în localStorage
   // (sau un hash valid, în oricare dintre cele două forme), se deschide
   // tabul respectiv — nu se pierde locul.
   let initial = null;
@@ -4684,7 +4810,11 @@ function initTabs() {
     if (parsed && parsed.type === 'tab') initial = parsed.id;
   }
   if (TABS.includes(initial)) activateTab(initial);
-  else activateHome();
+  else {
+    const parsed = parseHash(location.hash);
+    if (parsed && parsed.type === 'global') activateGlobal(parsed.id);
+    else activateHome();
+  }
 }
 
 /* ═══ 27. Căutare rapidă ⌘K ═══════════════════════════════
@@ -4698,10 +4828,30 @@ let searchActive = -1;
 let searchResults = [];
 
 function buildSearchItems() {
-  return TABS.map((id) => {
+  const tabs = TABS.map((id) => {
     const cat = TAB_CATEGORY[id];
-    return { id, name: tabName(id), category: cat ? cat.nume : '' };
+    return { id, name: tabName(id), category: cat ? cat.nume : '', type: 'tab', target: id };
   });
+
+  // Glosarul, FAQ și miturile sunt marcate în HTML cu `data-search`;
+  // numele se ia din titlu (h3/summary), iar `data-search-target` spune
+  // unde se deschide (tab sau secțiune globală).
+  const extra = [];
+  document.querySelectorAll('[data-search]').forEach((el) => {
+    const nameEl = el.querySelector('h3, summary');
+    const name = nameEl ? nameEl.textContent.trim() : el.getAttribute('data-search');
+    const target = el.getAttribute('data-search-target');
+    if (!name || !target) return;
+    extra.push({
+      id: el.getAttribute('data-search-id') || '',
+      name: String(name).trim(),
+      category: el.getAttribute('data-search-cat') || '',
+      type: GLOBAL_IDS.includes(target) ? 'global' : 'tab',
+      target,
+    });
+  });
+
+  return tabs.concat(extra);
 }
 
 function scoreSearchItem(item, q) {
@@ -4745,7 +4895,7 @@ function renderSearchResults(query) {
     li.id = 'search-opt-' + item.id;
     li.setAttribute('role', 'option');
     li.setAttribute('aria-selected', i === searchActive ? 'true' : 'false');
-    li.dataset.tab = item.id;
+    li.dataset.searchId = item.id;
 
     const name = document.createElement('span');
     name.className = 'search-option-name';
@@ -4826,12 +4976,12 @@ function closeSearch(restoreFocus = true) {
   }
 }
 
-function chooseSearchItem(id) {
+function chooseSearchItem(item) {
   closeSearch(false);
-  if (TABS.includes(id)) {
-    activateTab(id, { focusPanel: true, history: 'push' });
-    persistSave();
-  }
+  if (!item) return;
+  if (item.type === 'global') activateGlobal(item.target, { focusPanel: true, history: 'push' });
+  else activateTab(item.target, { focusPanel: true, history: 'push' });
+  persistSave();
 }
 
 function initSearch() {
@@ -4869,7 +5019,7 @@ function initSearch() {
     else if (event.key === 'ArrowUp') { event.preventDefault(); setSearchActive(searchActive - 1); }
     else if (event.key === 'Enter') {
       event.preventDefault();
-      if (searchActive >= 0 && searchResults[searchActive]) chooseSearchItem(searchResults[searchActive].id);
+      if (searchActive >= 0 && searchResults[searchActive]) chooseSearchItem(searchResults[searchActive]);
     } else if (event.key === 'Escape') {
       event.preventDefault();
       closeSearch();
@@ -4890,13 +5040,15 @@ function initSearch() {
 
   list.addEventListener('click', (event) => {
     const option = event.target.closest('.search-option');
-    if (option) chooseSearchItem(option.dataset.tab);
+    if (!option) return;
+    const item = searchResults.find((r) => r.id === option.dataset.searchId);
+    if (item) chooseSearchItem(item);
   });
 
   list.addEventListener('mousemove', (event) => {
     const option = event.target.closest('.search-option');
     if (!option) return;
-    const idx = searchResults.findIndex((item) => item.id === option.dataset.tab);
+    const idx = searchResults.findIndex((item) => item.id === option.dataset.searchId);
     if (idx !== -1 && idx !== searchActive) setSearchActive(idx);
   });
 }
@@ -6039,7 +6191,7 @@ const FORMULA_TIPS = {
   },
   'dv-corelare': {
     title: 'Corelația dintre active',
-    text: 'Cât de mult se mișcă activele împreună, de la −100% (se mișcă exact invers) la +100% (se mișcă identic). 0% = independente. Cu cât e mai mică, cu atât diversificarea reduce mai mult volatilitatea. Surse: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>, <a href="https://asf.ro/" target="_blank" rel="noopener">ASF</a>.'
+    text: 'Cât de mult se mișcă activele împreună, de la −100% (se mișcă exact invers) la +100% (se mișcă identic). 0% = independente. Cu cât e mai mică, cu atât diversificarea reduce mai mult volatilitatea. Surse: <a href="https://www.bnr.ro/" target="_blank" rel="noopener">BNR</a>, <a href="https://www.asfromania.ro/" target="_blank" rel="noopener">ASF</a>.'
   },
   'dv-rf': {
     title: 'Rată fără risc',

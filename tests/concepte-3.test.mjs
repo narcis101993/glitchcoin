@@ -359,8 +359,8 @@ test('Surse — taburile noi menționează linkuri BNR / INS / ASF', () => {
   const panouAsigurari = html.split('id="panel-asigurari"')[1].split('id="panel-stres"')[0];
   const panouStres = html.split('id="panel-stres"')[1];
   includes(panouDiversificare, 'https://www.bnr.ro/', 'diversificare · BNR');
-  includes(panouDiversificare, 'asf.ro', 'diversificare · ASF');
-  includes(panouAsigurari, 'asf.ro', 'asigurări · ASF');
+  includes(panouDiversificare, 'asfromania.ro', 'diversificare · ASF');
+  includes(panouAsigurari, 'asfromania.ro', 'asigurări · ASF');
   includes(panouAsigurari, 'https://www.bnr.ro/', 'asigurări · BNR');
   includes(panouStres, 'https://www.bnr.ro/', 'stres · BNR');
   includes(panouStres, 'insse.ro', 'stres · INS');

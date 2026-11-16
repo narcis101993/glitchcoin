@@ -65,6 +65,7 @@ const src =
   'BIASE_QUIZ, scorBiase, renderBiaseQuiz, renderBiase, resetBiase, ' +
   'FORMULA_TIPS, parseHash, hashForTab, stepTab, normalizeText, ' +
   'filterSearchItems, scoreSearchItem, collectAlerts, ' +
+  'buildSearchItems, GLOBAL_PANELS, GLOBAL_IDS, globalName, ' +
   'buildStepsFromFields, stepTextFor, parseFormattedNumber, formatStatValue };';
 
 vm.runInContext(src, ctx, { filename: 'glitchcoin-bundle.js' });

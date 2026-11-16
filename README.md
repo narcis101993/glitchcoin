@@ -234,10 +234,10 @@ node --test tests/
 
 1. **Simulatorul inflației** — introdu suma actuală și rata inflației; vezi cât de multi bani
    îi vei avea nevoie în anii 2, 5, 10 și 15, plus tabelul complet pe 15 ani.
-2. **Alimente** — prețurile la 10 produse de bază, 2020–2026, cu creșterea 2025 vs 2020.
+2. **Alimente** — prețurile la 10 produse de bază, 2020–2026, cu creșterea 2026 vs 2020 (parțial).
 3. **Inflația 1991–2026** — grafic cu rata anuală, statistici și tabel complet (2026 e parțial).
    Anii cu deflație (2015, 2016) sunt evidențiați cu roșu și în tabel.
-4. **Deflatorul sumelor** — află echivalentul sumei actuale în orice an între 1991 și 2025.
+4. **Deflatorul sumelor** — află echivalentul sumei actuale în orice an între 1991 și 2026.
 5. **Surse și note metodologice** — linkuri către INS, BNR, PwC, money.ro și InfoCons.
 
 ## Ce conține tabul Timp vs dorințe
@@ -246,11 +246,11 @@ node --test tests/
    24 (oră) și 60 (minut), plus venitul pe zi lucrătoare și pe oră lucrătoare (8 ore).
 2. **Cât timp muncești pentru o dorință** — minute, ore și zile din viață (24/24) sau ore și zile
    lucrate (8/24), cu procentul din timpul unui an (365 zile) sau dintr-un an lucrător.
-3. **Zile lucrătoare / an** — input (implicit **248**, România 2025). Din el se derivă venitul pe zi
+3. **Zile lucrătoare / an** — input (implicit **250**, România 2026). Din el se derivă venitul pe zi
    lucrătoare și procentul dintr-un an lucrător; valoarea se salvează în `localStorage`.
 
-Valori implicite: venit 5.000 lei, dorință 3.600 lei, 248 zile lucrătoare → 31.536 minute / 526 ore /
-22 zile (24/24), sau 119 ore / 15 zile lucrate (8/24) — 6,00% din venitul anual lucrător
+Valori implicite: venit 5.000 lei, dorință 3.600 lei, 250 zile lucrătoare → 31.536 minute / 526 ore /
+22 zile (24/24), sau 120 ore / 15 zile lucrate (8/24) — 6,00% din venitul anual lucrător
 (cele două procente coincid, vezi nota metodologică din aplicație).
 
 ## Ce conține tabul Calculul dobânzii
@@ -335,14 +335,14 @@ Cu cont de economii rămâi cu mai mulți bani, la fel ca în desfășuratorul z
 
 1. **Randament nominal vs real** — sumă, randament nominal și inflație; creșterea nominală, randamentul
    real (exact, Fisher), valoarea reală după 1 an și aproximarea „nominal − inflație".
-2. **Exemple istorice 2000–2025** — inflația reală (INS, IPC național) și randamentul real al aceleiași
+2. **Exemple istorice 2000–2026** — inflația reală (INS, IPC național) și randamentul real al aceleiași
    rate nominale, pe fiecare an; medie, minim, maxim și numărul de ani cu randament real negativ.
 3. **Pe termen lung** — puterea de cumpărare a cash-ului vs a unei investiții la randament nominal,
-   pe 26 de ani.
+   pe 27 de ani.
 
 Valori implicite: 10.000 lei / 7% / 5% → creștere nominală 700,00 lei, randament real 1,90%,
-valoare reală 10.190,48 lei. Pe 2000–2025, cash-ul de 10.000 lei ajunge la 1.155,64 lei reali,
-iar la randament nominal 7% la 6.711,19 lei reali (diferența 5.555,55 lei).
+valoare reală 10.190,48 lei. Pe 2000–2026, cash-ul de 10.000 lei ajunge la 1.087,15 lei reali,
+iar la randament nominal 7% la 6.755,38 lei reali (diferența 5.668,23 lei).
 
 ## Ce conține tabul Regula 72
 
@@ -386,7 +386,7 @@ cost de oportunitate 5.835,15 lei.
    „Vezi venitul în «Buget 50/30/20»” din tabul „Timp vs dorințe”.
 
 Valori implicite: 5.000 lei → 2.500 / 1.500 / 1.000 lei, toate la țintă. Dorințele de 1.500 lei
-costă 6,20 zile lucrate (49,60 ore), iar economia de 1.000 lei 4,13 zile lucrate.
+costă 6,25 zile lucrate (50,00 ore), iar economia de 1.000 lei 4,17 zile lucrate.
 Cu 4.000 / 2.500 / 1.200 / 600 lei: deficit 300,00 lei, nevoi 62,50%, economii 15,00%.
 
 ## Ce conține tabul Sănătate financiară
@@ -464,7 +464,7 @@ valoarea așteptată 19.500,00 lei.
    randamentul anual efectiv și valoarea reală (putere de cumpărare).
 3. **Evoluția pe ani** — un rând pe an: contribuții totale, valoare brută, după comisioane,
    impozit dacă retragi atunci și valoare netă.
-4. **Scenarii predefinite** — selector: Istoric (6,7% — media fondurilor Pilon III pe 2007–2025),
+4. **Scenarii predefinite** — selector: Istoric (6,7% — media fondurilor Pilon III pe 2007–2025, ultimul an complet),
    Conservator (4%), Optimist (9%), Personalizat.
 
 Valori implicite: 25 → 65 de ani, 300 lei/lună, 6,7% brut, 1,5% comision, 10% impozit, 4,9% inflație
@@ -500,10 +500,10 @@ Valori implicite: valori mobiliare prin broker RO, 2026, 10.000 lei câștig →
   ASF — Pilonul III și datele fondurilor de pensii private ([asfromania.ro](https://asfromania.ro/));
   Tax Efficiency Lab — ghid fiscal ([taxefficiencylab.com](https://taxefficiencylab.com/romania-tax-guide)).
 - Valorile cheie: simulator 5.000 lei @ 5% → 5.250 / 6.077,53 / 7.756,64 / 9.899,66 lei;
-  deflator 2001 → 1.131,93 lei; Profit 10.000 / 25 / 28 / 1% / 0,3% / 5% → 11.200,00 / 1.200,00 / 1.184,40;
+  deflator 2001 → 1.064,84 lei; Profit 10.000 / 25 / 28 / 1% / 0,3% / 5% → 11.200,00 / 1.200,00 / 1.184,40;
   Costul mediu → 29,5447 lei; Sumă dorită 10% / 15 ani / 1.000.000 lei → 2.412,72 lei/lună;
   Nu am bani → 2.570,00 lei fără CE / 2.577,41 lei cu CE / profit 7,41 lei;
-  Buget 50/30/20 → 2.500 / 1.500 / 1.000 lei (dorințele costă 6,20 zile lucrate);
+  Buget 50/30/20 → 2.500 / 1.500 / 1.000 lei (dorințele costă 6,25 zile lucrate);
   Sănătate financiară → rezerva 4,0 luni, net worth 25.000,00 lei;
   Diversificare → randament 6,20%, volatilitate 10,68%, randament ajustat la risc 0,25;
   Asigurări → cost total primă 23.462,79 lei, pierdere așteptată 1.600,00 lei/an;

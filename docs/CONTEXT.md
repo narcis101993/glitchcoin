@@ -270,6 +270,8 @@ Lanț: corecții → concepte 1 → 2 → 3 → 4 → 5 → 6. Cardul `t_5ce2d4f
 Decizii Narcis: sursele se menționează cu linkuri (INS/BNR); 2025 = 7,3% (INS); 2026 = 6,3% provizoriu;
 248 zile lucrătoare (acum ca **input**); comisioane = media pieței + tooltip cu linkuri.
 
+> **Notă (Detalii 4 / `t_dfd71659`, 2026-11-17):** decizia de mai sus rămâne validă ca **decizie istorică** — sensul nu s-a schimbat. Odată cu trecerea aplicației la anul curent **2026**, valorile implicite actuale sunt: **250 zile lucrătoare** (365 − 104 weekend − 11 sărbători legale, România 2026; 20,83 zile/lună); **2025 = 7,3%** (dată finală INS, neschimbată) și **2026 = 6,3%** („oct 2026 vs dec 2025, parțial"; rata anuală oct/oct = 6,9%). Cotele implicite pentru 2026: broker RO ≥ 365 zile **3%**, < 365 zile **6%**, broker străin/crypto **16%**, dividende **16%**.
+
 ## Verificare corecții (organizer, 2026-11-13)
 
 Toate C1–C12 implementate și verificate pe disc: C1 (semn), C2 (deflator), C3 (selector „Tipul de venit"

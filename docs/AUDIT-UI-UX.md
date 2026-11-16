@@ -85,7 +85,7 @@ Format: **ce** · **de ce** · **efort** · **prioritate (1 = acum, 5 = mai târ
 **Efort mediu:** `@media print` e mic; CSV-ul e mic-mediu.
 
 ### P6 · Grafice accesibile — **MIC** · prioritate **3**
-**Ce:** `role="img"` + `aria-label` pe `.bar-chart`/`.vchart` cu sumarul („Creștere 2025 vs 2020, max 60% la pâine"), plus `aria-hidden` pe barele decorative. Tabelele din spate deja există — deci doar etichetarea.
+**Ce:** `role="img"` + `aria-label` pe `.bar-chart`/`.vchart` cu sumarul („Creștere 2026 vs 2020, max 66,50% la pâine"), plus `aria-hidden` pe barele decorative. Tabelele din spate deja există — deci doar etichetarea.
 **De ce:** completatează P4; efort mic.
 
 ### P7 · Robustete la valori extreme — **MIC** · prioritate **3**

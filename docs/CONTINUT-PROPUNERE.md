@@ -145,7 +145,7 @@ Regula pentru fiecare secțiune: **Lead propus** (textul care înlocuiește lead
 
 **Surse:** [INS — câștiguri salariale, serie anuală](https://insse.ro/cms/en/content/earnings-1938-annual-series-0) · [BNR — studii și date economice](https://www.bnr.ro/)
 
-**De rescris:** „Calculele sunt identice cu tabul „Timp vs dorințe" din GlitchCoin.xlsx" → eliminat; inputul „Zile lucrătoare / an" rămâne (implicit 248, România 2025), cu nota metodologică.
+**De rescris:** „Calculele sunt identice cu tabul „Timp vs dorințe" din GlitchCoin.xlsx" → eliminat; inputul „Zile lucrătoare / an" rămâne (implicit 250, România 2026), cu nota metodologică.
 
 ### 3. Calculul dobânzii — `panel-dobanda`
 
@@ -235,7 +235,7 @@ Regula pentru fiecare secțiune: **Lead propus** (textul care înlocuiește lead
 
 **Lead propus:**
 
-> Randamentul nominal spune cu câți bani mai mulți termini; randamentul real spune ce poți cumpăra mai mult. Introdu randamentul și inflația — află ce rămâne după inflație, cu exemple reale din 2000–2025 și comparația cash vs investiție pe 26 de ani.
+> Randamentul nominal spune cu câți bani mai mulți termini; randamentul real spune ce poți cumpăra mai mult. Introdu randamentul și inflația — află ce rămâne după inflație, cu exemple reale din 2000–2026 și comparația cash vs investiție pe 27 de ani.
 
 **De ce contează:** inflația e inamicul tăcut al economiilor — un randament nominal bun poate fi un randament real negativ.
 
@@ -468,7 +468,7 @@ cu linkuri către taburi. Se păstrează termenii în engleză acolo unde sunt o
 Format propus: carduri mici (iconiță + 1–2 fraze + link „Sursă"), afișate pe Acasă sau la finalul fiecărui tab relevant.
 
 1. **Inflația anuală în România a fost de 170,2% în 1991 și de 45,7% în 2000**; în 2015 și 2016 a existat deflație (−0,6%, −1,5%). — [INS — IPC, serie anuală](https://insse.ro/cms/ro/content/ipc%E2%80%93serie-de-date-anuala)
-2. **Din 1.000 lei din 2000, în 2025 ai avea nevoie de aproape 8.653 lei** pentru aceeași putere de cumpărare. — calculat din [seria INS](https://insse.ro/cms/en/content/cpi-annual-data-series)
+2. **Din 1.000 lei din 2000, în 2026 ai avea nevoie de aproape 9.198 lei** pentru aceeași putere de cumpărare. — calculat din [seria INS](https://insse.ro/cms/en/content/cpi-annual-data-series)
 3. **Regula 72 apare prima dată scrisă în 1494**, la Luca Pacioli, în *Summa de arithmetica* — și nici atunci nu a fost demonstrată, ci doar enunțată. — [Rule of 72](https://en.wikipedia.org/wiki/Rule_of_72)
 4. **La 7% pe an, banii se dublează în ~10,3 ani** — și regula 72 dă același rezultat (72 ÷ 7 ≈ 10,3). — matematică standard
 5. **Fondul de urgență recomandat acoperă 3–6 luni de cheltuieli esențiale**, nu venituri. — [CFPB](https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/)
@@ -545,7 +545,7 @@ Se folosesc ca linkuri inline în textul tabs-urilor și ca secțiune „Surse" 
 
 | Sursă | URL | Ce acoperă |
 |-------|-----|------------|
-| INS — IPC, serie anuală (RO) | https://insse.ro/cms/ro/content/ipc%E2%80%93serie-de-date-anuala | inflația 1991–2025 |
+| INS — IPC, serie anuală (RO) | https://insse.ro/cms/ro/content/ipc%E2%80%93serie-de-date-anuala | inflația 1991–2026 (2026 parțial) |
 | INS — IPC, annual data (EN) | https://insse.ro/cms/en/content/cpi-annual-data-series | inflație, ENG |
 | INS — earnings since 1938 | https://insse.ro/cms/en/content/earnings-1938-annual-series-0 | salariul mediu net |
 | INS — TEMPO Online | http://statistici.insse.ro/tempoins/index.jsp?page=tempo2&lang=en&context=40 | seri statistice complete |

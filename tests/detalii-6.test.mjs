@@ -38,12 +38,12 @@ test('prefill-ul acceptă mai multe perechi și constante numerice', () => {
 
 /* ── (b) poziționarea pe „Acasă" ── */
 
-test('simulatoarele rapide stau înaintea celor 6 carduri de categorii', () => {
+test('simulatoarele rapide stau după cele 6 carduri de categorii', () => {
   const quick = home.indexOf('<div class="quick-grid">');
   const grid = home.indexOf('<div class="home-grid">');
   assert.ok(quick !== -1 && grid !== -1, 'ambele secțiuni există pe Acasă');
-  assert.ok(quick < grid, 'simulatoarele trebuie să fie deasupra cardurilor de categorii');
-  assert.ok(home.indexOf('id="home-title"') < grid, 'titlul „Simulatoare rapide" e înaintea grid-ului');
+  assert.ok(grid < quick, 'simulatoarele trebuie să fie sub cardurile de categorii');
+  assert.ok(grid < home.indexOf('id="home-title"'), 'titlul „Simulatoare rapide" e după grid');
 });
 
 /* ── (c) simulatoarele noi ── */

@@ -59,7 +59,7 @@ const src =
   'mulberry32, randn, cholesky, computeAsigurare, AS_PRESETS, ' +
   'computeStres, ST_SCENARII, ST_SCEN_ACTIVE, ' +
   'computePensie, citestePensie, PN_SCENARII, computeImpozit, impozitRata, ' +
-  'IMPOZIT_VENITURI, IMPOZIT_SURSE, renderPensie, renderImpozitare, ' +
+  'IMPOZIT_VENITURI, IMPOZIT_SURSE, SURSA_PWC_RATA, renderPensie, renderImpozitare, ' +
   'textDataActualizate, textEtichetaInflatie, textContextFiscal, renderDataFreshness, SURSA_COD_FISCAL, ' +
   'computeDatorii, citesteDatorii, rataAnuitate, renderDatorii, ' +
   'computeDca, citesteDca, DCA_SCENARII, renderDca, computeCost, ' +

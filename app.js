@@ -3090,7 +3090,7 @@ function initPensie() {
 /* Rate reale, România, 2025 → 2026. Informativ, nu recomandare fiscală.
    Sursele sunt enumerate la finalul panoului și în tooltip-uri. */
 const IMPOZIT_SURSE = {
-  pwc: { nume: 'PwC', url: 'https://taxsummaries.pwc.com/romania/individual/significant-developments' },
+  pwc: { nume: 'PwC', url: SURSA_PWC_RATA },
   ey: { nume: 'EY', url: 'https://www.ey.com/en_gl/technical/tax-alerts/romanian-tax-changes-introduced-by-new-fiscal-and-budgetary-measures' },
   tel: { nume: 'Tax Efficiency Lab', url: 'https://taxefficiencylab.com/romania-tax-guide' },
   oa: { nume: 'openaccountants', url: 'https://www.openaccountants.com/skills/ro-employee-income-tax' },

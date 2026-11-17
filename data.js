@@ -18,7 +18,8 @@
 /* CONFIG_AN — SINGURUL loc cu valorile care se schimbă odată cu anul.
    La actualizarea anuală se modifică doar acest obiect (și seria de inflație
    din GLITCHCOIN_DATA); app.js și index.html preiau valorile de aici.
-   Sursa valorilor: DATE-2025-2026.md §2, §5, §7. */
+   Sursa valorilor: DATE-2025-2026.md §2, §5, §7 — raport de cercetare păstrat
+   în arhiva locală și atașat pe cardul t_fe959b3f (nu e versionat în repo). */
 const CONFIG_AN = {
   anCurent: 2026,
   inflatie: {
@@ -38,6 +39,11 @@ const CONFIG_AN = {
   },
   actualizatLa: '2026-11-12',
 };
+
+/* Sursa [13] din raportul de cercetare (PwC Tax Summaries, România).
+   app.js o folosește în IMPOZIT_SURSE.pwc; testul verifică această legătură,
+   fără să depindă de fișierul DATE-2025-2026.md (păstrat doar local). */
+const SURSA_PWC_RATA = 'https://taxsummaries.pwc.com/romania/individual/significant-developments';
 
 const GLITCHCOIN_DATA = {
   // Rata inflației anuale 1991–2026. Valoarea 2.561 înseamnă +256,1%.

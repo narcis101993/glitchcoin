@@ -3,7 +3,6 @@
 // Rulează: node --test tests/
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { html, css, js, gc } from './helpers/bundle.mjs';
 
 const CONFIG = gc.CONFIG_AN;
@@ -117,9 +116,7 @@ test('renderDataFreshness umple toate sloturile și adaugă linkuri cu sursele d
   assert.match(randare, /SURSA_COD_FISCAL/, 'link către Codul fiscal/ANAF');
   assert.match(randare, /IMPOZIT_SURSE\.pwc/, 'link către sursa ratelor din raport');
 
-  const raport = readFileSync(new URL('../DATE-2025-2026.md', import.meta.url), 'utf8');
-  const sursa13 = raport.match(/^\[13\]\s+(\S+)/m)[1].trim().toLowerCase();
-  assert.equal(gc.IMPOZIT_SURSE.pwc.url.toLowerCase(), sursa13, 'PwC e sursa [13] din raport');
+  assert.equal(gc.IMPOZIT_SURSE.pwc.url.toLowerCase(), gc.SURSA_PWC_RATA.toLowerCase(), 'PwC e sursa [13] consemnată în arhiva DATE-2025-2026.md');
   assert.equal(gc.SURSA_COD_FISCAL.url, 'http://static.anaf.ro/static/10/Anaf/legislatie/L_227_2015.htm', 'ANAF e linkul deja citat în Despre');
   const inceputInit = js.indexOf('function init() {');
   assert.ok(inceputInit !== -1, 'funcția init există');

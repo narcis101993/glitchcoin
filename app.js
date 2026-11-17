@@ -5,7 +5,7 @@
 /* Format internațional: virgulă pentru mii, punct pentru zecimale
    (5,000.00 lei / 0.3% / 1.10x). Nu mai folosim ro-RO, care dădea 5.000,00. */
 const LOCALE = 'en-US';
-const AN_CURENT = 2026; // anul "prezent" pentru care suma actuală este introdusă
+const AN_CURENT = CONFIG_AN.anCurent; // anul „prezent” (singura sursă: CONFIG_AN din data.js)
 
 /* ── Formatare ────────────────────────────────────────── */
 
@@ -303,17 +303,18 @@ const RATE_BY_YEAR = Object.fromEntries(
   GLITCHCOIN_DATA.inflation.map((d) => [d.year, d.rate]),
 );
 
-/* Corecție C3 — impozitul pe tipuri de venit (România, 2026).
+/* Corecție C3 — impozitul pe tipuri de venit (România, anul din CONFIG_AN).
    Selectul „Tipul de venit" (taburile Randament și Profit) setează impozitul
    implicit; utilizatorul îl poate apoi modifica manual. Sunt rate reale,
    nu valori generice (10% supraestimează impozitul pentru acțiuni păstrate
-   mai mult de un an prin broker românesc). */
+   mai mult de un an prin broker românesc). Cotele vin din CONFIG_AN.coteFiscale;
+   obiectul păstrează numele și etichetele folosite deja în UI și în teste. */
 const IMPOZIT_TIPURI = {
-  'dobandi':     { rata: 10, eticheta: 'Dobândă (depozite, obligațiuni RO)' },
-  'dividende':   { rata: 16, eticheta: 'Dividende' },
-  'vm-ro':       { rata: 3,  eticheta: 'Valori mobiliere · broker RO · ≥ 1 an' },
-  'vm-ro-scurt': { rata: 6,  eticheta: 'Valori mobiliere · broker RO · < 1 an' },
-  'vm-strain':   { rata: 16, eticheta: 'Valori mobiliere · broker străin / crypto' },
+  'dobandi':     { rata: CONFIG_AN.coteFiscale.dobanda,   eticheta: 'Dobândă (depozite, obligațiuni RO)' },
+  'dividende':   { rata: CONFIG_AN.coteFiscale.dividende, eticheta: 'Dividende' },
+  'vm-ro':       { rata: CONFIG_AN.coteFiscale.vmRo,      eticheta: 'Valori mobiliere · broker RO · ≥ 1 an' },
+  'vm-ro-scurt': { rata: CONFIG_AN.coteFiscale.vmRoScurt, eticheta: 'Valori mobiliere · broker RO · < 1 an' },
+  'vm-strain':   { rata: CONFIG_AN.coteFiscale.vmStrain,  eticheta: 'Valori mobiliere · broker străin / crypto' },
 };
 
 /* ═══ 1. Simulatorul inflației ═════════════════════════ */
@@ -377,11 +378,12 @@ function renderSimulator() {
 
 /* ═══ 2. Prețurile la alimente ══════════════════════════ */
 
-const FOOD_YEARS = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
+const FOOD_YEARS = [2020, 2021, 2022, 2023, 2024, 2025, CONFIG_AN.anCurent];
 
-/* Creștere 2026 vs 2020 — 2026 e parțial (estimare metodologică). */
+/* Creștere față de 2020 — anul curent vine din CONFIG_AN; 2026 e parțial
+   (estimare metodologică). Valorile max/min sunt expuse și în CONFIG_DERIVAT. */
 function foodGrowth(product) {
-  return product.prices[2026] / product.prices[2020] - 1;
+  return product.prices[CONFIG_AN.anCurent] / product.prices[2020] - 1;
 }
 
 function renderFood() {
@@ -530,20 +532,21 @@ function renderDeflator() {
 /* ═══ 5. Timp vs dorințe ═══════════════════════════════ */
 
 /* Constantele tabulului „Timp vs dorințe”.
-   Corecții C5 și C11: 250 de zile lucrătoare (România 2026) și 30,44 zile/lună
-   (365 ÷ 12), în loc de convenția SUA de 261 și de „31 zile/lună".
+   Corecții C5 și C11: zilele lucrătoare vin din CONFIG_AN (România: 365 − 104
+   weekend − CONFIG_AN.sarbatoriLegale sărbători legale); 30,44 zile/lună
+   (365 ÷ 12) e o medie calendaristică, nu depinde de an.
    Din 2026-11-13 numărul de zile lucrătoare e un INPUT (cerință Narcis): utilizatorul
-   îl poate schimba, iar valoarea implicită rămâne 250. */
+   îl poate schimba, iar valoarea implicită rămâne cea din CONFIG_AN. */
 const TIMP_ZILE_LUNA = 365 / 12;     // 30,44 — media reală de zile pe lună (365/12)
 const TIMP_LUNI_AN = 12;             // luni într-un an (venitul anual = 12 × venitul lunar)
 const TIMP_ORE_ZI = 24;              // venitul pe oră = venit pe zi / 24
 const TIMP_MINUTE_ORA = 60;          // venitul pe minut = venit pe oră / 60
 const TIMP_ORE_LUCRATOARE = 8;       // venitul pe oră lucrătoare = zi lucrătoare / 8
 const TIMP_ZILE_AN = 365;            // zile într-un an calendaristic
-const TIMP_ZILE_LUCRATOARE_AN_DEFAULT = 250; // România 2026: 365 − 104 weekend − 11 sărbători legale
+const TIMP_ZILE_LUCRATOARE_AN_DEFAULT = CONFIG_AN.zileLucratoare; // alias cu numele vechi
 
-/* Zilele lucrătoare dintr-un an se citesc din inputul „Zile lucrătoare / an".
-   Orice valoare invalidă, nulă sau negativă revine la 250 — altfel am împărți la zero. */
+/* Zilele lucrătoare dintr-un an se citesc din inputul „Zile lucrătoare / an”.
+   Orice valoare invalidă, nulă sau negativă revine la CONFIG_AN.zileLucratoare — altfel am împărți la zero. */
 function zileLucratoareAn() {
   const el = document.getElementById('timp-zile-lucratore');
   if (!el) return TIMP_ZILE_LUCRATOARE_AN_DEFAULT;

@@ -2,7 +2,7 @@
 // Rulează: node --test tests/
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { html, js, data } from './helpers/bundle.mjs';
+import { html, js, data, gc } from './helpers/bundle.mjs';
 
 function includes(haystack, needle, label) {
   assert.ok(haystack.includes(needle), `${label}: lipsește „${needle}”`);
@@ -26,15 +26,30 @@ test('C3 — selectul „Tipul de venit" există în Randament și Profit, cu ra
 });
 
 test('C3 — tabelele de impozitare din app.js folosesc ratele reale', () => {
-  includes(js, "'vm-ro':       { rata: 3", 'C3');
-  includes(js, "'vm-ro-scurt': { rata: 6", 'C3');
-  includes(js, "'vm-strain':   { rata: 16", 'C3');
+  // Cotele nu mai sunt hardcodate: vin din CONFIG_AN.coteFiscale.
+  includes(js, "'vm-ro':       { rata: CONFIG_AN.coteFiscale.vmRo", 'C3');
+  includes(js, "'vm-ro-scurt': { rata: CONFIG_AN.coteFiscale.vmRoScurt", 'C3');
+  includes(js, "'vm-strain':   { rata: CONFIG_AN.coteFiscale.vmStrain", 'C3');
   includes(js, 'impozit-tipuri', 'C3 tooltip');
 });
 
 test('C4 — data.js: seria de inflație e INS (1991 = 170,2%, nu 230,62%)', () => {
   includes(data, '{ year: 1991, rate: 1.702 }', 'C4');
   includes(data, 'Sursa inflatiei: INS, IPC national', 'C4');
+
+  // P0/1 — CONFIG_AN e singurul loc al valorilor care se schimbă anual.
+  assert.equal(gc.CONFIG_AN.anCurent, 2026);
+  assert.equal(gc.CONFIG_AN.zileLucratoare, 250);
+  assert.equal(gc.CONFIG_AN.sarbatoriLegale, 11);
+  assert.equal(gc.CONFIG_AN.inflatie.rata, 0.063);
+  assert.equal(gc.CONFIG_AN.inflatie.rataOctOct, 0.069);
+  assert.equal(gc.CONFIG_AN.inflatie.eticheta, 'oct 2026 vs dec 2025, parțial');
+  assert.match(gc.CONFIG_AN.inflatie.sursa, /^https:\/\/agerpres\.ro\//);
+  assert.deepEqual({ ...gc.CONFIG_AN.coteFiscale }, {
+    dobanda: 10, dividende: 16, vmRo: 3, vmRoScurt: 6, vmStrain: 16,
+  });
+  assert.equal(gc.CONFIG_AN.actualizatLa, '2026-11-12');
+  assert.equal(gc.AN_CURENT, gc.CONFIG_AN.anCurent);
 });
 
 test('C7 — data.js: cartofii 2025 = 2,49 lei', () => {
@@ -44,10 +59,23 @@ test('C7 — data.js: cartofii 2025 = 2,49 lei', () => {
 test('A2/A3 — data.js: 2025 = 7,3% (INS), 2026 = 6,3% (parțial)', () => {
   includes(data, '{ year: 2025, rate: 0.0730 }', 'A2');
   includes(data, '{ year: 2026, rate: 0.0630, partial: true }', 'A3');
+
+  // Valorile calculate se derivă din CONFIG_AN, nu sunt scrise de mână.
+  const derivat = gc.CONFIG_DERIVAT;
+  assert.equal(derivat.zileLucratoarePeLuna, 250 / 12);
+  // Rândul curent al seriei rămâne literal (cerința „nu atinge seria”), dar nu
+  // poate diverge de la CONFIG_AN — gard pentru actualizarea anuală următoare.
+  const seria = Object.fromEntries(gc.GLITCHCOIN_DATA.inflation.map((d) => [d.year, d]));
+  assert.equal(seria[gc.CONFIG_AN.anCurent].rate, gc.CONFIG_AN.inflatie.rata);
+  assert.ok(Math.abs(derivat.echivalent1000lei2000 - 9198.398404954) < 1e-6);
+  assert.ok(Math.abs(derivat.crestereAlimente.max.valoare - 0.665) < 1e-12);
+  assert.ok(Math.abs(derivat.crestereAlimente.min.valoare - 0.215) < 1e-12);
+  assert.equal(derivat.crestereAlimente.max.produs, 'Pâine (500g)');
+  assert.equal(derivat.crestereAlimente.min.produs, 'Cartofi (kg)');
 });
 
 test('C5/C11 — Timp vs dorințe: zile lucrătoare ca input (implicit 248) și 30,44 zile/lună', () => {
-  includes(js, 'TIMP_ZILE_LUCRATOARE_AN_DEFAULT = 250', 'C5 default');
+  includes(js, 'TIMP_ZILE_LUCRATOARE_AN_DEFAULT = CONFIG_AN.zileLucratoare', 'C5 default');
   includes(js, 'TIMP_ZILE_LUNA = 365 / 12', 'C11');
   includes(js, "getElementById('timp-zile-lucratore')", 'C5 input');
   includes(js, 'timp-zile-lucratore', 'C5 tooltip');
@@ -89,4 +117,12 @@ test('Surse — linkuri INS/BNR/PwC/EY în secțiunea „Surse și note metodolo
   includes(html, 'bnr.ro', 'surse');
   includes(html, 'taxsummaries.pwc.com/romania', 'surse');
   includes(html, 'ey.com', 'surse');
+
+  // Fallback-urile statice din HTML sunt marcate pentru guardul de date hardcodate.
+  for (const key of [
+    'echivalent1000lei2000', 'anCurent', 'crestereAlimente', 'inflatie',
+    'zileLucratoare', 'zileLucratoarePeLuna', 'sarbatoriLegale', 'coteFiscale.vmRo',
+  ]) {
+    assert.ok(html.includes(`data-config-key="${key}"`), `marker lipsă: ${key}`);
+  }
 });

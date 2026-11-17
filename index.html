@@ -288,7 +288,7 @@
           <a class="fact-source" href="https://insse.ro/cms/ro/content/ipc%E2%80%93serie-de-date-anuala" target="_blank" rel="noopener">Sursă: INS — IPC, serie anuală</a>
         </div>
         <div class="fact-card">
-          <p>Din 1.000 lei din 2000, în 2026 ai avea nevoie de aproape 9.198 lei pentru aceeași putere de cumpărare.</p>
+          <p data-config-key="echivalent1000lei2000">Din 1.000 lei din 2000, în 2026 ai avea nevoie de aproape 9.198 lei pentru aceeași putere de cumpărare.</p>
           <a class="fact-source" href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">Sursă: calculat din seria INS</a>
         </div>
         <div class="fact-card">
@@ -441,8 +441,8 @@
         </div>
 
         <div class="card">
-          <h3>Creștere 2026 vs 2020, pe produs</h3>
-          <div id="food-chart" class="bar-chart" role="img" aria-label="Creștere 2026 vs 2020, pe produs. Maxim: 66,50% la Pâine (500g); minim: 21,50% la Cartofi (kg)."></div>
+          <h3 data-config-key="anCurent">Creștere 2026 vs 2020, pe produs</h3>
+          <div data-config-key="crestereAlimente" id="food-chart" class="bar-chart" role="img" aria-label="Creștere 2026 vs 2020, pe produs. Maxim: 66,50% la Pâine (500g); minim: 21,50% la Cartofi (kg)."></div>
         </div>
       </section>
 
@@ -474,7 +474,7 @@
           </table>
         </div>
 
-        <p class="note">
+        <p class="note" data-config-key="inflatie">
           <strong>Sursă:</strong> INS — Indicele prețurilor de consum național (IPC), serie anuală
           (<a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">insse.ro</a>).
           2025 = media anuală 7,3% (INS, definitivă). 2026 = 6,3% (oct 2026 vs dec 2025,
@@ -524,7 +524,7 @@
         <p class="lead">Datele publice folosite în aplicație, cu linkuri către sursele oficiale.</p>
         <div class="card">
           <ul class="info-list">
-            <li><strong>Inflație</strong> — INS, Indicele prețurilor de consum național (IPC), serie anuală:
+            <li data-config-key="inflatie"><strong>Inflație</strong> — INS, Indicele prețurilor de consum național (IPC), serie anuală:
               <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">insse.ro</a>.
               Media anuală 2025 = 7,3% (INS, definitivă); 2026 = 6,3% (oct 2026 vs dec 2025, parțial); rata anuală oct/oct = 6,9%.</li>
             <li><strong>Raportul asupra inflației</strong> — BNR: <a href="https://www.bnr.ro/uploads/2026-11-16raportasuprainflatiei,noiembrie2026_documentpdf_545_1794821695.pdf" target="_blank" rel="noopener">bnr.ro</a>.</li>
@@ -970,7 +970,7 @@
         </div>
         <div class="field">
           <label for="timp-zile-lucratore" data-tip="timp-zile-lucratore">Zile lucrătoare / an</label>
-          <input type="number" id="timp-zile-lucratore" value="250" min="1" max="366" step="1" inputmode="numeric">
+          <input type="number" data-config-key="zileLucratoare" id="timp-zile-lucratore" value="250" min="1" max="366" step="1" inputmode="numeric">
           <span class="field-hint">România 2026</span>
         </div>
       </div>
@@ -994,7 +994,7 @@
             <span class="stat-sub">venit net ÷ minute</span>
           </div>
           <div class="stat">
-            <span class="stat-label">Pe zi lucrătoare · <span id="timp-venit-ziluc-div">20,83</span></span>
+            <span class="stat-label">Pe zi lucrătoare · <span data-config-key="zileLucratoarePeLuna" id="timp-venit-ziluc-div">20,83</span></span>
             <span class="stat-value" id="timp-venit-ziluc">—</span>
             <span class="stat-sub">venit anual (12 × lunar) ÷ zile lucrătoare / an</span>
           </div>
@@ -1057,7 +1057,7 @@
             <tr>
               <td>An lucrător (8/24)</td>
               <td class="num" id="timp-tabel-zileluc">—</td>
-              <td class="num" id="timp-tabel-zileanluc">250</td>
+              <td class="num" data-config-key="zileLucratoare" id="timp-tabel-zileanluc">250</td>
               <td class="num" id="timp-tabel-pctluc">—</td>
             </tr>
           </tbody>
@@ -1066,10 +1066,10 @@
 
       <p class="note">
         <strong>Note metodologice:</strong> „An lucrător" = zilele lucrătoare dintr-un an, setate în
-        inputul „Zile lucrătoare / an" (implicit <strong><span id="timp-note-zile">250</span></strong>,
-        România 2026: 365 zile − 104 de zile de weekend − 11 sărbători legale). Media reală de zile
+        inputul „Zile lucrătoare / an" (implicit <strong><span data-config-key="zileLucratoare" id="timp-note-zile">250</span></strong>,
+        România 2026: 365 zile − 104 de zile de weekend − <span data-config-key="sarbatoriLegale">11</span> sărbători legale). Media reală de zile
         pe lună e <strong>30,44</strong> (365 ÷ 12), nu 31; zilele lucrătoare pe lună se derivă din cele
-        anuale (<strong><span id="timp-note-zile-luna">20,83</span></strong>).
+        anuale (<strong><span data-config-key="zileLucratoarePeLuna" id="timp-note-zile-luna">20,83</span></strong>).
       </p>
 
       <div class="presets">
@@ -1731,7 +1731,7 @@
         </div>
         <div class="field">
           <label for="rand-impozit" data-tip="impozit-tipuri">Impozit (%)</label>
-          <input type="number" id="rand-impozit" value="3" min="0" max="100" step="any" inputmode="decimal">
+          <input type="number" data-config-key="coteFiscale.vmRo" id="rand-impozit" value="3" min="0" max="100" step="any" inputmode="decimal">
         </div>
         <div class="field">
           <label for="rand-comisioane" data-tip="comisioane">Comisioane (%)</label>
@@ -1842,7 +1842,7 @@
         </div>
         <div class="field">
           <label for="prof-impozit" data-tip="impozit-tipuri">Impozit (%)</label>
-          <input type="number" id="prof-impozit" value="3" min="0" max="100" step="any" inputmode="decimal">
+          <input type="number" data-config-key="coteFiscale.vmRo" id="prof-impozit" value="3" min="0" max="100" step="any" inputmode="decimal">
         </div>
         <div class="field">
           <label for="prof-comisioane" data-tip="comisioane">Comisioane (%)</label>

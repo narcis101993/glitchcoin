@@ -47,7 +47,7 @@ vm.createContext(ctx);
 const src =
   readFileSync(join(DIR, 'data.js'), 'utf8') + '\n' +
   readFileSync(join(DIR, 'app.js'), 'utf8') + '\n' +
-  'globalThis.__gc = { GLITCHCOIN_DATA, AN_CURENT, IMPOZIT_TIPURI, NUAM_DEFAULTS, COST_DEFAULTS, ' +
+  'globalThis.__gc = { CONFIG_AN, CONFIG_DERIVAT, GLITCHCOIN_DATA, AN_CURENT, IMPOZIT_TIPURI, NUAM_DEFAULTS, COST_DEFAULTS, ' +
   'TIMP_ZILE_LUNA, TIMP_ZILE_LUCRATOARE_AN_DEFAULT, computeNuAm, deflatorValue, computeTimp, ' +
   'computeRandament, computeProfit, computeCompusa, ' +
   'computeRandamentReal, computeIstoricReal, computeRegula72, computeDublareInAni, fmtAni, ' +

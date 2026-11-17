@@ -143,7 +143,9 @@ test('Despre — conține toate sursele aplicației, cu linkuri precise și sigu
   }
   for (const m of js.matchAll(/href=\\"(https?:\/\/[^"\\]+)/g)) add(m[1]);
   for (const m of js.matchAll(/url: '(https?:\/\/[^']+)'/g)) add(m[1]);
-  for (const m of data.matchAll(/https?:\/\/[^\s]+/g)) add(m[0].replace(/[.,;]$/, ''));
+  // data.js conține acum și URL-uri ca valori (CONFIG_AN.inflatie.sursa), nu doar în comentarii:
+  // regex-ul trebuie să ignore ghilimeala de închidere a literalului JS.
+  for (const m of data.matchAll(/https?:\/\/[^\s]+/g)) add(m[0].replace(/[.,;']+$/, ''));
   for (const u of appUrls) assert.ok(set.has(u), `sursă absentă din Despre: ${u}`);
 });
 

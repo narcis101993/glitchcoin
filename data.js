@@ -15,6 +15,30 @@
      cf. InfoCons — https://infocons.ro/studiu-comparativ-infocons-protectia-consumatorilor-cat-ne-costa-alimentele-de-baza-septembrie-2025-vs-septembrie-2026 */
 'use strict';
 
+/* CONFIG_AN — SINGURUL loc cu valorile care se schimbă odată cu anul.
+   La actualizarea anuală se modifică doar acest obiect (și seria de inflație
+   din GLITCHCOIN_DATA); app.js și index.html preiau valorile de aici.
+   Sursa valorilor: DATE-2025-2026.md §2, §5, §7. */
+const CONFIG_AN = {
+  anCurent: 2026,
+  inflatie: {
+    rata: 0.063,                 // 6,3% — oct 2026 vs dec 2025 (partial)
+    eticheta: 'oct 2026 vs dec 2025, parțial',
+    rataOctOct: 0.069,           // 6,9% — rata anuală pe octombrie 2026
+    sursa: 'https://agerpres.ro/economic/2026/11/12/rata-anuala-a-inflatiei-isi-continua-cresterea-si-ajunge-la-6-9-in-octombrie--1612494',
+  },
+  zileLucratoare: 250,           // 365 − 104 weekend − 11 sărbători legale
+  sarbatoriLegale: 11,
+  coteFiscale: {
+    dobanda: 10,
+    dividende: 16,
+    vmRo: 3,
+    vmRoScurt: 6,
+    vmStrain: 16,
+  },
+  actualizatLa: '2026-11-12',
+};
+
 const GLITCHCOIN_DATA = {
   // Rata inflației anuale 1991–2026. Valoarea 2.561 înseamnă +256,1%.
   inflation: [
@@ -71,3 +95,34 @@ const GLITCHCOIN_DATA = {
     { name: 'Brânză telemea (kg)', prices: { 2020: 20,  2021: 21,   2022: 22.5, 2023: 23.5, 2024: 24.5, 2025: 26.39, 2026: 27.30 } },
   ],
 };
+
+/* Valori DERIVATE din CONFIG_AN și din seriile existente. Nu sunt valori
+   noi, ci o singură sursă verificabilă pentru textele de fallback din
+   index.html (marcate cu `data-config-key`) și pentru teste. Nicio funcție
+   financiară nu e modificată de aici. */
+const CONFIG_DERIVAT = (() => {
+  const an = CONFIG_AN.anCurent;
+  const produsInflatie = GLITCHCOIN_DATA.inflation
+    .filter((d) => d.year >= 2000 && d.year <= an)
+    .reduce((produs, d) => produs * (1 + d.rate), 1);
+  const crestere = (p) => p.prices[an] / p.prices[2020] - 1;
+  const max = Math.max(...GLITCHCOIN_DATA.food.map(crestere));
+  const min = Math.min(...GLITCHCOIN_DATA.food.map(crestere));
+
+  return {
+    anCurent: an,
+    inflatie: {
+      rata: CONFIG_AN.inflatie.rata,
+      rataOctOct: CONFIG_AN.inflatie.rataOctOct,
+    },
+    zileLucratoare: CONFIG_AN.zileLucratoare,
+    sarbatoriLegale: CONFIG_AN.sarbatoriLegale,
+    zileLucratoarePeLuna: CONFIG_AN.zileLucratoare / 12,   // 250/12 = 20,83
+    echivalent1000lei2000: 1000 * produsInflatie,         // 9.198,40 lei
+    crestereAlimente: {
+      max: { valoare: max, produs: GLITCHCOIN_DATA.food.find((p) => crestere(p) === max).name },
+      min: { valoare: min, produs: GLITCHCOIN_DATA.food.find((p) => crestere(p) === min).name },
+    },
+    coteFiscale: { ...CONFIG_AN.coteFiscale },
+  };
+})();

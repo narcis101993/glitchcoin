@@ -50,6 +50,46 @@ function escapeHtml(text) {
   }[ch]));
 }
 
+/* ── Prospețimea datelor (P0/2) ───────────────────────────────
+   Textele de mai jos NU sunt literale: se construiesc din CONFIG_AN (data.js).
+   Când se actualizează anul, se schimbă doar configul, nu și interfața. */
+const LUNI_SCURTE_RO = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+/* Link de verificare pentru nota fiscală. Exact linkul ANAF deja citat în
+   sursele panoului N7 și în pagina Despre; nu ating IMPOZIT_SURSE (tabelul N7). */
+const SURSA_COD_FISCAL = {
+  nume: 'Codul fiscal/ANAF',
+  url: 'http://static.anaf.ro/static/10/Anaf/legislatie/L_227_2015.htm',
+};
+
+/* „2026-11-12” → „12 nov 2026”. Formatul datei din config e ISO (YYYY-MM-DD). */
+function textDataActualizate() {
+  const [an, luna, zi] = CONFIG_AN.actualizatLa.split('-').map(Number);
+  return `Date actualizate: ${zi} ${LUNI_SCURTE_RO[luna - 1]} ${an}`;
+}
+
+/* Eticheta din config e „oct 2026 vs dec 2025, parțial”: împărțim la virgulă
+   ca să obținem perioada + calificativul, fără să scriem „oct”/„parțial” aici.
+   Proza e în română, deci rata oct/oct folosește virgula zecimală (6,9%),
+   spre deosebire de cifrele calculate afișate cu LOCALE = en-US. */
+function textEtichetaInflatie() {
+  const eticheta = CONFIG_AN.inflatie.eticheta;
+  const virgula = eticheta.indexOf(',');
+  const perioada = (virgula === -1 ? eticheta : eticheta.slice(0, virgula)).trim();
+  const calificativ = virgula === -1 ? '' : eticheta.slice(virgula + 1).trim();
+  const prefix = calificativ ? `${calificativ}: ` : '';
+  const rata = fmtPctSmart(CONFIG_AN.inflatie.rataOctOct).replace('.', ',');
+  return `${CONFIG_AN.anCurent} = ${prefix}${perioada}; rata oct/oct = ${rata}`;
+}
+
+/* Cotele afișate în nota de context vin din CONFIG_AN.coteFiscale,
+   același obiect care alimentează selectul de impozit (IMPOZIT_TIPURI). */
+function textContextFiscal() {
+  const c = CONFIG_AN.coteFiscale;
+  return `Cotele ${CONFIG_AN.anCurent} (${c.vmRo}/${c.vmRoScurt}/${c.vmStrain}%, ` +
+    `dividende ${c.dividende}%) — verifică întotdeauna Codul fiscal/ANAF în vigoare.`;
+}
+
 /* ── Persistență inputuri (localStorage) ───────────────────
    Toate inputurile se salvează local, pe acest calculator:
      • inputurile statice — câte un `glitchcoin-input:<id>` pentru fiecare;
@@ -3238,6 +3278,45 @@ function initImpozitare() {
   ['tx-tip', 'tx-an'].forEach((id) => {
     document.getElementById(id).addEventListener('change', renderImpozitare);
   });
+}
+
+/* Completează cele trei locuri de context adăugate în P0/2: badge-ul global
+   de prospețime, nota de lângă inflație și nota de lângă rezultatele fiscale.
+   Toate textele vin din CONFIG_AN prin funcțiile de mai sus; linkurile sunt
+   sursele deja folosite în panou (ANAF/Cod fiscal și PwC = [13] în raport). */
+function appendTextLink(parent, sursa, text) {
+  const a = document.createElement('a');
+  a.href = sursa.url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.textContent = text || sursa.nume;
+  parent.appendChild(a);
+}
+
+function renderDataFreshness() {
+  const badgeData = document.getElementById('badge-actualizare');
+  if (badgeData) badgeData.textContent = textDataActualizate();
+
+  const badgeInflatie = document.getElementById('badge-inflatie');
+  if (badgeInflatie) badgeInflatie.textContent = textEtichetaInflatie();
+
+  const nota = document.getElementById('tx-context-note');
+  if (!nota) return;
+  nota.replaceChildren();
+
+  const text = textContextFiscal();
+  const marker = 'Codul fiscal/ANAF';
+  const pozitie = text.indexOf(marker);
+  if (pozitie === -1) {
+    nota.appendChild(document.createTextNode(text));
+  } else {
+    nota.appendChild(document.createTextNode(text.slice(0, pozitie)));
+    appendTextLink(nota, SURSA_COD_FISCAL, marker);
+    nota.appendChild(document.createTextNode(text.slice(pozitie + marker.length)));
+  }
+  nota.appendChild(document.createTextNode(' Sursa ratelor: '));
+  appendTextLink(nota, IMPOZIT_SURSE.pwc, 'PwC Tax Summaries (raport)');
+  nota.appendChild(document.createTextNode(' Nu e consultanță fiscală.'));
 }
 
 /* ═══ 24. Datorii bune vs rele (N9) ══════════════════════ */
@@ -7069,6 +7148,9 @@ function init() {
   renderDca();
   renderCurs();
   renderBiase();
+
+  // Badge-urile și notele de context se trag din CONFIG_AN, nu din inputuri.
+  renderDataFreshness();
 
   // Orice modificare a unui input/select se salvează (cu debounce).
   document.addEventListener('input', (event) => {

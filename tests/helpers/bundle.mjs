@@ -14,6 +14,7 @@ const documentStub = {
   querySelectorAll() { return []; },
   querySelector() { return null; },
   createElement() { return fakeElement(); },
+  createTextNode(text) { return { textContent: String(text) }; },
   createDocumentFragment() { return { appendChild() {} }; },
 };
 
@@ -59,6 +60,7 @@ const src =
   'computeStres, ST_SCENARII, ST_SCEN_ACTIVE, ' +
   'computePensie, citestePensie, PN_SCENARII, computeImpozit, impozitRata, ' +
   'IMPOZIT_VENITURI, IMPOZIT_SURSE, renderPensie, renderImpozitare, ' +
+  'textDataActualizate, textEtichetaInflatie, textContextFiscal, renderDataFreshness, SURSA_COD_FISCAL, ' +
   'computeDatorii, citesteDatorii, rataAnuitate, renderDatorii, ' +
   'computeDca, citesteDca, DCA_SCENARII, renderDca, computeCost, ' +
   'computeCurs, citesteCurs, renderCurs, initCurs, ' +

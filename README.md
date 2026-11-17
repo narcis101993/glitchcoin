@@ -3,6 +3,15 @@
 Aplicație web de educație financiară, cu 24 de calculatoare grupate în 6 categorii.
 HTML + CSS + JavaScript static, **fără backend**, fără conturi, fără date personale.
 
+## v3.0 — ce e nou
+
+- **Date verificabile**: `node scripts/verifica-date.mjs` verifică coerența internă a datelor; Convențiile sunt în [`docs/METODOLOGIE.md`](docs/METODOLOGIE.md); CI rulează testele la fiecare push/PR.
+- **Randament real** afișat și în „Fond de urgență", „Sumă dorită" și „DCA" (la rata de referință din `CONFIG_AN`).
+- **An fiscal 2025/2026** selectabil în „Randament" și „Profit" — cota implicită se schimbă odată cu anul.
+- **Prețurile estimate** 2025–2026 sunt marcate cu `*` și au sursă InfoCons în notă.
+- **„Explică rezultatul" și scenariile A/B** în toate cele 23 de taburi cu calculator; comparația arată două coloane (A vs B).
+- **Progres „explorat"** opțional în sidebar, categorii rapide pe mobil și simulare Monte Carlo cu status (nu mai blochează interfața la pornire).
+
 ## Cum deschizi
 
 1. **Dublu-click pe `index.html`** — se deschide în browserul implicit (Safari/Chrome), direct din folder.
@@ -45,7 +54,7 @@ Nu ai nevoie de internet — toate fișierele și toate datele sunt locale.
 
 ## Scenarii A/B (salvate local)
 
-Disponibil în 6 taburi nucleu: **Inflație, Timp vs dorințe, Dobândă, Dobândă compusă, Randament, Buget**.
+Disponibil în toate cele 23 de taburi cu calculator (vezi `gc.AB_CORE_TABS`): scenariile A/B compară două seturi de inputuri în două coloane, cu doar câmpurile care diferă.
 În panou, sub rezumat, găsești patru butoane mici: **Salvează A**, **Salvează B**,
 **Arată comparația**, **Șterge scenariile**.
 
@@ -67,7 +76,7 @@ Disponibil în 6 taburi nucleu: **Inflație, Timp vs dorințe, Dobândă, Dobân
 
 ## „Explică rezultatul” (în limbaj simplu)
 
-Disponibil în aceleași 6 taburi nucleu. Sub rezumat găsești butonul discret
+Disponibil în aceleași 23 de taburi cu calculator. Sub rezumat găsești butonul discret
 **Explică rezultatul**: deschide un paragraf scurt în română care spune **ce înseamnă
 numărul**, nu formula (aceea e deja în tooltipuri). De exemplu: „La 6.3% pe an, 1,000 lei
 de azi cumpără ~941 lei anul viitor (2026 e parțial)” sau „50/30/20 înseamnă 2,500 lei
@@ -237,6 +246,8 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
 
 ## Documentație
 
+Pentru convențiile de calcul și actualizarea anuală vezi [`docs/METODOLOGIE.md`](docs/METODOLOGIE.md). `docs/REVIEW-FINANCIAR.md` e un snapshot istoric (12–16.11.2026).
+
 Documentația de proces (auditul UI/UX, propunerile de redesign și conținut, revizuirea financiară,
 contextul proiectului) e în `docs/`. Partea de documentație pentru utilizator e acest `README`.
 
@@ -246,6 +257,7 @@ Rulează cu Node (fără librării externe):
 
 ```bash
 node --test tests/
+node scripts/verifica-date.mjs
 ```
 
 - `tests/c1-c12.test.mjs` — verifică fiecare corecție financiară (C1–C12) și datele 2025/2026,

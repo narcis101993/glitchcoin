@@ -7,20 +7,21 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { html, js, css, gc } from './helpers/bundle.mjs';
 
-const EXPLICA_TABS = ['inflatie', 'timp', 'dobanda', 'compusa', 'randament', 'buget'];
+const EXPLICA_TABS = ['inflatie', 'dobanda', 'compusa', 'di', 'regula72', 'timp', 'nuam', 'buget', 'fond', 'sanatate', 'randament', 'profit', 'cost', 'suma', 'oportunitate', 'dca', 'curs', 'diversificare', 'asigurari', 'stres', 'datorii', 'pensie', 'impozitare'];
+const TABURI_CU_FUNCTIE_DEDICATA = ['inflatie', 'timp', 'dobanda', 'compusa', 'randament', 'buget'];
 const CODE = js;
 
-/* ── 1. Montare pe cele 6 taburi nucleu ──────────────────── */
+/* ── 1. Montare pe cele 23 de taburi cu calculator ───────── */
 
-test('cele 6 taburi nucleu au câte o gazdă .explica-widget, imediat sub summary', () => {
-  assert.deepEqual(Object.keys(gc.EXPLAINERS), EXPLICA_TABS);
+test('toate taburile au o gazdă .explica-widget, imediat sub summary', () => {
+  assert.deepEqual(Object.keys(gc.EXPLAINERS), TABURI_CU_FUNCTIE_DEDICATA);
   for (const id of EXPLICA_TABS) {
     assert.ok(html.includes(`id="panel-${id}"`), `lipsește panoul ${id}`);
     assert.equal((html.match(new RegExp(`data-explica-panel="${id}"`, 'g')) || []).length, 1,
       `gazda explicației pentru ${id} trebuie să fie unică`);
   }
   const hosts = html.match(/class="explica-widget" data-explica-panel="/g) || [];
-  assert.equal(hosts.length, 6, 'exact 6 gazde în HTML');
+  assert.equal(hosts.length, 23, 'exact 23 de gazde în HTML');
   // Fiecare gazdă e între summary și widgetul A/B din același panou.
   for (const id of EXPLICA_TABS) {
     const panel = html.slice(html.indexOf(`id="panel-${id}"`));

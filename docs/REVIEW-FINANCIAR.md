@@ -3,7 +3,8 @@
 > **Document istoric (snapshot 12–16.11.2026).** Valorile din tabelele de status de mai jos
 > (248 zile lucrătoare, AN_CURENT = 2025, deflator 2001 = 1.131,93 lei, buget 6,20 zile etc.)
 > descriu starea aplicației la data auditului și **nu** reflectă codul curent. Pentru valorile
-> actuale vezi `data.js` (`CONFIG_AN` / `CONFIG_DERIVAT`), `app.js` și `README.md`.
+> actuale și convențiile în vigoare vezi `docs/METODOLOGIE.md`, `data.js` (`CONFIG_AN` /
+> `CONFIG_DERIVAT`), `app.js` și `README.md`.
 
 **Card:** `t_5fe146bc` · **Data:** 2026-11-12 · **Profil:** finance
 **Fișiere verificate:** `data.js` (57 linii), `app.js` (1.784), `index.html` (1.025), `README.md`, `CONTEXT.md`

@@ -39,19 +39,20 @@ const snapB = {
   outputs: [{ id: 'bg-summary', label: 'Rezumat · Buget', text: 'Rezultat B' }],
 };
 
-/* ── 1. Montare pe cele 6 taburi nucleu ──────────────────── */
+/* ── 1. Montare pe toate cele 23 de taburi cu calculator ── */
 
-test('cele 6 taburi nucleu au câte o gazdă .ab-widget, fără duplicare', () => {
-  assert.deepEqual(plain(gc.AB_CORE_TABS),
-    ['inflatie', 'timp', 'dobanda', 'compusa', 'randament', 'buget']);
+const TOATE_TABURILE = ['inflatie', 'dobanda', 'compusa', 'di', 'regula72', 'timp', 'nuam', 'buget', 'fond', 'sanatate', 'randament', 'profit', 'cost', 'suma', 'oportunitate', 'dca', 'curs', 'diversificare', 'asigurari', 'stres', 'datorii', 'pensie', 'impozitare'];
+
+test('toate taburile cu calculator au câte o gazdă .ab-widget, fără duplicare', () => {
+  assert.deepEqual(plain(gc.AB_CORE_TABS), TOATE_TABURILE);
   for (const id of gc.AB_CORE_TABS) {
     assert.ok(html.includes(`id="panel-${id}"`), `lipsește panoul ${id}`);
     assert.equal((html.match(new RegExp(`data-ab-panel="${id}"`, 'g')) || []).length, 1,
       `gazda widgetului pentru ${id} trebuie să fie unică`);
   }
   const hosts = html.match(/class="ab-widget" data-ab-panel="/g) || [];
-  assert.equal(hosts.length, 6, 'exact 6 gazde în HTML');
-  assert.match(js, /const AB_CORE_TABS = \['inflatie', 'timp', 'dobanda', 'compusa', 'randament', 'buget'\]/);
+  assert.equal(hosts.length, 23, 'exact 23 de gazde în HTML');
+  assert.ok(gc.AB_CORE_TABS.length === 23, 'lista taburilor e extinsă');
 });
 
 test('widgetul se montează automat dintr-un singur punct (initScenarii)', () => {
@@ -83,7 +84,7 @@ test('widgetul are exact 4 butoane native, focalizabile', () => {
   assert.match(widget, /AB_SLOTS\.forEach\(\(slot\) => addButton\('Salvează ' \+ slot/);
   assert.match(widget, /btn\.type = 'button'/, 'butoanele nu submit forme');
   assert.match(widget, /btn\.textContent = text/);
-  for (const text of ['Salvează ', 'Arată comparația', 'Șterge scenariile']) {
+  for (const text of ['Salvează ', 'Compară A vs B', 'Șterge scenariile']) {
     assert.ok(widget.includes(text), `lipsește butonul „${text}”`);
   }
   assert.match(widget, /addEventListener\('click', onClick\)/);

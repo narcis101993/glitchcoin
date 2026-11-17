@@ -73,6 +73,15 @@
     </div>
   </header>
 
+  <nav class="mobile-cats" aria-label="Categorii pe mobil">
+    <a href="#fundamente/inflatie">Fundamente</a>
+    <a href="#buget/timp">Buget</a>
+    <a href="#investitii/randament">Investiții</a>
+    <a href="#risc/diversificare">Risc</a>
+    <a href="#impozite/pensie">Impozite</a>
+    <a href="#psihologie/biase">Psihologie</a>
+  </nav>
+
   <div class="layout" id="layout">
 <aside class="sidebar" id="sidebar" aria-label="Navigare principală">
     <nav class="side-nav">
@@ -168,6 +177,10 @@
         </div>
       </div>
     </nav>
+    <div class="side-progress" id="side-progress">
+      <span id="explorat-text">0 din 23 taburi explorate</span>
+      <button type="button" id="explorat-toggle" aria-label="Ascunde progresul" aria-pressed="true">×</button>
+    </div>
   </aside>
   <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
 
@@ -444,6 +457,8 @@
             <tbody id="food-table-body"></tbody>
           </table>
         </div>
+        <p class="note">* 2025–2026 = estimări metodologice (variațiile INS aplicate prețului 2024), nu prețuri oficiale per brand/lanț.
+          Pentru prețuri reale compară studiile <a href="https://infocons.ro/studiu-comparativ-infocons-protectia-consumatorilor-cat-ne-costa-alimentele-de-baza-septembrie-2025-vs-septembrie-2026" target="_blank" rel="noopener">InfoCons</a>.</p>
 
         <div class="card">
           <h3 data-config-key="anCurent">Creștere 2026 vs 2020, pe produs</h3>
@@ -742,6 +757,10 @@
 
       <p id="di-summary" class="summary" aria-live="polite"></p>
 
+        <div class="explica-widget" data-explica-panel="di"></div>
+
+        <div class="ab-widget" data-ab-panel="di"></div>
+
       <div class="cards">
         <div class="stat" data-tip="di-crestere">
           <span class="stat-label">Creșterea nominală · 1 an</span>
@@ -890,6 +909,10 @@
       </div>
 
       <p id="r72-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="regula72"></div>
+
+        <div class="ab-widget" data-ab-panel="regula72"></div>
 
       <div class="cards">
         <div class="stat" data-tip="r72-regula">
@@ -1157,6 +1180,10 @@
       </div>
 
       <p id="nuam-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="nuam"></div>
+
+        <div class="ab-widget" data-ab-panel="nuam"></div>
 
       <div class="cards">
         <div class="stat" data-tip="nuam-fara">
@@ -1482,6 +1509,10 @@
 
       <p id="fu-summary" class="summary" aria-live="polite"></p>
 
+        <div class="explica-widget" data-explica-panel="fond"></div>
+
+        <div class="ab-widget" data-ab-panel="fond"></div>
+
       <div class="cards">
         <div class="stat" data-tip="fu-tinta">
           <span class="stat-label">Ținta fondului</span>
@@ -1492,6 +1523,11 @@
           <span class="stat-label">Dobânda pe un an · netă</span>
           <span class="stat-value" id="fu-dobanda-net">—</span>
           <span class="stat-sub">brut <span id="fu-dobanda-brut">—</span>, după impozit</span>
+        </div>
+        <div class="stat" data-tip="fu-dobanda-real">
+          <span class="stat-label">Dobânda reală pe un an</span>
+          <span class="stat-value" id="fu-dobanda-real">—</span>
+          <span class="stat-sub">după inflația de referință</span>
         </div>
         <div class="stat" data-tip="fu-economie-necesara">
           <span class="stat-label">Economia lunară necesară</span>
@@ -1611,6 +1647,10 @@
       </div>
 
       <p id="sf-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="sanatate"></div>
+
+        <div class="ab-widget" data-ab-panel="sanatate"></div>
       <div id="sf-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -1747,6 +1787,13 @@
           <input type="number" id="rand-randament" value="7" min="0" max="100" step="any" inputmode="decimal">
         </div>
         <div class="field">
+          <label for="rand-an">Anul de aplicare</label>
+          <select id="rand-an" data-default="2026">
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+          </select>
+        </div>
+        <div class="field">
           <label for="rand-tip-venit">Tipul de venit</label>
           <select id="rand-tip-venit" data-default="vm-ro">
             <option value="dobandi">Dobândă (depozite, obligațiuni RO) — 10%</option>
@@ -1862,6 +1909,13 @@
           <input type="number" id="prof-pret-vanzare" value="28" min="0" max="1000000000" step="any" inputmode="decimal">
         </div>
         <div class="field">
+          <label for="prof-an">Anul de aplicare</label>
+          <select id="prof-an" data-default="2026">
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+          </select>
+        </div>
+        <div class="field">
           <label for="prof-tip-venit">Tipul de venit</label>
           <select id="prof-tip-venit" data-default="vm-ro">
             <option value="dobandi">Dobândă (depozite, obligațiuni RO) — 10%</option>
@@ -1886,6 +1940,10 @@
       </div>
 
       <p id="prof-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="profit"></div>
+
+        <div class="ab-widget" data-ab-panel="profit"></div>
 
       <div class="cards">
         <div class="stat" data-tip="prof-final">
@@ -2004,6 +2062,10 @@
 
       <p id="cost-summary" class="summary" aria-live="polite"></p>
 
+        <div class="explica-widget" data-explica-panel="cost"></div>
+
+        <div class="ab-widget" data-ab-panel="cost"></div>
+
       <div class="cards">
         <div class="stat" data-tip="cost-mediu">
           <span class="stat-label">Costul mediu de achiziție</span>
@@ -2073,6 +2135,10 @@
 
       <p id="suma-summary" class="summary" aria-live="polite"></p>
 
+        <div class="explica-widget" data-explica-panel="suma"></div>
+
+        <div class="ab-widget" data-ab-panel="suma"></div>
+
       <div class="cards">
         <div class="stat" data-tip="suma-economie">
           <span class="stat-label">Economia lunară necesară</span>
@@ -2088,6 +2154,11 @@
           <span class="stat-label">Suma din dobândă</span>
           <span class="stat-value" id="suma-dobanda">—</span>
           <span class="stat-sub">creștere generată</span>
+        </div>
+        <div class="stat" data-tip="suma-real">
+          <span class="stat-label">Puterea de cumpărare a țintei</span>
+          <span class="stat-value" id="suma-real">—</span>
+          <span class="stat-sub">la sfârșitul perioadei, în lei de azi</span>
         </div>
         <div class="stat" data-tip="suma-final">
           <span class="stat-label">Suma totală la final</span>
@@ -2160,6 +2231,10 @@
       </div>
 
       <p id="co-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="oportunitate"></div>
+
+        <div class="ab-widget" data-ab-panel="oportunitate"></div>
 
       <div class="cards">
         <div class="stat" data-tip="co-cash-nominal">
@@ -2275,6 +2350,10 @@
       </div>
 
       <p id="dc-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="dca"></div>
+
+        <div class="ab-widget" data-ab-panel="dca"></div>
       <div id="dc-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -2307,6 +2386,11 @@
           <span class="stat-label">Diferența</span>
           <span class="stat-value" id="dc-diferenta">—</span>
           <span class="stat-sub">DCA − o dată</span>
+        </div>
+        <div class="stat" data-tip="dc-valoare-real">
+          <span class="stat-label">Valoare reală · DCA</span>
+          <span class="stat-value" id="dc-valoare-real">—</span>
+          <span class="stat-sub">în lei de la începutul perioadei</span>
         </div>
         <div class="stat" data-tip="dc-verdict">
           <span class="stat-label">Verdict</span>
@@ -2416,6 +2500,10 @@
       </div>
 
       <p id="cs-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="curs"></div>
+
+        <div class="ab-widget" data-ab-panel="curs"></div>
       <div id="cs-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -2598,6 +2686,10 @@
       </div>
 
       <p id="dv-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="diversificare"></div>
+
+        <div class="ab-widget" data-ab-panel="diversificare"></div>
       <div id="dv-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -2655,6 +2747,9 @@
                 <td>Drawdown estimat (2σ)</td>
                 <td class="num" id="dv-t-dd-p">—</td>
                 <td class="num" id="dv-t-dd-a">—</td>
+              </tr>
+              <tr>
+                <td colspan="3"><span id="dv-sim-status" class="sim-status" aria-live="polite"></span></td>
               </tr>
               <tr>
                 <td>Randament ajustat la risc</td>
@@ -2776,6 +2871,10 @@
       </div>
 
       <p id="as-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="asigurari"></div>
+
+        <div class="ab-widget" data-ab-panel="asigurari"></div>
       <div id="as-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -2935,6 +3034,10 @@
       </div>
 
       <p id="st-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="stres"></div>
+
+        <div class="ab-widget" data-ab-panel="stres"></div>
       <div id="st-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -3059,6 +3162,10 @@
       </div>
 
       <p id="dt-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="datorii"></div>
+
+        <div class="ab-widget" data-ab-panel="datorii"></div>
       <div id="dt-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -3256,6 +3363,10 @@
       </div>
 
       <p id="pn-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="pensie"></div>
+
+        <div class="ab-widget" data-ab-panel="pensie"></div>
       <div id="pn-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -3396,6 +3507,10 @@
       </div>
 
       <p id="tx-summary" class="summary" aria-live="polite"></p>
+
+        <div class="explica-widget" data-explica-panel="impozitare"></div>
+
+        <div class="ab-widget" data-ab-panel="impozitare"></div>
       <div id="tx-alerte" class="alerts" aria-live="polite"></div>
 
       <div class="cards">
@@ -4071,7 +4186,7 @@
       </p>
       <p>
         Valorile implicite sunt alese ca exerciții, nu sunt date personale ·
-        GlitchCoin v2.13 · aplicație locală, fără backend
+        GlitchCoin <span data-config-key="versiune" id="versiune-app">v3.0.0</span> · aplicație locală, fără backend
       </p>
       <p>
         Surse publice: <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS — IPC național</a> ·

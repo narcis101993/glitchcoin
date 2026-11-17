@@ -349,6 +349,10 @@ const RATE_BY_YEAR = Object.fromEntries(
 /* Pentru calculele de putere de cumpărare, anul parțial (2026) folosește media
    pe 12 luni din CONFIG_AN, nu rata YTD afișată în serie — o rată oct/dec nu e
    o rată anuală și nu poate compara doi ani calendaristici. */
+/* Rata de referință pentru puterea de cumpărare: media pe 12 luni din CONFIG_AN
+   (nu rata YTD, care nu compară doi ani calendaristici). */
+const RATA_REFERINTA_REAL = CONFIG_AN.inflatie.rataPutereCumparare;
+
 const RATE_PUTERE_BY_YEAR = Object.fromEntries(
   GLITCHCOIN_DATA.inflation.map((d) => [
     d.year,
@@ -369,6 +373,19 @@ const IMPOZIT_TIPURI = {
   'vm-ro-scurt': { rata: CONFIG_AN.coteFiscale.vmRoScurt, eticheta: 'Valori mobiliere · broker RO · < 1 an' },
   'vm-strain':   { rata: CONFIG_AN.coteFiscale.vmStrain,  eticheta: 'Valori mobiliere · broker străin / crypto' },
 };
+
+/* v3 — aceleași tipuri de venit, cu cotele din 2025 (PwC/EY/ANAF). Selectul
+   „Anul de aplicare” din Randament și Profit schimbă cota implicită. */
+const IMPOZIT_TIPURI_2025 = {
+  'dobandi': 10, 'dividende': 10, 'vm-ro': 1, 'vm-ro-scurt': 3, 'vm-strain': 10,
+};
+const IMPOZIT_ANI = [2025, CONFIG_AN.anCurent];
+
+function impozitPentruAn(tip, an) {
+  const sursa = Number(an) === 2025 ? IMPOZIT_TIPURI_2025 : IMPOZIT_TIPURI;
+  const valoare = sursa[tip];
+  return typeof valoare === 'number' ? valoare : valoare?.rata;
+}
 
 /* ═══ 1. Simulatorul inflației ═════════════════════════ */
 
@@ -445,7 +462,7 @@ function renderFood() {
   document.getElementById('food-table-body').innerHTML = GLITCHCOIN_DATA.food.map((p) => `
     <tr>
       <td>${escapeHtml(p.name)}</td>
-      ${FOOD_YEARS.map((an) => `<td class="num">${p.prices[an].toLocaleString(LOCALE)}</td>`).join('')}
+      ${FOOD_YEARS.map((an) => `<td class="num">${p.prices[an].toLocaleString(LOCALE)}${an >= 2025 ? '<sup class="est-mark" aria-label=" estimare">*</sup>' : ''}</td>`).join('')}
       <td class="num strong">${fmtPct(foodGrowth(p))}</td>
     </tr>`).join('');
 
@@ -1211,7 +1228,7 @@ function renderSuma() {
   const sumaDorita = Math.max(0, readNumber(document.getElementById('suma-dorita')));
 
   const summary = document.getElementById('suma-summary');
-  const ids = ['suma-economie', 'suma-total-economisit', 'suma-dobanda', 'suma-final'];
+  const ids = ['suma-economie', 'suma-total-economisit', 'suma-dobanda', 'suma-real', 'suma-final'];
   const r = computeSuma(randament, ani, sumaInitiala, sumaDorita);
 
   if (ani <= 0 || sumaDorita <= 0) {
@@ -1235,6 +1252,8 @@ function renderSuma() {
   document.getElementById('suma-total-economisit').textContent = fmtLei(r.totalEconomisit);
   document.getElementById('suma-dobanda').textContent = fmtLei(r.dinDobanda);
   document.getElementById('suma-final').textContent = fmtLei(r.sumaFinala);
+  document.getElementById('suma-real').textContent =
+    fmtLei(sumaDorita / Math.pow(1 + RATA_REFERINTA_REAL, ani));
   paintSign('suma-dobanda', r.dinDobanda);
 
   document.getElementById('suma-table-body').innerHTML = r.rows.map((row) => `
@@ -1741,6 +1760,11 @@ function renderFond() {
   document.getElementById('fu-tinta').textContent = fmtLei(r.tinta);
   document.getElementById('fu-dobanda-net').textContent = fmtLei(r.dobandaNet);
   document.getElementById('fu-dobanda-brut').textContent = fmtLei(r.dobandaBrut);
+  const dobandaRealPct = r.tinta > 0
+    ? (1 + r.dobandaNet / r.tinta) / (1 + RATA_REFERINTA_REAL) - 1
+    : 0;
+  document.getElementById('fu-dobanda-real').textContent = fmtLei(r.tinta * dobandaRealPct);
+  paintSign('fu-dobanda-real', dobandaRealPct);
   document.getElementById('fu-economie-necesara').textContent =
     r.economieNecesara === null || r.economieNecesara <= 0 ? 'ținta e acoperită' : fmtLei(r.economieNecesara);
   document.getElementById('fu-timp').textContent = fmtLuni(r.timpLuni);
@@ -2441,13 +2465,45 @@ function renderDvRows() {
   });
 }
 
+/* v3 — simularea Monte Carlo (5.000 × 5 ani) e amânată cu un tick ca să nu
+   blocheze întâi statusul „Se calculează…” și restul interfeței pe mobil.
+   Tokenul ignoră rezultatele învechite când utilizatorul schimbă inputurile. */
+let simulareToken = 0;
+
+function renderDiversificareSimulare(sim) {
+  if (!sim || !sim.valid) return;
+
+  if (sim.valid) {
+    document.getElementById('dv-t-med-p').textContent = fmtLei(sim.p.mediana);
+    document.getElementById('dv-t-med-a').textContent = fmtLei(sim.a.mediana);
+    document.getElementById('dv-t-p5-p').textContent = fmtLei(sim.p.p5);
+    document.getElementById('dv-t-p5-a').textContent = fmtLei(sim.a.p5);
+    document.getElementById('dv-t-p95-p').textContent = fmtLei(sim.p.p95);
+    document.getElementById('dv-t-p95-a').textContent = fmtLei(sim.a.p95);
+    document.getElementById('dv-t-pl-p').textContent = fmtPct(sim.p.probPierdere);
+    document.getElementById('dv-t-pl-a').textContent = fmtPct(sim.a.probPierdere);
+    document.getElementById('dv-t-ddm-p').textContent = fmtPct(sim.ddP.mediana);
+    document.getElementById('dv-t-ddm-a').textContent = fmtPct(sim.ddA.mediana);
+  }}
+
+/* Rulează simularea după ce browserul a avut timp să picteze statusul. */
+function programeazaSimulare(rows, corelare, suma) {
+  const status = document.getElementById('dv-sim-status');
+  if (status) status.textContent = 'Se calculează simularea (5.000 de scenarii)…';
+  const token = ++simulareToken;
+  setTimeout(() => {
+    if (token !== simulareToken) return;
+    renderDiversificareSimulare(simuleazaDiversificare(rows, corelare, { suma }));
+    if (status) status.textContent = '';
+  }, 0);
+}
+
 function renderDiversificare() {
   const suma = Math.max(0, readNumber(document.getElementById('dv-suma')));
   const corelare = Math.max(-100, Math.min(100, readNumber(document.getElementById('dv-corelare'), 30)));
   const rf = Math.max(0, Math.min(100, readNumber(document.getElementById('dv-rf'), 3.5)));
 
   const c = computeDiversificare(dvRows, corelare, rf);
-  const sim = simuleazaDiversificare(dvRows, corelare, { suma });
 
   const summary = document.getElementById('dv-summary');
   const alertesBox = document.getElementById('dv-alerte');
@@ -2478,18 +2534,7 @@ function renderDiversificare() {
   document.getElementById('dv-t-sh-p').textContent = fmtNum(c.sharpeP, 2);
   document.getElementById('dv-t-sh-a').textContent = fmtNum(c.sharpeA, 2);
 
-  if (sim.valid) {
-    document.getElementById('dv-t-med-p').textContent = fmtLei(sim.p.mediana);
-    document.getElementById('dv-t-med-a').textContent = fmtLei(sim.a.mediana);
-    document.getElementById('dv-t-p5-p').textContent = fmtLei(sim.p.p5);
-    document.getElementById('dv-t-p5-a').textContent = fmtLei(sim.a.p5);
-    document.getElementById('dv-t-p95-p').textContent = fmtLei(sim.p.p95);
-    document.getElementById('dv-t-p95-a').textContent = fmtLei(sim.a.p95);
-    document.getElementById('dv-t-pl-p').textContent = fmtPct(sim.p.probPierdere);
-    document.getElementById('dv-t-pl-a').textContent = fmtPct(sim.a.probPierdere);
-    document.getElementById('dv-t-ddm-p').textContent = fmtPct(sim.ddP.mediana);
-    document.getElementById('dv-t-ddm-a').textContent = fmtPct(sim.ddA.mediana);
-  }
+  programeazaSimulare(dvRows, corelare, suma);
 
   // Scenarii pe un an: randamentul portofoliului și al activului, la z deviații standard.
   const scenBody = document.getElementById('dv-scen-body');
@@ -3314,6 +3359,9 @@ function appendTextLink(parent, sursa, text) {
 }
 
 function renderDataFreshness() {
+  const versiune = document.getElementById('versiune-app');
+  if (versiune) versiune.textContent = `v${CONFIG_AN.versiune}`;
+
   const badgeData = document.getElementById('badge-actualizare');
   if (badgeData) badgeData.textContent = textDataActualizate();
 
@@ -3621,13 +3669,14 @@ function citesteDca() {
 }
 
 function renderDca() {
-  const c = computeDca(citesteDca());
+  const inputDca = citesteDca();
+  const c = computeDca(inputDca);
   const summary = document.getElementById('dc-summary');
 
   if (!c.valid) {
     summary.textContent = 'Introdu o sumă de investit mai mare decât zero.';
     ['dc-pret-final', 'dc-cost-mediu', 'dc-pret-mediu', 'dc-valoare-dca', 'dc-valoare-lump',
-      'dc-diferenta', 'dc-verdict'].forEach((id) => {
+      'dc-diferenta', 'dc-valoare-real', 'dc-verdict'].forEach((id) => {
       const el = document.getElementById(id);
       el.textContent = '—';
       el.classList.remove('is-pos', 'is-neg');
@@ -3647,6 +3696,8 @@ function renderDca() {
   paintSign('dc-diferenta', c.diferenta);
   const verdictText = { dca: 'DCA', lump: 'O dată', indiferent: 'Indiferent' }[c.verdict] || '—';
   document.getElementById('dc-verdict').textContent = verdictText;
+  document.getElementById('dc-valoare-real').textContent =
+    fmtLei(c.valoareDca / Math.pow(1 + RATA_REFERINTA_REAL, inputDca.luni / 12));
 
   const body = document.getElementById('dc-body');
   body.replaceChildren();
@@ -4280,7 +4331,42 @@ function activeTabId() {
    conținut, iar panoul nu rămâne ascuns sub bara de taburi sticky.
    `history: 'push'` adaugă o intrare în istoric (click/săgeți), deci
    back/forward schimbă tabul; implicit se înlocuiește intrarea curentă. */
+/* v3 — progres „explorat”, opțional: numărul de calculatoare deschise.
+   Cheile sunt prefixate ca să nu se amestece cu inputurile salvate. */
+const EXPLORAT_KEY = 'glitchcoin-explorat';
+const EXPLORAT_OFF_KEY = 'glitchcoin-explorat-off';
+
+function citesteExplorat() {
+  try {
+    const brut = localStorage.getItem(EXPLORAT_KEY);
+    const lista = brut ? JSON.parse(brut) : [];
+    return Array.isArray(lista) ? lista : [];
+  } catch (e) { return []; }
+}
+
+function actualizeazaProgres() {
+  const box = document.getElementById('side-progress');
+  if (!box) return;
+  let ascuns = false;
+  try { ascuns = localStorage.getItem(EXPLORAT_OFF_KEY) === '1'; } catch (e) { /* blocat */ }
+  box.hidden = ascuns;
+  const text = document.getElementById('explorat-text');
+  if (text) text.textContent = `${citesteExplorat().length} din ${AB_CORE_TABS.length} taburi explorate`;
+  const btn = document.getElementById('explorat-toggle');
+  if (btn) btn.setAttribute('aria-pressed', String(!ascuns));
+}
+
+function marcheazaExplorat(id) {
+  if (!AB_CORE_TABS.includes(id)) return;
+  const lista = citesteExplorat();
+  if (lista.includes(id)) return;
+  lista.push(id);
+  try { localStorage.setItem(EXPLORAT_KEY, JSON.stringify(lista)); } catch (e) { /* blocat */ }
+  actualizeazaProgres();
+}
+
 function activateTab(id, { focus = false, focusPanel = false, scroll = false, history: historyMode = 'replace' } = {}) {
+  marcheazaExplorat(id);
   const tab = document.getElementById('tab-' + id);
   const panel = document.getElementById('panel-' + id);
   if (!tab || !panel) return;
@@ -5973,6 +6059,18 @@ function initCountUp() {
    și pe ecranele tactile. */
 
 const FORMULA_TIPS = {
+  'fu-dobanda-real': {
+    title: 'Dobânda reală pe un an',
+    text: 'Dobânda netă actualizată cu inflația de referință (media pe 12 luni din CONFIG_AN): (1 + netă/țintă) ÷ (1 + inflație) − 1, înmulțit cu ținta. Numeric negativ înseamnă că dobânda nu acoperă inflația.'
+  },
+  'suma-real': {
+    title: 'Puterea de cumpărare a țintei',
+    text: 'Suma dorită adusă în lei de azi: țintă ÷ (1 + inflație de referință)^ani. Arată ce poți cumpăra efectiv când atingi ținta.'
+  },
+  'dc-valoare-real': {
+    title: 'Valoare reală · DCA',
+    text: 'Valoarea finală DCA împărțită la (1 + inflație de referință)^ani. Compară rezultatul cu puterea de cumpărare de la începutul perioadei.'
+  },
   'sim-compound': {
     title: 'Suma necesară în anul N',
     text: 'Suma actuală × (1 + rata inflației)<sup>N−1</sup>. Anul 1 = anul curent, deci suma rămâne cea introdusă. Exemplu: 5.000 lei la 5% ajung la 5.250 lei în anul 2.'
@@ -7154,7 +7252,7 @@ function downloadCSV(filename, csv) {
    existentă: dacă stocarea e blocată, butoanele explică și nu crash-uiesc. */
 
 const AB_SLOTS = ['A', 'B'];
-const AB_CORE_TABS = ['inflatie', 'timp', 'dobanda', 'compusa', 'randament', 'buget'];
+const AB_CORE_TABS = ['inflatie', 'dobanda', 'compusa', 'di', 'regula72', 'timp', 'nuam', 'buget', 'fond', 'sanatate', 'randament', 'profit', 'cost', 'suma', 'oportunitate', 'dca', 'curs', 'diversificare', 'asigurari', 'stres', 'datorii', 'pensie', 'impozitare'];
 
 function abScenarioKey(slot) {
   return AB_PREFIX + slot;
@@ -7297,12 +7395,12 @@ function abRenderComparison(host, diff) {
   const table = document.createElement('table');
   table.className = 'ab-table';
   const caption = document.createElement('caption');
-  caption.textContent = 'Scenarii A vs B — câmpuri care diferă și rezultate';
+  caption.textContent = 'Compară două scenarii (A vs B) — câmpuri care diferă și rezultate';
   table.appendChild(caption);
 
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
-  ['Câmp', 'A', 'B'].forEach((text) => {
+  ['Câmp', 'Scenariul A', 'Scenariul B'].forEach((text) => {
     const th = document.createElement('th');
     th.setAttribute('scope', 'col');
     th.textContent = text;
@@ -7376,7 +7474,7 @@ function abBuildWidget(host) {
     results.replaceChildren();
   }));
 
-  addButton('Arată comparația', () => {
+  addButton('Compară A vs B', () => {
     const a = abLoadScenario('A'), b = abLoadScenario('B');
     if (!a || !b) {
       setStatus('Salvează mai întâi ambele scenarii (A și B).');
@@ -7528,10 +7626,22 @@ const EXPLAINERS = {
    aria-expanded / aria-controls țin starea pentru cititoarele de ecran;
    Escape închide și readuce focusul pe buton. Textul se regenerează la
    fiecare deschidere și la schimbarea inputurilor, cât timp e deschis. */
+/* Explicator generic pentru taburile fără funcție dedicată: folosește
+   rezumatul live al panoului + textul „De ce contează” deja scris în panou.
+   Nu inventează cifre și nu introdu locale nou. */
+function textExplicaGenerica(panel) {
+  if (!panel) return 'Deschide un calculator pentru a vedea explicația rezultatului.';
+  const curat = (s) => String(s || '').replace(/\s+/g, ' ').trim();
+  const sumar = curat(panel.querySelector('.summary')?.textContent);
+  const sens = curat(panel.querySelector('.why-card p')?.textContent);
+  if (!sumar && !sens) return 'Rezultatul se actualizează când modifici datele din panou.';
+  return [sumar ? `Rezultatul curent: ${sumar}` : '', sens].filter(Boolean).join(' ');
+}
+
 function explicaBuildWidget(host) {
   const panelId = host.dataset ? host.dataset.explicaPanel : '';
   const panel = document.getElementById('panel-' + panelId);
-  const explainer = EXPLAINERS[panelId];
+  const explainer = EXPLAINERS[panelId] || (() => textExplicaGenerica(panel));
   const textId = 'explica-text-' + panelId;
 
   const button = document.createElement('button');
@@ -7636,7 +7746,33 @@ function initInflationPrint() {
   details.addEventListener('toggle', updateTableScrollHints);
 }
 
+/* v3 — validare minimă la încărcare: prinde serii goale, rate lipsă sau
+   prețuri invalide înainte ca eroarea să ajungă în grafice. Nu modifică datele. */
+function valideazaDate() {
+  const probleme = [];
+  const serie = GLITCHCOIN_DATA.inflation || [];
+  if (serie.length < 2) probleme.push('seria de inflație e prea scurtă');
+  for (let i = 1; i < serie.length; i++) {
+    if (serie[i].year !== serie[i - 1].year + 1) probleme.push(`an lipsă: ${serie[i - 1].year} → ${serie[i].year}`);
+    if (!Number.isFinite(serie[i].rate)) probleme.push(`rată invalidă în ${serie[i].year}`);
+  }
+  for (const p of GLITCHCOIN_DATA.food || []) {
+    if (!(p.prices[CONFIG_AN.anCurent] > 0)) probleme.push(`preț invalid: ${p.name}`);
+  }
+  if (probleme.length) console.error('GlitchCoin — date invalide:', probleme);
+  return probleme;
+}
+
 function init() {
+  valideazaDate();
+  actualizeazaProgres();
+  document.getElementById('explorat-toggle')?.addEventListener('click', () => {
+    try {
+      const ascuns = localStorage.getItem(EXPLORAT_OFF_KEY) === '1';
+      localStorage.setItem(EXPLORAT_OFF_KEY, ascuns ? '0' : '1');
+    } catch (e) { /* blocat */ }
+    actualizeazaProgres();
+  });
   initTheme();
   initTabs();
   initShell();
@@ -7982,20 +8118,21 @@ function init() {
 
   // Corecție C3: „Tipul de venit" setează impozitul implicit (Randament / Profit).
   [
-    ['rand-tip-venit', 'rand-impozit', renderRandament],
-    ['prof-tip-venit', 'prof-impozit', renderProfit],
-  ].forEach(([tipId, impozitId, render]) => {
+    ['rand-tip-venit', 'rand-an', 'rand-impozit', renderRandament],
+    ['prof-tip-venit', 'prof-an', 'prof-impozit', renderProfit],
+  ].forEach(([tipId, anId, impozitId, render]) => {
     const select = document.getElementById(tipId);
-    if (select) {
-      select.addEventListener('change', () => {
-        const tip = IMPOZIT_TIPURI[select.value];
-        const input = document.getElementById(impozitId);
-        if (tip && input) {
-          input.value = String(tip.rata);
-          render();
-        }
-      });
-    }
+    const anSelect = document.getElementById(anId);
+    const input = document.getElementById(impozitId);
+    const aplica = () => {
+      const rata = impozitPentruAn(select?.value, anSelect?.value);
+      if (Number.isFinite(rata) && input) {
+        input.value = String(rata);
+        render();
+      }
+    };
+    select?.addEventListener('change', aplica);
+    anSelect?.addEventListener('change', aplica);
   });
 
   // Costul mediu de achiziție

@@ -59,7 +59,7 @@ const src =
   'mulberry32, randn, cholesky, computeAsigurare, AS_PRESETS, ' +
   'computeStres, ST_SCENARII, ST_SCEN_ACTIVE, ' +
   'computePensie, citestePensie, PN_SCENARII, computeImpozit, impozitRata, ' +
-  'IMPOZIT_VENITURI, IMPOZIT_SURSE, SURSA_PWC_RATA, renderPensie, renderImpozitare, ' +
+  'IMPOZIT_TIPURI, IMPOZIT_TIPURI_2025, IMPOZIT_ANI, impozitPentruAn, IMPOZIT_VENITURI, IMPOZIT_SURSE, SURSA_PWC_RATA, renderPensie, renderImpozitare, ' +
   'textDataActualizate, textEtichetaInflatie, textContextFiscal, renderDataFreshness, SURSA_COD_FISCAL, ' +
   'computeDatorii, citesteDatorii, rataAnuitate, renderDatorii, ' +
   'computeDca, citesteDca, DCA_SCENARII, renderDca, computeCost, ' +
@@ -72,8 +72,8 @@ const src =
   'fmtLei, fmtPct, fmtPctSmart, fmtX, fmtInt, LOCALE, attachChartTip, clearChartTips, ' +
   'AB_SLOTS, AB_PREFIX, AB_CORE_TABS, abScenarioKey, abSaveScenario, abLoadScenario, ' +
   'abClearScenarios, abCollectSnapshot, abDiffSnapshots, abRenderComparison, abBuildWidget, initScenarii, ' +
-  'fmtProzaNum, fmtProzaLei, fmtProzaPct, textExplicaInflatie, textExplicaTimp, textExplicaDobanda, ' +
-  'textExplicaCompusa, textExplicaRandament, textExplicaBuget, EXPLAINERS, explicaBuildWidget, initExplicate };';
+  'citesteExplorat, actualizeazaProgres, marcheazaExplorat, valideazaDate, fmtProzaNum, fmtProzaLei, fmtProzaPct, textExplicaInflatie, textExplicaTimp, textExplicaDobanda, ' +
+  'textExplicaCompusa, textExplicaRandament, textExplicaBuget, textExplicaGenerica, EXPLAINERS, explicaBuildWidget, initExplicate };';
 
 vm.runInContext(src, ctx, { filename: 'glitchcoin-bundle.js' });
 

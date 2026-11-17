@@ -414,7 +414,8 @@ Valori implicite: 7% → 10.29 ani (regula 72) vs 10.24 ani (exact); pentru 10 a
 1. **Ținta** — cheltuielile lunare esențiale × 3–6 luni; dobânda brută și netă pe un an.
 2. **Economia lunară necesară** — contribuția pentru a ajunge la țintă în perioada aleasă.
 3. **Timpul până la țintă** — cu economia lunară introdusă (suma deja acumulată și dobânda reduc timpul).
-4. **Unde ții fondul** — tabel comparativ: cont curent / depozit / acțiuni, cu lichiditate și randament tipic.
+4. **Unde ții fondul** — tabel comparativ: cont curent / cont de economii / depozit / acțiuni, cu
+   lichiditate și randament tipic (cont de economii 2–3% pe an, sursă Raiffeisen; depozit 3–4%, sursă BNR).
 
 Valori implicite: 4,000 lei/lună, 6 luni, dobândă 3.5%, impozit 10% → țintă 24,000.00 lei,
 dobândă netă 756.00 lei/an; 500 lei/lună ajung în ~45 de luni (~3.7 ani).

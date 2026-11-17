@@ -19,7 +19,7 @@
    La actualizarea anuală se modifică doar acest obiect (și seria de inflație
    din GLITCHCOIN_DATA); app.js și index.html preiau valorile de aici.
    Sursa valorilor: DATE-2025-2026.md §2, §5, §7 — raport de cercetare păstrat
-   în arhiva locală și atașat pe cardul t_fe959b3f (nu e versionat în repo). */
+   în repo (public) și atașat și pe cardul t_fe959b3f. */
 const CONFIG_AN = {
   anCurent: 2026,
   inflatie: {

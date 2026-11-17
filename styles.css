@@ -2763,3 +2763,43 @@ body.is-search-open { overflow: hidden; }
   .ab-widget { margin: 8px 0; padding: 0; border: 0; }
   .ab-table { font-size: 9pt; }
 }
+
+/* ── „Explică rezultatul” (component reutilizabil) ──────── */
+.explica-widget {
+  margin: -8px 0 12px;      /* lipit vizual de summary, fără a-l modifica */
+}
+.explica-btn {
+  font: inherit;
+  font-size: .78rem;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dotted var(--line-strong);
+  border-radius: 0;
+  padding: 2px 0;
+  min-height: 28px;
+  cursor: pointer;
+  transition: color var(--speed) var(--ease);
+}
+.explica-btn:hover,
+.explica-btn[aria-expanded="true"] { color: var(--accent-strong); }
+.explica-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.explica-text {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--accent-line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: .9rem;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;   /* 390px: textul se rupe, nu face overflow */
+}
+.explica-text[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .explica-btn { transition: none; }
+}
+@media print {
+  .explica-btn { display: none !important; }
+  .explica-text { margin: 4px 0; padding: 0; border: 0; background: none; }
+}

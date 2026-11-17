@@ -65,6 +65,25 @@ Disponibil în 6 taburi nucleu: **Inflație, Timp vs dorințe, Dobândă, Dobân
 > `<div class="ab-widget" data-ab-panel="id-tab"></div>`. Componentul din `app.js`
 > (`initScenarii`) îl găsește și montează widgetul automat — nu se scrie cod per tab.
 
+## „Explică rezultatul” (în limbaj simplu)
+
+Disponibil în aceleași 6 taburi nucleu. Sub rezumat găsești butonul discret
+**Explică rezultatul**: deschide un paragraf scurt în română care spune **ce înseamnă
+numărul**, nu formula (aceea e deja în tooltipuri). De exemplu: „La 6,3% pe an, 1.000 lei
+de azi cumpără ~941 lei anul viitor (2026 e parțial)” sau „50/30/20 înseamnă 2.500 lei
+nevoi… pentru 5.000 lei venit”.
+
+- Textul se generează din **valorile curente** ale panoului (se actualizează live cât timp
+  paragraful e deschis) și din `CONFIG_AN` — anul, rata inflației și eticheta „parțial”
+  nu sunt scrise în text.
+- Butonul e `<button type="button">` nativ, cu `aria-expanded` / `aria-controls`; se
+  închide cu **Escape**, care readuce focusul pe buton.
+- Butonul e ascuns la print; textul rămâne. Mișcarea e oprită de `prefers-reduced-motion`.
+
+> Extindere: adaugă `<div class="explica-widget" data-explica-panel="id-tab"></div>` în panou
+> și o cheie în `EXPLAINERS` (`app.js`). Montarea e automată (`initExplicate`); funcțiile
+> `textExplica*` sunt pure, deci testabile fără browser.
+
 ## Navigare: sidebar pe categorii
 
 Cele 24 de taburi sunt grupate în **6 categorii** în sidebar (260 px, sticky), nu mai stau într-un rând

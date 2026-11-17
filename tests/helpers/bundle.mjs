@@ -71,7 +71,9 @@ const src =
   'buildStepsFromFields, stepTextFor, parseFormattedNumber, formatStatValue, ' +
   'fmtLei, fmtPct, fmtPctSmart, fmtX, fmtInt, LOCALE, attachChartTip, clearChartTips, ' +
   'AB_SLOTS, AB_PREFIX, AB_CORE_TABS, abScenarioKey, abSaveScenario, abLoadScenario, ' +
-  'abClearScenarios, abCollectSnapshot, abDiffSnapshots, abRenderComparison, abBuildWidget, initScenarii };';
+  'abClearScenarios, abCollectSnapshot, abDiffSnapshots, abRenderComparison, abBuildWidget, initScenarii, ' +
+  'fmtRoNum, fmtRoLei, fmtRoPct, textExplicaInflatie, textExplicaTimp, textExplicaDobanda, ' +
+  'textExplicaCompusa, textExplicaRandament, textExplicaBuget, EXPLAINERS, explicaBuildWidget, initExplicate };';
 
 vm.runInContext(src, ctx, { filename: 'glitchcoin-bundle.js' });
 

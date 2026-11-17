@@ -7371,6 +7371,184 @@ function initScenarii() {
   document.querySelectorAll('.ab-widget[data-ab-panel]').forEach(abBuildWidget);
 }
 
+/* ═══ 28. „Explică rezultatul” (component reutilizabil) ═══════
+
+   Sub summary-ul panoului, un buton discret deschide UN paragraf în română
+   simplă: interpretarea numărului pentru utilizator, NU formula brută
+   (aceea există deja în tooltipuri). Textul se construiește din valorile
+   curente ale panoului și din CONFIG_AN — nicio cifră de config scrisă aici.
+
+   EXTINDERE LA ALT TAB: adaugă în panou o gazdă
+     <div class="explica-widget" data-explica-panel="id-tab"></div>
+   și o intrare în EXPLAINERS. `initExplicate()` montează automat toate
+   gazdele marcate; funcțiile `textExplica*` sunt pure, deci testabile
+   fără browser (ca celelalte funcții `compute*`). */
+
+/* Proza e în română:virgulă zecimală, punct pentru mii (2.500 lei, 6,3%).
+   Formatul de calcul al aplicației rămâne en-US, neatins — nu adăugăm un
+   al doilea locale, ci schimbăm separatorii după formatarea cu LOCALE. */
+function fmtRoNum(value, min = 0, max = 2) {
+  return value.toLocaleString(LOCALE, { minimumFractionDigits: min, maximumFractionDigits: max })
+    .replace(/\./g, '\u0000')   // zecimala en-US → marcator
+    .replace(/,/g, '.')         // miile en-US → punct românesc
+    .replace(/\u0000/g, ',');   // marcatorul → virgulă românească
+}
+function fmtRoLei(value, decimals = 0) {
+  return fmtRoNum(value, decimals, decimals) + ' lei';
+}
+function fmtRoPct(fraction) {
+  return fmtRoNum(fraction * 100, 0, 2) + '%';
+}
+
+/* Inflație: puterea de cumpărare a 1.000 lei peste un an, la rata din
+   CONFIG_AN. Cuvântul „parțial” și anul vin tot din eticheta de config. */
+function textExplicaInflatie(rata) {
+  const r = Math.max(-0.99, rata);
+  const putere = 1000 / (1 + r);
+  const eticheta = String(CONFIG_AN.inflatie.eticheta || '').toLowerCase();
+  const calificativ = eticheta.indexOf('parțial') !== -1
+    ? ` (${CONFIG_AN.anCurent} e parțial)`
+    : '';
+  return `La ${fmtRoPct(r)} pe an, 1.000 lei de azi cumpără ~${fmtRoNum(Math.round(putere), 0, 0)} lei anul viitor${calificativ}.`;
+}
+
+/* Timp: dorința tradusă în zile de muncă, raportat la anul lucrător. */
+function textExplicaTimp(venit, pret, zileAn) {
+  if (!(venit > 0)) return 'Introdu un venit lunar mai mare decât zero ca să vezi câte zile de muncă înseamnă dorința.';
+  const r = computeTimp(venit, pret, zileAn);
+  return `O dorință de ${fmtRoLei(pret)} înseamnă ~${fmtRoNum(Math.round(r.zileLucrate), 0, 0)} zile de muncă (8 ore pe zi) — aproximativ ${fmtRoPct(r.pctAnLucrator)} dintr-un an de ${fmtRoNum(zileAn, 0, 2)} zile lucrătoare.`;
+}
+
+/* Dobândă simplă: cât câștigă suma pe zilele alese, după impozit. */
+function textExplicaDobanda(suma, rata, zile, impozit) {
+  if (!(suma > 0) || !(zile > 0)) return 'Introdu o sumă și un număr de zile mai mari decât zero pentru a vedea dobânda.';
+  const { brut, net } = computeDobanda(suma, rata, zile, impozit);
+  return `Pe ${fmtRoNum(zile, 0, 0)} zile, ${fmtRoLei(suma)} la ${fmtRoPct(rata)} îți aduce ${fmtRoLei(brut, 2)} dobândă; după impozitul de ${fmtRoPct(impozit)} rămân ${fmtRoLei(net, 2)}.`;
+}
+
+/* Dobândă compusă: de câte ori crește suma când dobânda e reinvestită. */
+function textExplicaCompusa(suma, rata, ani) {
+  if (!(suma > 0)) return 'Introdu o sumă inițială mai mare decât zero pentru a vedea creșterea.';
+  const { scenA } = computeCompusa(suma, 0, rata);
+  const idx = Math.max(0, Math.min(ani, scenA.length - 1));
+  const final = scenA[idx];
+  const factor = final.valoare / suma;
+  return `După ${fmtRoNum(ani, 0, 0)} ani la ${fmtRoPct(rata)}, suma crește de ~${fmtRoNum(factor, 0, 2)} ori: ${fmtRoLei(suma)} devin ~${fmtRoLei(final.valoare)}. Dobânda rămâne în cont și produce dobândă și în anii următori.`;
+}
+
+/* Randament: ce rămâne după taxe și după inflație (puterea de cumpărare). */
+function textExplicaRandament(suma, randament, impozit, comisioane, inflatie) {
+  if (!(suma > 0)) return 'Introdu o sumă investită mai mare decât zero pentru a vedea randamentul.';
+  const r = computeRandament(suma, randament, impozit, comisioane, inflatie);
+  return `La ${fmtRoPct(randament)} pe ${fmtRoLei(suma)}, câștigul brut e ${fmtRoLei(r.brutLei, 2)}. După impozit și comisioane rămân ${fmtRoLei(r.netLei, 2)} (${fmtRoPct(r.netPct)}), iar după inflația de ${fmtRoPct(inflatie)} câștigul real e ${fmtRoLei(r.realLei, 2)} (${fmtRoPct(r.realPct)}).`;
+}
+
+/* Buget: repartizarea 50/30/20 pentru venitul lunar curent. */
+function textExplicaBuget(venit) {
+  if (!(venit > 0)) return 'Introdu venitul lunar net pentru a vedea repartizarea 50/30/20.';
+  const { tinta } = computeBuget(venit, 0, 0, 0);
+  return `50/30/20 înseamnă ${fmtRoLei(tinta.nevoi)} nevoi, ${fmtRoLei(tinta.dorinte)} dorințe, ${fmtRoLei(tinta.economii)} economii pentru ${fmtRoLei(venit)} venit lunar.`;
+}
+
+/* Citește valoarea curentă a unui câmp din panou (input sau select). */
+function explicaValoare(panel, id) {
+  const el = panel && panel.querySelector ? panel.querySelector('#' + id) : null;
+  return el ? readNumber(el) : 0;
+}
+
+/* Registrul e punctul de extensie: un tab nou = o cheie nouă aici + o gazdă
+   în HTML. Inflația folosește rata din CONFIG_AN (contextul real al datelor),
+   restul folosesc cifrele introduse de utilizator în panoul respectiv. */
+const EXPLAINERS = {
+  inflatie: () => textExplicaInflatie(CONFIG_AN.inflatie.rata),
+  timp: (panel) => textExplicaTimp(
+    explicaValoare(panel, 'timp-venit'),
+    explicaValoare(panel, 'timp-pret'),
+    explicaValoare(panel, 'timp-zile-lucratore'),
+  ),
+  dobanda: (panel) => textExplicaDobanda(
+    explicaValoare(panel, 'dob-suma'),
+    explicaValoare(panel, 'dob-rata') / 100,
+    explicaValoare(panel, 'dob-zile'),
+    explicaValoare(panel, 'dob-impozit') / 100,
+  ),
+  compusa: (panel) => textExplicaCompusa(
+    explicaValoare(panel, 'comp-suma'),
+    explicaValoare(panel, 'comp-rata') / 100,
+    COMP_ANI,
+  ),
+  randament: (panel) => textExplicaRandament(
+    explicaValoare(panel, 'rand-suma'),
+    explicaValoare(panel, 'rand-randament') / 100,
+    explicaValoare(panel, 'rand-impozit') / 100,
+    explicaValoare(panel, 'rand-comisioane') / 100,
+    explicaValoare(panel, 'rand-inflatie') / 100,
+  ),
+  buget: (panel) => textExplicaBuget(explicaValoare(panel, 'bg-venit')),
+};
+
+/* Un widget = buton <button type="button"> focalizabil + paragraf ascuns.
+   aria-expanded / aria-controls țin starea pentru cititoarele de ecran;
+   Escape închide și readuce focusul pe buton. Textul se regenerează la
+   fiecare deschidere și la schimbarea inputurilor, cât timp e deschis. */
+function explicaBuildWidget(host) {
+  const panelId = host.dataset ? host.dataset.explicaPanel : '';
+  const panel = document.getElementById('panel-' + panelId);
+  const explainer = EXPLAINERS[panelId];
+  const textId = 'explica-text-' + panelId;
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'explica-btn';
+  button.textContent = 'Explică rezultatul';
+  button.setAttribute('aria-expanded', 'false');
+  button.setAttribute('aria-controls', textId);
+
+  const paragraph = document.createElement('p');
+  paragraph.className = 'explica-text';
+  paragraph.id = textId;
+  paragraph.setAttribute('role', 'note');
+  paragraph.hidden = true;
+
+  const genereaza = () => {
+    if (!explainer) return 'Explicația pentru acest tab nu este încă disponibilă.';
+    try {
+      return String(explainer(panel) || '');
+    } catch (e) {
+      return 'Explicația nu poate fi generată cu valorile curente.';
+    }
+  };
+
+  const seteaza = (deschis) => {
+    if (deschis) paragraph.textContent = genereaza();
+    paragraph.hidden = !deschis;
+    button.setAttribute('aria-expanded', deschis ? 'true' : 'false');
+    button.textContent = deschis ? 'Ascunde explicația' : 'Explică rezultatul';
+  };
+
+  button.addEventListener('click', () => seteaza(paragraph.hidden));
+  host.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !paragraph.hidden) {
+      seteaza(false);
+      button.focus();
+    }
+  });
+
+  if (panel && panel.addEventListener) {
+    ['input', 'change'].forEach((evt) => panel.addEventListener(evt, () => {
+      if (!paragraph.hidden) paragraph.textContent = genereaza();
+    }));
+  }
+
+  host.appendChild(button);
+  host.appendChild(paragraph);
+}
+
+/* Singurul punct de montare — ca la scenariile A/B. */
+function initExplicate() {
+  document.querySelectorAll('.explica-widget[data-explica-panel]').forEach(explicaBuildWidget);
+}
+
 /* ═══ Inițializare ══════════════════════════════════════ */
 
 function populateYearSelect() {
@@ -7770,6 +7948,9 @@ function init() {
 
   // Scenarii A/B: fiecare gazdă `.ab-widget` se montează singură.
   initScenarii();
+
+  // „Explică rezultatul": fiecare gazdă `.explica-widget` se montează singură.
+  initExplicate();
 }
 
 document.addEventListener('DOMContentLoaded', init);

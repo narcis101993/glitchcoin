@@ -5,7 +5,9 @@
    • 1991–1993: aliniate la INS (valorile anterioare, World Bank/IMF, difereau semnificativ).
    • 1994–2024: coincid cu INS la zecimala de procent.
    • 2025: media anuala IPC nationala, 7,3% (INS, definitiva).
-   • 2026: 6,3% — oct 2026 vs dec 2025 (partial); rata anuala oct/oct = 6,9%.
+   • 2026: 6,3% — oct 2026 vs dec 2025 (YTD, parțial); rata anuală oct/oct = 6,9%.
+   • Pentru puterea de cumpărare a anului parțial se folosește media pe 12 luni
+     (nov 2025–oct 2026 = 9,0%), nu rata YTD — o rată YTD nu e o rată anuală.
 
    Surse oficiale:
    • INS — https://insse.ro/cms/en/content/cpi-annual-data-series
@@ -23,13 +25,17 @@
 const CONFIG_AN = {
   anCurent: 2026,
   inflatie: {
-    rata: 0.063,                 // 6,3% — oct 2026 vs dec 2025 (partial)
+    rata: 0.063,                 // 6,3% — oct 2026 vs dec 2025 (YTD, parțial)
     eticheta: 'oct 2026 vs dec 2025, parțial',
     rataOctOct: 0.069,           // 6,9% — rata anuală pe octombrie 2026
+    // Pentru puterea de cumpărare folosim media pe 12 luni, nu rata YTD:
+    // seria lui 2026 e parțială, iar 6,3% (oct/dec) nu e o rată anuală.
+    rataPutereCumparare: 0.090,  // 9,0% — nov 2025–oct 2026 (provizoriu)
+    etichetaPutereCumparare: 'media 12 luni (nov 2025–oct 2026), provizoriu',
     sursa: 'https://agerpres.ro/economic/2026/11/12/rata-anuala-a-inflatiei-isi-continua-cresterea-si-ajunge-la-6-9-in-octombrie--1612494',
   },
-  zileLucratoare: 250,           // 365 − 104 weekend − 11 sărbători legale
-  sarbatoriLegale: 11,
+  zileLucratoare: 250,           // 365 − 104 weekend − 11 sărbători din timpul săptămânii
+  sarbatoriLegale: 11,           // din 16 sărbători legale în 2026 (Codul muncii, art. 137)
   coteFiscale: {
     dobanda: 10,
     dividende: 16,
@@ -37,7 +43,7 @@ const CONFIG_AN = {
     vmRoScurt: 6,
     vmStrain: 16,
   },
-  actualizatLa: '2026-11-12',
+  actualizatLa: '2026-11-16',    // data publicării sursei BNR celei mai recente
 };
 
 /* Sursa [13] din raportul de cercetare (PwC Tax Summaries, România).
@@ -95,7 +101,7 @@ const GLITCHCOIN_DATA = {
     { name: 'Carne de pui (kg)',   prices: { 2020: 12,  2021: 12.5, 2022: 13,   2023: 13.5, 2024: 14,   2025: 14.98, 2026: 15.73 } },
     { name: 'Zahăr (kg)',          prices: { 2020: 3.5, 2021: 3.7,  2022: 4,    2023: 4.2,  2024: 4.4,  2025: 4.74,  2026: 4.88  } },
     { name: 'Făină (kg)',          prices: { 2020: 2.5, 2021: 2.6,  2022: 2.8,  2023: 2.9,  2024: 3,    2025: 3.23,  2026: 3.15  } },
-    { name: 'Oua (10 buc)',        prices: { 2020: 6,   2021: 6.2,  2022: 6.5,  2023: 6.8,  2024: 7,    2025: 7.70,  2026: 8.51  } },
+    { name: 'Ouă (10 buc)',        prices: { 2020: 6,   2021: 6.2,  2022: 6.5,  2023: 6.8,  2024: 7,    2025: 7.70,  2026: 8.51  } },
     { name: 'Cartofi (kg)',        prices: { 2020: 2,   2021: 2.2,  2022: 2.5,  2023: 2.7,  2024: 2.8,  2025: 2.49,  2026: 2.43  } },
     { name: 'Mere (kg)',           prices: { 2020: 3,   2021: 3.2,  2022: 3.5,  2023: 3.7,  2024: 3.9,  2025: 4.20,  2026: 3.99  } },
     { name: 'Brânză telemea (kg)', prices: { 2020: 20,  2021: 21,   2022: 22.5, 2023: 23.5, 2024: 24.5, 2025: 26.39, 2026: 27.30 } },
@@ -110,7 +116,8 @@ const CONFIG_DERIVAT = (() => {
   const an = CONFIG_AN.anCurent;
   const produsInflatie = GLITCHCOIN_DATA.inflation
     .filter((d) => d.year >= 2000 && d.year <= an)
-    .reduce((produs, d) => produs * (1 + d.rate), 1);
+    // Anul parțial folosește media pe 12 luni, nu rata YTD (vezi CONFIG_AN.inflatie).
+    .reduce((produs, d) => produs * (1 + (d.partial ? CONFIG_AN.inflatie.rataPutereCumparare : d.rate)), 1);
   const crestere = (p) => p.prices[an] / p.prices[2020] - 1;
   const max = Math.max(...GLITCHCOIN_DATA.food.map(crestere));
   const min = Math.min(...GLITCHCOIN_DATA.food.map(crestere));
@@ -120,11 +127,12 @@ const CONFIG_DERIVAT = (() => {
     inflatie: {
       rata: CONFIG_AN.inflatie.rata,
       rataOctOct: CONFIG_AN.inflatie.rataOctOct,
+      putereCumparare: CONFIG_AN.inflatie.rataPutereCumparare,
     },
     zileLucratoare: CONFIG_AN.zileLucratoare,
     sarbatoriLegale: CONFIG_AN.sarbatoriLegale,
     zileLucratoarePeLuna: CONFIG_AN.zileLucratoare / 12,   // 250/12 = 20,83
-    echivalent1000lei2000: 1000 * produsInflatie,         // 9.198,40 lei
+    echivalent1000lei2000: 1000 * produsInflatie,         // putere de cumpărare, 2000 → 2026
     crestereAlimente: {
       max: { valoare: max, produs: GLITCHCOIN_DATA.food.find((p) => crestere(p) === max).name },
       min: { valoare: min, produs: GLITCHCOIN_DATA.food.find((p) => crestere(p) === min).name },

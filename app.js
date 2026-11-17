@@ -23,9 +23,9 @@ function fmtPct(fraction, decimals = 2) {
   }) + '%';
 }
 
-/* Procent cu număr minim de zecimale: 1% → „1%", 0,3% → „0,3%", 2,5% → „2,5%".
+/* Procent cu număr minim de zecimale: 1% → „1%", 0.3% → „0.3%", 2,5% → „2,5%".
    Util pentru ratele mici (comisioane), unde rotunjirea la 0 zecimale ar da „0%".
-   Se rotunjește mai întâi, ca să evităm artefactul în virgulă mobilă (0,07 × 100 ≠ 7). */
+   Se rotunjește mai întâi, ca să evităm artefactul în virgulă mobilă (0.07 × 100 ≠ 7). */
 function fmtPctSmart(fraction) {
   const procent = Math.round(fraction * 10000) / 100;
   return fmtPct(fraction, Number.isInteger(procent) ? 0 : 1);
@@ -70,15 +70,14 @@ function textDataActualizate() {
 
 /* Eticheta din config e „oct 2026 vs dec 2025, parțial”: împărțim la virgulă
    ca să obținem perioada + calificativul, fără să scriem „oct”/„parțial” aici.
-   Proza e în română, deci rata oct/oct folosește virgula zecimală (6,9%),
-   spre deosebire de cifrele calculate afișate cu LOCALE = en-US. */
+   Toate cifrele, inclusiv rata oct/oct, folosesc LOCALE = en-US (6.9%). */
 function textEtichetaInflatie() {
   const eticheta = CONFIG_AN.inflatie.eticheta;
   const virgula = eticheta.indexOf(',');
   const perioada = (virgula === -1 ? eticheta : eticheta.slice(0, virgula)).trim();
   const calificativ = virgula === -1 ? '' : eticheta.slice(virgula + 1).trim();
   const prefix = calificativ ? `${calificativ}: ` : '';
-  const rata = fmtPctSmart(CONFIG_AN.inflatie.rataOctOct).replace('.', ',');
+  const rata = fmtPctSmart(CONFIG_AN.inflatie.rataOctOct);
   return `${CONFIG_AN.anCurent} = ${prefix}${perioada}; rata oct/oct = ${rata}`;
 }
 
@@ -347,6 +346,16 @@ const RATE_BY_YEAR = Object.fromEntries(
   GLITCHCOIN_DATA.inflation.map((d) => [d.year, d.rate]),
 );
 
+/* Pentru calculele de putere de cumpărare, anul parțial (2026) folosește media
+   pe 12 luni din CONFIG_AN, nu rata YTD afișată în serie — o rată oct/dec nu e
+   o rată anuală și nu poate compara doi ani calendaristici. */
+const RATE_PUTERE_BY_YEAR = Object.fromEntries(
+  GLITCHCOIN_DATA.inflation.map((d) => [
+    d.year,
+    d.partial ? CONFIG_AN.inflatie.rataPutereCumparare : d.rate,
+  ]),
+);
+
 /* Corecție C3 — impozitul pe tipuri de venit (România, anul din CONFIG_AN).
    Selectul „Tipul de venit" (taburile Randament și Profit) setează impozitul
    implicit; utilizatorul îl poate apoi modifica manual. Sunt rate reale,
@@ -401,7 +410,7 @@ function renderSimulator() {
 
   const mult15 = dupaAn[15].mult;
   summary.innerHTML =
-    `Cu <strong>${fmtLei(suma)}</strong> acum, în anul 2 avei nevoie de <strong>${fmtLei(dupaAn[2].valoare)}</strong>, ` +
+    `Cu <strong>${fmtLei(suma)}</strong> acum, în anul 2 vei avea nevoie de <strong>${fmtLei(dupaAn[2].valoare)}</strong>, ` +
     `în anul 5 de <strong>${fmtLei(dupaAn[5].valoare)}</strong>, în anul 10 de <strong>${fmtLei(dupaAn[10].valoare)}</strong> ` +
     `și în anul 15 de <strong>${fmtLei(dupaAn[15].valoare)}</strong> — <strong>${mult15 === null ? '—' : fmtX(mult15)}</strong> suma inițială, ` +
     `menținând inflația la <strong>${fmtPct(rata)}</strong> în fiecare an.`;
@@ -541,7 +550,7 @@ function renderInflationChart(range = 'all') {
 function deflatorValue(suma, an) {
   let produs = 1;
   for (let y = an + 1; y <= AN_CURENT; y++) {
-    produs *= 1 + (RATE_BY_YEAR[y] ?? 0);
+    produs *= 1 + (RATE_PUTERE_BY_YEAR[y] ?? 0);
   }
   return suma / produs;
 }
@@ -577,11 +586,11 @@ function renderDeflator() {
 
 /* Constantele tabulului „Timp vs dorințe”.
    Corecții C5 și C11: zilele lucrătoare vin din CONFIG_AN (România: 365 − 104
-   weekend − CONFIG_AN.sarbatoriLegale sărbători legale); 30,44 zile/lună
+   weekend − CONFIG_AN.sarbatoriLegale sărbători legale); 30.44 zile/lună
    (365 ÷ 12) e o medie calendaristică, nu depinde de an.
    Din 2026-11-13 numărul de zile lucrătoare e un INPUT (cerință Narcis): utilizatorul
    îl poate schimba, iar valoarea implicită rămâne cea din CONFIG_AN. */
-const TIMP_ZILE_LUNA = 365 / 12;     // 30,44 — media reală de zile pe lună (365/12)
+const TIMP_ZILE_LUNA = 365 / 12;     // 30.44 — media reală de zile pe lună (365/12)
 const TIMP_LUNI_AN = 12;             // luni într-un an (venitul anual = 12 × venitul lunar)
 const TIMP_ORE_ZI = 24;              // venitul pe oră = venit pe zi / 24
 const TIMP_MINUTE_ORA = 60;          // venitul pe minut = venit pe oră / 60
@@ -766,7 +775,7 @@ function computeCompusa(suma, contributie, rata) {
 
     const luna = rata / COMP_LUNI_AN;
     const putere = Math.pow(1 + luna, COMP_LUNI_AN * an);
-    // Când rată = 0, formula cu divizare la (rată/12) dă erorie — limita ei e suma platită.
+    // Când rată = 0, formula cu divizare la (rată/12) dă eroare — limita ei e suma plătită.
     const sumaTotala = rata === 0
       ? suma + contributie * COMP_LUNI_AN * an
       : suma * putere + contributie * (putere - 1) / luna;
@@ -1479,8 +1488,14 @@ function computeIstoricReal(nominal, suma) {
   const ani = GLITCHCOIN_DATA.inflation.filter((d) => d.year >= DI_ANI_START && d.year <= DI_ANI_END);
   let produsInflatie = 1;
   const rows = ani.map((d) => {
-    produsInflatie *= 1 + d.rate;
-    return { an: d.year, inflatie: d.rate, real: (1 + nominal) / (1 + d.rate) - 1 };
+    const rata = RATE_PUTERE_BY_YEAR[d.year];
+    produsInflatie *= 1 + rata;
+    return {
+      an: d.year,
+      inflatie: rata,
+      real: (1 + nominal) / (1 + rata) - 1,
+      partial: Boolean(d.partial),
+    };
   });
 
   const medie = rows.reduce((a, b) => a + b.real, 0) / rows.length;
@@ -1531,7 +1546,7 @@ function renderDi() {
 
   document.getElementById('di-istoric-body').innerHTML = istoric.rows.map((row) => `
     <tr${row.real < 0 ? ' class="is-neg"' : ''}>
-      <td>${row.an}</td>
+      <td>${row.an}${row.partial ? ' *' : ''}</td>
       <td class="num">${fmtPct(row.inflatie)}</td>
       <td class="num strong">${fmtPct(row.real)}</td>
     </tr>`).join('');
@@ -1540,7 +1555,8 @@ function renderDi() {
     <span>Medie reală ${DI_ANI_START}–${DI_ANI_END}: <strong>${fmtPct(istoric.medie)}</strong></span>
     <span>Minim: <strong>${fmtPct(istoric.minim.real)}</strong> (${istoric.minim.an})</span>
     <span>Maxim: <strong>${fmtPct(istoric.maxim.real)}</strong> (${istoric.maxim.an})</span>
-    <span>Ani cu randament real negativ: <strong>${istoric.numarNegativi}</strong> din ${istoric.rows.length}</span>`;
+    <span>Ani cu randament real negativ: <strong>${istoric.numarNegativi}</strong> din ${istoric.rows.length}</span>` +
+    ` <span>${CONFIG_AN.anCurent} e parțial: pentru puterea de cumpărare se folosește media pe 12 luni (${fmtPct(CONFIG_AN.inflatie.rataPutereCumparare)}).</span>`;
 
   document.getElementById('di-cash-real').textContent = fmtLei(istoric.cashReal);
   document.getElementById('di-investit-real').textContent = fmtLei(istoric.investitReal);
@@ -2441,7 +2457,7 @@ function renderDiversificare() {
     alertesBox.innerHTML = '';
     const p = document.createElement('p');
     p.className = 'alert is-warn';
-    p.textContent = 'Portofoliul nu poate fi calculat: ponderile sunt zero sau lipesc.';
+    p.textContent = 'Portofoliul nu poate fi calculat: ponderile sunt zero sau lipsesc.';
     alertesBox.appendChild(p);
     return;
   }
@@ -2527,7 +2543,7 @@ function renderDiversificare() {
     });
   }
   if (alertes.length === 0) {
-    alertes.push({ nivel: 'ok', text: 'Portofiliul e diversificat și volatilitatea e sub media volatilităților.' });
+    alertes.push({ nivel: 'ok', text: 'Portofoliul e diversificat și volatilitatea e sub media volatilităților.' });
   }
   renderAlerts('dv-alerte', alertes);
 }
@@ -2886,10 +2902,10 @@ function initStres() {
 /* ═══ 22. Pensie / Pilon III (N6) ═══════════════════════ */
 
 /* Valori ilustrative, nu recomandări. Randamentul mediu al fondurilor de
-   pensii facultative (Pilon III) pe 2007–2025 (ultimul an complet) a fost 6,7% pe an, calculat de
-   APAPR din datele ASF, față de o inflație medie de 4,9%. Comisioanele din
-   schemele autorizate: 3–5% din contribuție (maxim 5%) + 0,091–0,195% lunar
-   din activul net (maxim 0,2% pe lună) — echivalent de ~1,5% pe an. */
+   pensii facultative (Pilon III) pe 2007–2025 (ultimul an complet) a fost 6.7% pe an, calculat de
+   APAPR din datele ASF, față de o inflație medie de 4.9%. Comisioanele din
+   schemele autorizate: 3–5% din contribuție (maxim 5%) + 0.091–0.195% lunar
+   din activul net (maxim 0.2% pe lună) — echivalent de ~1.5% pe an. */
 const PN_SCENARII = {
   istoric: { randament: 6.7, inflatie: 4.9 },
   conservator: { randament: 4, inflatie: 4.9 },
@@ -3136,7 +3152,7 @@ const IMPOZIT_VENITURI = [
     nume: 'Valori mobiliare · broker străin / crypto',
     r2025: 10, r2026: 16,
     baza: 'Plusvaloarea anuală netă',
-    cum: 'Declarat anual. Prag neditabil: 200 lei/tranzacție, dacă totalul anual nu depășește 600 lei.',
+    cum: 'Declarat anual. Prag nedeductibil: 200 lei/tranzacție, dacă totalul anual nu depășește 600 lei.',
     sursa: 'tel',
   },
   {
@@ -3923,7 +3939,7 @@ const BIASE_QUIZ = [
     intrebare: 'O acțiune din portofel a scăzut 20%, dar planul pe termen lung rămâne valabil. Care reflex e cel mai probabil?',
     optiuni: [
       { id: 'a', text: 'Nu o vinzi cât timp nu revii la prețul de cumpărare.' },
-      { id: 'b', text: 'O evaluiezi la valoarea actuală și decizi conform planului.', corect: true },
+      { id: 'b', text: 'O evaluezi la valoarea actuală și decizi conform planului.', corect: true },
       { id: 'c', text: 'Vinzi tot portofelul ca să nu mai simți pierderea.' },
     ],
     explicatie: 'Aversiunea la pierdere ne face să tratăm pierderea ca pe un eșec personal. Decizia se ia pe valoarea de mâine, nu pe cea de ieri.',
@@ -5447,14 +5463,14 @@ const STEP_TEXT = {
   'sf-datorii': 'Datoriile totale.',
   'rand-suma': 'Suma pe care o investești.',
   'rand-randament': 'Randamentul nominal anual.',
-  'rand-tip-venit': 'Alege tipul de venit — impozitul implicit se setez singur.',
+  'rand-tip-venit': 'Alege tipul de venit — impozitul implicit se setează singur.',
   'rand-impozit': 'Impozitul pe veniturile din investiții.',
   'rand-comisioane': 'Comisioanele anuale totale.',
   'rand-inflatie': 'Inflația cu care traducem totul în putere de cumpărare.',
   'prof-suma': 'Suma investită inițial.',
   'prof-pret-init': 'Prețul inițial sau mediu de achiziție.',
   'prof-pret-vanzare': 'Prețul la care vinzi.',
-  'prof-tip-venit': 'Alege tipul de venit — impozitul implicit se setez singur.',
+  'prof-tip-venit': 'Alege tipul de venit — impozitul implicit se setează singur.',
   'prof-impozit': 'Impozitul pe câștig.',
   'prof-comisioane': 'Comisioanele de tranzacționare.',
   'prof-inflatie': 'Inflația cu care comparăm prețul real.',
@@ -5475,7 +5491,7 @@ const STEP_TEXT = {
   'dc-volatilitate': 'Volatilitatea anuală a activului.',
   'cs-curs': 'Cursul RON/valută la momentul de start.',
   'cs-apreciere': 'Aprecierea anuală a valutei față de RON.',
-  'cs-ani': 'Perioada analysată.',
+  'cs-ani': 'Perioada analizată.',
   'cs-inflatie': 'Inflația anuală în RON.',
   'cs-suma': 'Suma investită, în valută.',
   'cs-randament': 'Randamentul anual al activului, în valută.',
@@ -5506,7 +5522,7 @@ const STEP_TEXT = {
   'dt-economie': 'Dobânda anuală la economii.',
   'dt-impozit': 'Impozitul pe dobânda economiilor.',
   'dt-avans': 'Suma lunară suplimentară pentru anticipare.',
-  'pn-scenariu': 'Alege un scenariu de contributie.',
+  'pn-scenariu': 'Alege un scenariu de contribuție.',
   'pn-varsta': 'Vârsta ta acum.',
   'pn-pensionare': 'Vârsta la care vrei să te pensionezi.',
   'pn-contributie': 'Contribuția lunară la Pilon III.',
@@ -5515,7 +5531,7 @@ const STEP_TEXT = {
   'pn-comision': 'Comisionul anual total.',
   'pn-impozit': 'Impozitul pe câștig la retragere.',
   'pn-inflatie': 'Inflația anuală.',
-  'tx-tip': 'Alege tipul de venit — rata reală se setez singură.',
+  'tx-tip': 'Alege tipul de venit — rata reală se setează singură.',
   'tx-an': 'Alege anul de aplicare (2025 sau 2026).',
   'tx-castig': 'Introdu câștigul brut.',
 };
@@ -5967,11 +5983,11 @@ const FORMULA_TIPS = {
   },
   'timp-basis': {
     title: 'Baza de calcul a timpului',
-    text: 'Venitul pe zi = venitul lunar net ÷ 30,44 (media reală de zile pe lună, 365/12). Pe oră = ÷ 24. Pe minut = ÷ 60. Pe zi lucrătoare = ÷ 20. Pe oră lucrătoare = ÷ 8 ore.'
+    text: 'Venitul pe zi = venitul lunar net ÷ 30.44 (media reală de zile pe lună, 365/12). Pe oră = ÷ 24. Pe minut = ÷ 60. Pe zi lucrătoare = ÷ 20. Pe oră lucrătoare = ÷ 8 ore.'
   },
   'timp-minute': {
     title: 'Minute de muncă',
-    text: 'Prețul dorinței ÷ venitul pe minut. Un minut de muncă = 1/60 dintr-o oră, iar o oră = 1/24 dintr-o zi de 30,44 de zile.'
+    text: 'Prețul dorinței ÷ venitul pe minut. Un minut de muncă = 1/60 dintr-o oră, iar o oră = 1/24 dintr-o zi de 30.44 de zile.'
   },
   'timp-oreluc': {
     title: 'Ore lucrate',
@@ -5979,15 +5995,15 @@ const FORMULA_TIPS = {
   },
   'timp-zile-lucratore': {
     title: 'Zile lucrătoare într-un an',
-    text: 'Zilele lucrătoare = zile calendaristice − weekenduri − sărbători legale: 365 − 104 (52 × 2) − 11 = 250 în România, în 2026. De ce contează: venitul pe zi lucrătoare = venitul anual (12 × lunar) ÷ zilele lucrătoare, iar „% dintr-un an lucrător" = zilele lucrate ÷ zilele lucrătoare. Cu mai puține zile lucrătoare, fiecare zi valorează mai mult. Procentul dintr-un an lucrător este echivalent cu prețul ÷ venitul anual, deci nu se modifică odată cu numărul de zile. Surse: calendarul sărbătorilor legale — <a href="https://legislatie.just.ro/Public/DetaliiDocument/128647" target="_blank" rel="noopener">legislatie.just.ro</a>; date macro — <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.'
+    text: 'Zilele lucrătoare = zile calendaristice − weekenduri − sărbători legale: 365 − 104 (52 × 2) − 11 sărbători care cad în timpul săptămânii (din 16) = 250 în România, în 2026. De ce contează: venitul pe zi lucrătoare = venitul anual (12 × lunar) ÷ zilele lucrătoare, iar „% dintr-un an lucrător" = zilele lucrate ÷ zilele lucrătoare. Cu mai puține zile lucrătoare, fiecare zi valorează mai mult. Procentul dintr-un an lucrător este echivalent cu prețul ÷ venitul anual, deci nu se modifică odată cu numărul de zile. Surse: calendarul sărbătorilor legale — <a href="https://legislatie.just.ro/Public/DetaliiDocument/128647" target="_blank" rel="noopener">legislatie.just.ro</a>; date macro — <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS</a>.'
   },
   'dob-brut': {
     title: 'Dobânda brută',
-    text: 'ROUND(sumă × rată × zile ÷ 365, 2). Rata e anuală (7% = 0,07), iar zilele sunt calendaristice. Rezultatul e înainte de impozit.'
+    text: 'ROUND(sumă × rată × zile ÷ 365, 2). Rata e anuală (7% = 0.07), iar zilele sunt calendaristice. Rezultatul e înainte de impozit.'
   },
   'dob-net': {
     title: 'Dobânda netă',
-    text: 'ROUND((1 − impozit) × brut, 2). Impozitul e un procent din dobândă (10% = 0,10), nu din sumă.'
+    text: 'ROUND((1 − impozit) × brut, 2). Impozitul e un procent din dobândă (10% = 0.10), nu din sumă.'
   },
   'comp-a': {
     title: 'Dobânda compusă fără contribuție',
@@ -6019,7 +6035,7 @@ const FORMULA_TIPS = {
   },
   'comisioane': {
     title: 'Comisioanele de tranzacționare',
-    text: 'Media reală de pe piață: 0,1–0,5% la brokerii români (0,3% e tariful online cel mai răspândit), 0,5–1% la brokerii străini; crypto/CFD-uri pot ajunge la 1–2%. Valoarea din aplicație (0,3%) e media pieței RO pentru acțiuni. Surse: <a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro</a>, <a href="https://www.wall-street.ro/articol/Money/201325/cat-te-costa-sa-cumperi-actiuni-pe-bursa-si-care-sunt-sumele-minime-de-care-ai-nevoie.html" target="_blank" rel="noopener">wall-street.ro</a> (grile de comisioane, octombrie 2026).'
+    text: 'Media reală de pe piață: 0.1–0.5% la brokerii români (0.3% e tariful online cel mai răspândit), 0.5–1% la brokerii străini; crypto/CFD-uri pot ajunge la 1–2%. Valoarea din aplicație (0.3%) e media pieței RO pentru acțiuni. Surse: <a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro</a>, <a href="https://www.wall-street.ro/articol/Money/201325/cat-te-costa-sa-cumperi-actiuni-pe-bursa-si-care-sunt-sumele-minime-de-care-ai-nevoie.html" target="_blank" rel="noopener">wall-street.ro</a> (grile de comisioane, octombrie 2026).'
   },
   'prof-final': {
     title: 'Valoarea finală',
@@ -6079,7 +6095,7 @@ const FORMULA_TIPS = {
   },
   'nuam-rata': {
     title: 'Dobânda la contul de economii',
-    text: 'Intervalul real pentru depozitele nou deschise în România: 3–4% pe an (2025–2026). Media dobânzii la depozitele noi ale populației a fost 5,39% la finalul 2025, iar cele mai bune oferte ~6,75–7% (BNR). Valoarea din aplicație e prudentă, nu promoțională.'
+    text: 'Intervalul real pentru depozitele nou deschise în România: 3–4% pe an (2025–2026). Media dobânzii la depozitele noi ale populației a fost 5.39% la finalul 2025, iar cele mai bune oferte ~6.75–7% (BNR). Valoarea din aplicație e prudentă, nu promoțională.'
   },
   'nuam-profit': {
     title: 'Profit (diferență)',
@@ -6127,7 +6143,7 @@ const FORMULA_TIPS = {
   },
   'di-istoric': {
     title: 'Randamentul real istoric 2000–2026',
-    text: 'Pentru fiecare an, (1 + randament nominal constant) ÷ (1 + inflația anuală INS) − 1. Un depozit „sigur” poate fi negativ real în anii cu inflație ridicată. Sursa: INS — IPC național, serie annuală (<a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">insse.ro</a>).'
+    text: 'Pentru fiecare an, (1 + randament nominal constant) ÷ (1 + inflația anuală INS) − 1. Un depozit „sigur” poate fi negativ real în anii cu inflație ridicată. Sursa: INS — IPC național, serie anuală (<a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">insse.ro</a>).'
   },
   'di-cash-real': {
     title: 'Cash păstrat 27 de ani',
@@ -6143,7 +6159,7 @@ const FORMULA_TIPS = {
   },
   'r72-regula': {
     title: 'Regula 72',
-    text: 'Ani până la dublare ≈ 72 ÷ rată (în procente). O scurtătură bazată pe compunere; la 7% dă ~10,3 ani, iar compunerea exactă dă 10,24 ani. Cel mai precisă pentru rate de 6–10%.'
+    text: 'Ani până la dublare ≈ 72 ÷ rată (în procente). O scurtătură bazată pe compunere; la 7% dă ~10.3 ani, iar compunerea exactă dă 10.24 ani. Cea mai precisă pentru rate de 6–10%.'
   },
   'r72-exact': {
     title: 'Compunerea exactă',
@@ -6271,7 +6287,7 @@ const FORMULA_TIPS = {
   },
   'sf-rezerva': {
     title: 'Rezerva de urgență actuală',
-    text: 'Suma giudicioasă acum, pentru 3–6 luni de cheltuieli esențiale. Rezerva se adaugă la activele din net worth.'
+    text: 'Suma judicioasă acum, pentru 3–6 luni de cheltuieli esențiale. Rezerva se adaugă la activele din net worth.'
   },
   'sf-active': {
     title: 'Active, fără rezerva',
@@ -6402,7 +6418,7 @@ const FORMULA_TIPS = {
     text: 'Suma pusă deoparte în mod normal. Sub stres, inflația erodează puterea sa de cumpărare.'
   },
   'st-rezerva': {
-    text: 'Suma giudicioasă disponibilă acum. Rezerva acoperă luni de deficit = rezerva ÷ (cheltuieli noi − venit nou).',
+    text: 'Suma judicioasă disponibilă acum. Rezerva acoperă luni de deficit = rezerva ÷ (cheltuieli noi − venit nou).',
     title: 'Rezerva de urgență actuală'
   },
   'st-active': {
@@ -6463,7 +6479,7 @@ const FORMULA_TIPS = {
   },
   'pn-scenariu': {
     title: 'Scenariul de randament',
-    text: 'Presetul setează randamentul anual brut și inflația. „Istoric” folosește media fondurilor Pilon III pe 2007–2025 (ultimul an complet; 6,7% pe an, APAPR/ASF). Alege „Personalizat” pentru propriile valori.'
+    text: 'Presetul setează randamentul anual brut și inflația. „Istoric” folosește media fondurilor Pilon III pe 2007–2025 (ultimul an complet; 6.7% pe an, APAPR/ASF). Alege „Personalizat” pentru propriile valori.'
   },
   'pn-varsta': {
     title: 'Vârsta acum',
@@ -6471,7 +6487,7 @@ const FORMULA_TIPS = {
   },
   'pn-pensionare': {
     title: 'Vârsta la pensionare',
-    text: 'La Pilon III, banii pot fi retrași de la 60 de ani, cu minimum 90 de contribuții lunare. Numărul de ani = diferența dintre cele două vârste.'
+    text: 'La Pilon III, banii pot fi retrași de la 60 de ani; din 2026 nu mai e necesar pragul de 90 de contribuții lunare (Norma ASF 10/2026). Numărul de ani = diferența dintre cele două vârste.'
   },
   'pn-contributie': {
     title: 'Contribuția lunară',
@@ -6482,12 +6498,12 @@ const FORMULA_TIPS = {
     text: 'Activul pe care îl ai acum în fond (0 dacă abia începi). Se adaugă la contribuții și e compus la fel ca ele.'
   },
   'pn-randament': {
-    text: 'Randamentul anual brut al fondului, înainte de comisioane. Randamentul istoric mediu al Pilon III e 6,7% pe an (2007–2025, ultimul an complet), dar un an bun (2025: 19,6%) nu e regulă.',
+    text: 'Randamentul anual brut al fondului, înainte de comisioane. Randamentul istoric mediu al Pilon III e 6.7% pe an (2007–2025, ultimul an complet), dar un an bun (2025: 19.6%) nu e regulă.',
     title: 'Randament anual brut'
   },
   'pn-comision': {
     title: 'Comision anual total',
-    text: 'Costul ascuns, scos din randament. La Pilon III: 3–5% din contribuție (maxim 5%) plus 0,091–0,195% lunar din activul net (maxim 0,2% pe lună), adică ~1,5% pe an. Pe 30 de ani, comisioanele pot costa peste un sfert din valoare.'
+    text: 'Costul ascuns, scos din randament. La Pilon III: 3–5% din contribuție (maxim 5%) plus 0.091–0.195% lunar din activul net (maxim 0.2% pe lună), adică ~1.5% pe an. Pe 30 de ani, comisioanele pot costa peste un sfert din valoare.'
   },
   'pn-impozit': {
     title: 'Impozitul pe câștig la retragere',
@@ -6495,7 +6511,7 @@ const FORMULA_TIPS = {
   },
   'pn-inflatie': {
     title: 'Inflația anuală',
-    text: 'Folosită pentru valoarea reală de la pensionare: câți bani din astăzi valorează suma acumulată. Media 2007–2025 (ultimul an complet) a fost 4,9% pe an (INS).'
+    text: 'Folosită pentru valoarea reală de la pensionare: câți bani din astăzi valorează suma acumulată. Media 2007–2025 (ultimul an complet) a fost 4.9% pe an (INS).'
   },
   'pn-final-brut': {
     title: 'Valoarea brută la pensionare',
@@ -6511,7 +6527,7 @@ const FORMULA_TIPS = {
   },
   'pn-contributii': {
     title: 'Contribuții totale',
-    text: 'Suma inițială + contribuția lunară × numărul de luni. E banii tăi depuși, care nu se impozitează la retragere.'
+    text: 'Suma inițială + contribuția lunară × numărul de luni. Sunt banii tăi depuși, care nu se impozitează la retragere.'
   },
   'pn-castig': {
     title: 'Câștig brut',
@@ -6627,7 +6643,7 @@ const FORMULA_TIPS = {
   },
   'dt-verdict': {
     title: 'Verdict',
-    text: 'Arbitrajul: dobânda creditului vs randamentul net al economiilor. Dobândă mai mare → anticiparea; randament net mai mare → economisirea, dar cu risc. La egalitate, contează lichiditatea și riscul pe care îl accepti.'
+    text: 'Arbitrajul: dobânda creditului vs randamentul net al economiilor. Dobândă mai mare → anticiparea; randament net mai mare → economisirea, dar cu risc. La egalitate, contează lichiditatea și riscul pe care îl accepți.'
   },
   'dt-evolutie': {
     title: 'Evoluția pe ani',
@@ -6635,7 +6651,7 @@ const FORMULA_TIPS = {
   },
   'dt-tabel': {
     title: 'Datorii bune vs rele',
-    text: 'Clasificarea e qualitativă, nu o recomandare. Contează dobânda, scopul împrumutului și ce altceva ai putea face cu banii. Surse: BNR, Investor.gov.'
+    text: 'Clasificarea e calitativă, nu o recomandare. Contează dobânda, scopul împrumutului și ce altceva ai putea face cu banii. Surse: BNR, Investor.gov.'
   },
   'dc-scenariu': {
     title: 'Scenariu de preț',
@@ -6691,7 +6707,7 @@ const FORMULA_TIPS = {
   },
   'cs-curs': {
     title: 'Cursul RON/valută la start',
-    text: 'Câți lei dai astăzi pentru o unitate de valută (ex. 4,97 lei pentru 1 EUR). BNR publică cursul oficial zilnic; pentru USD vezi și raportul H.10 al Fed. Surse: <a href="https://www.bnr.ro/report?cid=668&type=1" target="_blank" rel="noopener">BNR</a>, <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener">ECB</a>.'
+    text: 'Câți lei dai astăzi pentru o unitate de valută (ex. 4.97 lei pentru 1 EUR). BNR publică cursul oficial zilnic; pentru USD vezi și raportul H.10 al Fed. Surse: <a href="https://www.bnr.ro/report?cid=668&type=1" target="_blank" rel="noopener">BNR</a>, <a href="https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" target="_blank" rel="noopener">ECB</a>.'
   },
   'cs-apreciere': {
     title: 'Apreciere anuală a valutei față de RON',
@@ -7408,20 +7424,17 @@ function initScenarii() {
    gazdele marcate; funcțiile `textExplica*` sunt pure, deci testabile
    fără browser (ca celelalte funcții `compute*`). */
 
-/* Proza e în română:virgulă zecimală, punct pentru mii (2.500 lei, 6,3%).
-   Formatul de calcul al aplicației rămâne en-US, neatins — nu adăugăm un
-   al doilea locale, ci schimbăm separatorii după formatarea cu LOCALE. */
-function fmtRoNum(value, min = 0, max = 2) {
-  return value.toLocaleString(LOCALE, { minimumFractionDigits: min, maximumFractionDigits: max })
-    .replace(/\./g, '\u0000')   // zecimala en-US → marcator
-    .replace(/,/g, '.')         // miile en-US → punct românesc
-    .replace(/\u0000/g, ',');   // marcatorul → virgulă românească
+/* Toate cifrele afișate, inclusiv în proza explicativă, folosesc același
+   format en-US (virgulă pentru mii, punct pentru zecimale): 2,500 lei / 6.3%.
+   Nu există un al doilea locale, deci nu se mai convertesc separatorii. */
+function fmtProzaNum(value, min = 0, max = 2) {
+  return value.toLocaleString(LOCALE, { minimumFractionDigits: min, maximumFractionDigits: max });
 }
-function fmtRoLei(value, decimals = 0) {
-  return fmtRoNum(value, decimals, decimals) + ' lei';
+function fmtProzaLei(value, decimals = 0) {
+  return fmtProzaNum(value, decimals, decimals) + ' lei';
 }
-function fmtRoPct(fraction) {
-  return fmtRoNum(fraction * 100, 0, 2) + '%';
+function fmtProzaPct(fraction) {
+  return fmtProzaNum(fraction * 100, 0, 2) + '%';
 }
 
 /* Inflație: puterea de cumpărare a 1.000 lei peste un an, la rata din
@@ -7433,21 +7446,21 @@ function textExplicaInflatie(rata) {
   const calificativ = eticheta.indexOf('parțial') !== -1
     ? ` (${CONFIG_AN.anCurent} e parțial)`
     : '';
-  return `La ${fmtRoPct(r)} pe an, 1.000 lei de azi cumpără ~${fmtRoNum(Math.round(putere), 0, 0)} lei anul viitor${calificativ}.`;
+  return `La ${fmtProzaPct(r)} pe an, 1,000 lei de azi cumpără ~${fmtProzaNum(Math.round(putere), 0, 0)} lei anul viitor${calificativ}.`;
 }
 
 /* Timp: dorința tradusă în zile de muncă, raportat la anul lucrător. */
 function textExplicaTimp(venit, pret, zileAn) {
   if (!(venit > 0)) return 'Introdu un venit lunar mai mare decât zero ca să vezi câte zile de muncă înseamnă dorința.';
   const r = computeTimp(venit, pret, zileAn);
-  return `O dorință de ${fmtRoLei(pret)} înseamnă ~${fmtRoNum(Math.round(r.zileLucrate), 0, 0)} zile de muncă (8 ore pe zi) — aproximativ ${fmtRoPct(r.pctAnLucrator)} dintr-un an de ${fmtRoNum(zileAn, 0, 2)} zile lucrătoare.`;
+  return `O dorință de ${fmtProzaLei(pret)} înseamnă ~${fmtProzaNum(Math.round(r.zileLucrate), 0, 0)} zile de muncă (8 ore pe zi) — aproximativ ${fmtProzaPct(r.pctAnLucrator)} dintr-un an de ${fmtProzaNum(zileAn, 0, 2)} zile lucrătoare.`;
 }
 
 /* Dobândă simplă: cât câștigă suma pe zilele alese, după impozit. */
 function textExplicaDobanda(suma, rata, zile, impozit) {
   if (!(suma > 0) || !(zile > 0)) return 'Introdu o sumă și un număr de zile mai mari decât zero pentru a vedea dobânda.';
   const { brut, net } = computeDobanda(suma, rata, zile, impozit);
-  return `Pe ${fmtRoNum(zile, 0, 0)} zile, ${fmtRoLei(suma)} la ${fmtRoPct(rata)} îți aduce ${fmtRoLei(brut, 2)} dobândă; după impozitul de ${fmtRoPct(impozit)} rămân ${fmtRoLei(net, 2)}.`;
+  return `Pe ${fmtProzaNum(zile, 0, 0)} zile, ${fmtProzaLei(suma)} la ${fmtProzaPct(rata)} îți aduce ${fmtProzaLei(brut, 2)} dobândă; după impozitul de ${fmtProzaPct(impozit)} rămân ${fmtProzaLei(net, 2)}.`;
 }
 
 /* Dobândă compusă: de câte ori crește suma când dobânda e reinvestită. */
@@ -7457,21 +7470,21 @@ function textExplicaCompusa(suma, rata, ani) {
   const idx = Math.max(0, Math.min(ani, scenA.length - 1));
   const final = scenA[idx];
   const factor = final.valoare / suma;
-  return `După ${fmtRoNum(ani, 0, 0)} ani la ${fmtRoPct(rata)}, suma crește de ~${fmtRoNum(factor, 0, 2)} ori: ${fmtRoLei(suma)} devin ~${fmtRoLei(final.valoare)}. Dobânda rămâne în cont și produce dobândă și în anii următori.`;
+  return `După ${fmtProzaNum(ani, 0, 0)} ani la ${fmtProzaPct(rata)}, suma crește de ~${fmtProzaNum(factor, 0, 2)} ori: ${fmtProzaLei(suma)} devin ~${fmtProzaLei(final.valoare)}. Dobânda rămâne în cont și produce dobândă și în anii următori.`;
 }
 
 /* Randament: ce rămâne după taxe și după inflație (puterea de cumpărare). */
 function textExplicaRandament(suma, randament, impozit, comisioane, inflatie) {
   if (!(suma > 0)) return 'Introdu o sumă investită mai mare decât zero pentru a vedea randamentul.';
   const r = computeRandament(suma, randament, impozit, comisioane, inflatie);
-  return `La ${fmtRoPct(randament)} pe ${fmtRoLei(suma)}, câștigul brut e ${fmtRoLei(r.brutLei, 2)}. După impozit și comisioane rămân ${fmtRoLei(r.netLei, 2)} (${fmtRoPct(r.netPct)}), iar după inflația de ${fmtRoPct(inflatie)} câștigul real e ${fmtRoLei(r.realLei, 2)} (${fmtRoPct(r.realPct)}).`;
+  return `La ${fmtProzaPct(randament)} pe ${fmtProzaLei(suma)}, câștigul brut e ${fmtProzaLei(r.brutLei, 2)}. După impozit și comisioane rămân ${fmtProzaLei(r.netLei, 2)} (${fmtProzaPct(r.netPct)}), iar după inflația de ${fmtProzaPct(inflatie)} câștigul real e ${fmtProzaLei(r.realLei, 2)} (${fmtProzaPct(r.realPct)}).`;
 }
 
 /* Buget: repartizarea 50/30/20 pentru venitul lunar curent. */
 function textExplicaBuget(venit) {
   if (!(venit > 0)) return 'Introdu venitul lunar net pentru a vedea repartizarea 50/30/20.';
   const { tinta } = computeBuget(venit, 0, 0, 0);
-  return `50/30/20 înseamnă ${fmtRoLei(tinta.nevoi)} nevoi, ${fmtRoLei(tinta.dorinte)} dorințe, ${fmtRoLei(tinta.economii)} economii pentru ${fmtRoLei(venit)} venit lunar.`;
+  return `50/30/20 înseamnă ${fmtProzaLei(tinta.nevoi)} nevoi, ${fmtProzaLei(tinta.dorinte)} dorințe, ${fmtProzaLei(tinta.economii)} economii pentru ${fmtProzaLei(venit)} venit lunar.`;
 }
 
 /* Citește valoarea curentă a unui câmp din panou (input sau select). */

@@ -33,20 +33,20 @@ test('N4 — randamentul real pe 1 an: formula exactă (Fisher) și aproximația
 test('N4 — seria istorică 2000–2026 (INS) aplicată unei rate nominale de 7%', () => {
   const h = computeIstoricReal(0.07, 10000);
   assert.equal(h.rows.length, 27);                       // 2000–2026 incluse
-  near(h.produsInflatie, 9.198398404954, 1e-9);
-  near(h.medie, -0.011004669996, 1e-9);
+  near(h.produsInflatie, 9.4320359937914, 1e-9);
+  near(h.medie, -0.011928142598, 1e-9);
   near(h.minim.real, -0.265463032883, 1e-9);
   assert.equal(h.minim.an, 2000);
   near(h.maxim.real, 0.086735730246, 1e-9);
   assert.equal(h.maxim.an, 2016);                        // deflație → randament real maxim
-  assert.equal(h.numarNegativi, 10);
+  assert.equal(h.numarNegativi, 11);
   // Un an concret: 2022, inflație 13,8%.
   const an2022 = h.rows.find((r) => r.an === 2022);
   near(an2022.inflatie, 0.138);
   near(an2022.real, 1.07 / 1.138 - 1);
-  near(h.cashReal, 1087.1457790537);
-  near(h.investitReal, 6755.3799652012);
-  near(h.diferenta, 5668.2341861475);
+  near(h.cashReal, 1060.2164799394807);
+  near(h.investitReal, 6588.044865145722);
+  near(h.diferenta, 5527.828385206241);
 });
 
 test('N4 — constantele de interval și sursa INS', () => {

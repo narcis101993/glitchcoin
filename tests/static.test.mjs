@@ -48,7 +48,7 @@ test('C4 — data.js: seria de inflație e INS (1991 = 170,2%, nu 230,62%)', () 
   assert.deepEqual({ ...gc.CONFIG_AN.coteFiscale }, {
     dobanda: 10, dividende: 16, vmRo: 3, vmRoScurt: 6, vmStrain: 16,
   });
-  assert.equal(gc.CONFIG_AN.actualizatLa, '2026-11-12');
+  assert.equal(gc.CONFIG_AN.actualizatLa, '2026-11-16');
   assert.equal(gc.AN_CURENT, gc.CONFIG_AN.anCurent);
 });
 
@@ -67,7 +67,7 @@ test('A2/A3 — data.js: 2025 = 7,3% (INS), 2026 = 6,3% (parțial)', () => {
   // poate diverge de la CONFIG_AN — gard pentru actualizarea anuală următoare.
   const seria = Object.fromEntries(gc.GLITCHCOIN_DATA.inflation.map((d) => [d.year, d]));
   assert.equal(seria[gc.CONFIG_AN.anCurent].rate, gc.CONFIG_AN.inflatie.rata);
-  assert.ok(Math.abs(derivat.echivalent1000lei2000 - 9198.398404954) < 1e-6);
+  assert.ok(Math.abs(derivat.echivalent1000lei2000 - 9432.0359937914) < 1e-6);
   assert.ok(Math.abs(derivat.crestereAlimente.max.valoare - 0.665) < 1e-12);
   assert.ok(Math.abs(derivat.crestereAlimente.min.valoare - 0.215) < 1e-12);
   assert.equal(derivat.crestereAlimente.max.produs, 'Pâine (500g)');
@@ -82,8 +82,14 @@ test('C5/C11 — Timp vs dorințe: zile lucrătoare ca input (implicit 248) și 
   includes(html, 'id="timp-zile-lucratore" value="250"', 'C5 input');
   includes(html, 'data-tip="timp-zile-lucratore"', 'C5 tooltip');
   includes(html, 'id="timp-tabel-zileanluc">250</td>', 'C5 tabel');
-  includes(html, 'Pe zi · 30,44 zile', 'C11');
+  includes(html, 'Pe zi · 30.44 zile', 'C11');
   includes(html, '365 ÷ 12', 'C11');
+});
+
+test('Pilon III — fără pragul depășit de 90 de contribuții', () => {
+  assert.ok(!js.includes('cu minimum 90 de contribuții'), 'tooltipul cu regula veche a rămas');
+  assert.ok(js.includes('Norma ASF 10/2026'), 'tooltipul nu menționează norma nouă');
+  assert.ok(html.includes('Norma 10/2026'), 'sursa ASF nouă lipsește din pagină');
 });
 
 test('C1 — „Nu am bani": semnul dobânzii e corect (venit − facturi + profit)', () => {

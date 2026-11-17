@@ -69,9 +69,9 @@ Disponibil în 6 taburi nucleu: **Inflație, Timp vs dorințe, Dobândă, Dobân
 
 Disponibil în aceleași 6 taburi nucleu. Sub rezumat găsești butonul discret
 **Explică rezultatul**: deschide un paragraf scurt în română care spune **ce înseamnă
-numărul**, nu formula (aceea e deja în tooltipuri). De exemplu: „La 6,3% pe an, 1.000 lei
-de azi cumpără ~941 lei anul viitor (2026 e parțial)” sau „50/30/20 înseamnă 2.500 lei
-nevoi… pentru 5.000 lei venit”.
+numărul**, nu formula (aceea e deja în tooltipuri). De exemplu: „La 6.3% pe an, 1,000 lei
+de azi cumpără ~941 lei anul viitor (2026 e parțial)” sau „50/30/20 înseamnă 2,500 lei
+nevoi… pentru 5,000 lei venit”.
 
 - Textul se generează din **valorile curente** ale panoului (se actualizează live cât timp
   paragraful e deschis) și din `CONFIG_AN` — anul, rata inflației și eticheta „parțial”
@@ -203,11 +203,11 @@ chip-uri în panoul sursă; inputurile se salvează în continuare în `localSto
 - **Drawer (mobil)** — navigația e un drawer cu overlay, `Esc` închide, focusul e ținut în drawer și
   la alegerea unui tab revine în conținut.
 - **`aria-live` doar în panoul activ** — cititorul de ecran nu anunță rezultatele din panourile ascunse.
-- **Back/forward** — hash-ul tabului este urmărit (`#categorie/tab`, cu fallback `#tab`); butoinele de
+- **Back/forward** — hash-ul tabului este urmărit (`#categorie/tab`, cu fallback `#tab`); butoanele de
   navigare din browser schimbă tabul.
 - **Tabele** — toate tabelele au `caption` (vizibil doar pentru cititoare) și `scope="col"`
   pe coloane, deci antetele sunt asociate formal cu tabelul.
-- **Contrast WCAG AA** — și pentru textul dezactivat (`--disabled` ≥ 4,5:1) în ambele teme.
+- **Contrast WCAG AA** — și pentru textul dezactivat (`--disabled` ≥ 4.5:1) în ambele teme.
 - **Tooltips accesibile pentru formule** — lângă etichetele și valorile cheie apare un declanșator
   „?” (buton focusabil). Panelul are `role="tooltip"` și e legat prin `aria-describedby`; se deschide
   la focus, hover sau click și se închide cu **Escape**, la click în afara sau la pierderea focusului.
@@ -276,7 +276,7 @@ node --test tests/
 
 ## Ce conține tabul Inflație
 
-1. **Simulatorul inflației** — introdu suma actuală și rata inflației; vezi cât de multi bani
+1. **Simulatorul inflației** — introdu suma actuală și rata inflației; vezi cât de mulți bani
    îi vei avea nevoie în anii 2, 5, 10 și 15, plus tabelul complet pe 15 ani.
 2. **Alimente** — prețurile la 10 produse de bază, 2020–2026, cu creșterea 2026 vs 2020 (parțial).
 3. **Inflația 1991–2026** — grafic cu rata anuală, statistici și tabel complet (2026 e parțial).
@@ -286,15 +286,15 @@ node --test tests/
 
 ## Ce conține tabul Timp vs dorințe
 
-1. **Venitul pe unități de timp** — venitul lunar net împărțit la 30,44 (zi, media reală 365/12),
+1. **Venitul pe unități de timp** — venitul lunar net împărțit la 30.44 (zi, media reală 365/12),
    24 (oră) și 60 (minut), plus venitul pe zi lucrătoare și pe oră lucrătoare (8 ore).
 2. **Cât timp muncești pentru o dorință** — minute, ore și zile din viață (24/24) sau ore și zile
    lucrate (8/24), cu procentul din timpul unui an (365 zile) sau dintr-un an lucrător.
 3. **Zile lucrătoare / an** — input (implicit **250**, România 2026). Din el se derivă venitul pe zi
    lucrătoare și procentul dintr-un an lucrător; valoarea se salvează în `localStorage`.
 
-Valori implicite: venit 5.000 lei, dorință 3.600 lei, 250 zile lucrătoare → 31.536 minute / 526 ore /
-22 zile (24/24), sau 120 ore / 15 zile lucrate (8/24) — 6,00% din venitul anual lucrător
+Valori implicite: venit 5,000 lei, dorință 3,600 lei, 250 zile lucrătoare → 31,536 minute / 526 ore /
+22 zile (24/24), sau 120 ore / 15 zile lucrate (8/24) — 6.00% din venitul anual lucrător
 (cele două procente coincid, vezi nota metodologică din aplicație).
 
 ## Ce conține tabul Calculul dobânzii
@@ -302,7 +302,7 @@ Valori implicite: venit 5.000 lei, dorință 3.600 lei, 250 zile lucrătoare →
 1. **Patru inputuri** — sumă inițială, rată anuală, număr de zile și impozit.
 2. **Dobânda brută și netă** — brut = ROUND(suma × rată × zile / 365, 2); net = ROUND((1 − impozit) × brut, 2).
 
-Valori implicite: 15.000 lei / 7% / 184 zile / 10% → brut 529,32 lei, net 476,39 lei.
+Valori implicite: 15,000 lei / 7% / 184 zile / 10% → brut 529.32 lei, net 476.39 lei.
 
 ## Ce conține tabul Dobânda compusă
 
@@ -311,9 +311,9 @@ Valori implicite: 15.000 lei / 7% / 184 zile / 10% → brut 529,32 lei, net 476,
    randamentul față de primul an.
 3. **Scenariul cu contribuție** — suma investită, dobânda acumulată, suma totală și creștere anuală.
 
-Valori implicite: 10.000 lei / 200 lei lunar / 2,50% → anul 1 = 10.250,00 lei,
-anul 2 = 10.506,25 lei, anul 20 = 16.386,14 lei (fără contribuție) și 78.673,58 lei
-cu contribuție, din care 58.000,00 lei investiți.
+Valori implicite: 10,000 lei / 200 lei lunar / 2.50% → anul 1 = 10,250.00 lei,
+anul 2 = 10,506.25 lei, anul 20 = 16,386.14 lei (fără contribuție) și 78,673.58 lei
+cu contribuție, din care 58,000.00 lei investiți.
 
 ## Ce conține tabul Randament
 
@@ -323,8 +323,8 @@ cu contribuție, din care 58.000,00 lei investiți.
 3. **Impozit pe tipuri de venit** — selectul „Tipul de venit" aplică rata reală (dobândă 10%,
    dividende 10% / 16%, valori mobiliere broker RO ≥ 1 an 1% / 3% etc.).
 
-Valori implicite: 10.000 lei / 7% / 1% / 0,3% / 5% → brut 700,00 lei (7,00%),
-net 690,90 lei (6,91%), real 181,81 lei (1,82%).
+Valori implicite: 10,000 lei / 7% / 1% / 0.3% / 5% → brut 700.00 lei (7.00%),
+net 690.90 lei (6.91%), real 181.81 lei (1.82%).
 
 ## Ce conține tabul Profit
 
@@ -338,8 +338,8 @@ net 690,90 lei (6,91%), real 181,81 lei (1,82%).
 4. **Impozit pe tipuri de venit** — selectul „Tipul de venit" aplică rata reală, la fel ca la Randament.
    Pierderea nu se impozitează: dacă brutul e negativ, netul = brutul.
 
-Valori implicite: 10.000 lei / 25 lei / 28 lei / 1% / 0,3% / 5% → valoarea finală 11.200,00 lei,
-profit brut 1.200,00 lei, profit net 1.184,40 lei, randament real 6,52% (profit real 651,81 lei).
+Valori implicite: 10,000 lei / 25 lei / 28 lei / 1% / 0.3% / 5% → valoarea finală 11,200.00 lei,
+profit brut 1,200.00 lei, profit net 1,184.40 lei, randament real 6.52% (profit real 651.81 lei).
 
 ## Ce conține tabul Costul mediu de achiziție
 
@@ -348,9 +348,9 @@ profit brut 1.200,00 lei, profit net 1.184,40 lei, randament real 6,52% (profit 
 2. **Costul mediu ponderat** — (Σ preț × cantitate + Σ preț × cantitate × comision) / Σ cantitate,
    plus cantitatea totală, valoarea achiziționată și totalul plătit (cu comision).
 
-Valori implicite: (28,81 × 24), (27,75 × 144), (32,89 × 4), (34,40 × 30), toate cu comision 2%
-→ costul mediu 29,5447 lei pentru 202 de unități (5.851,00 lei achiziționat + 117,02 lei comisioane
-= 5.968,02 lei plătiți).
+Valori implicite: (28.81 × 24), (27.75 × 144), (32.89 × 4), (34.40 × 30), toate cu comision 2%
+→ costul mediu 29.5447 lei pentru 202 de unități (5,851.00 lei achiziționat + 117.02 lei comisioane
+= 5,968.02 lei plătiți).
 
 ## Ce conține tabul Sumă dorită
 
@@ -359,8 +359,8 @@ Valori implicite: (28,81 × 24), (27,75 × 144), (32,89 × 4), (34,40 × 30), to
    plus totalul economisit și suma din dobândă.
 3. **Tabela pe ani** — suma acumulată, economisit în total, din dobândă și cât din țintă e acumulat.
 
-Valori implicite: 10% / 15 ani / 0 / 1.000.000 lei → **2.412,72 lei pe lună**
-(434.289,21 lei economisiți + 565.710,79 lei din dobândă = 1.000.000,00 lei).
+Valori implicite: 10% / 15 ani / 0 / 1,000,000 lei → **2,412.72 lei pe lună**
+(434,289.21 lei economisiți + 565,710.79 lei din dobândă = 1,000,000.00 lei).
 
 ## Ce conține tabul „Nu am bani"
 
@@ -371,8 +371,8 @@ Valori implicite: 10% / 15 ani / 0 / 1.000.000 lei → **2.412,72 lei pe lună**
    dobândă și desfășuratorul zilnic (ziua, suma + dobândă, dobânda, suma retrasă, soldul).
 4. **Pe termen lung** — profitul într-un an, inflația pentru tine și profitul în 10 ani.
 
-Valori implicite: venit 5.000 lei, venitul în ziua 10, inflație 5%, economii 5.000 lei,
-dobândă 3,5% (intervalul real 3–4%) → **2.570,00 lei fără CE, 2.577,41 lei cu CE, profit 7,41 lei (0,15%)**.
+Valori implicite: venit 5,000 lei, venitul în ziua 10, inflație 5%, economii 5,000 lei,
+dobândă 3.5% (intervalul real 3–4%) → **2,570.00 lei fără CE, 2,577.41 lei cu CE, profit 7.41 lei (0.15%)**.
 Cu cont de economii rămâi cu mai mulți bani, la fel ca în desfășuratorul zilnic.
 
 ## Ce conține tabul Dobânda vs inflație
@@ -384,9 +384,9 @@ Cu cont de economii rămâi cu mai mulți bani, la fel ca în desfășuratorul z
 3. **Pe termen lung** — puterea de cumpărare a cash-ului vs a unei investiții la randament nominal,
    pe 27 de ani.
 
-Valori implicite: 10.000 lei / 7% / 5% → creștere nominală 700,00 lei, randament real 1,90%,
-valoare reală 10.190,48 lei. Pe 2000–2026, cash-ul de 10.000 lei ajunge la 1.087,15 lei reali,
-iar la randament nominal 7% la 6.755,38 lei reali (diferența 5.668,23 lei).
+Valori implicite: 10,000 lei / 7% / 5% → creștere nominală 700.00 lei, randament real 1.90%,
+valoare reală 10,190.48 lei. Pe 2000–2026, cash-ul de 10,000 lei ajunge la 1,060.22 lei reali,
+iar la randament nominal 7% la 6,588.04 lei reali (diferența 5,527.83 lei).
 
 ## Ce conține tabul Regula 72
 
@@ -395,7 +395,7 @@ iar la randament nominal 7% la 6.755,38 lei reali (diferența 5.668,23 lei).
 2. **Invers** — ce rată dublează banii într-un număr dat de ani (72 ÷ ani vs 2^(1/ani) − 1).
 3. **Pe rate** — grafic și tabel cu rate de la 1% la 15%.
 
-Valori implicite: 7% → 10,29 ani (regula 72) vs 10,24 ani (exact); pentru 10 ani → 7,20% vs 7,18%.
+Valori implicite: 7% → 10.29 ani (regula 72) vs 10.24 ani (exact); pentru 10 ani → 7.20% vs 7.18%.
 
 ## Ce conține tabul Fond de urgență
 
@@ -404,8 +404,8 @@ Valori implicite: 7% → 10,29 ani (regula 72) vs 10,24 ani (exact); pentru 10 a
 3. **Timpul până la țintă** — cu economia lunară introdusă (suma deja acumulată și dobânda reduc timpul).
 4. **Unde ții fondul** — tabel comparativ: cont curent / depozit / acțiuni, cu lichiditate și randament tipic.
 
-Valori implicite: 4.000 lei/lună, 6 luni, dobândă 3,5%, impozit 10% → țintă 24.000,00 lei,
-dobândă netă 756,00 lei/an; 500 lei/lună ajung în ~45 de luni (~3,7 ani).
+Valori implicite: 4,000 lei/lună, 6 luni, dobândă 3.5%, impozit 10% → țintă 24,000.00 lei,
+dobândă netă 756.00 lei/an; 500 lei/lună ajung în ~45 de luni (~3.7 ani).
 
 ## Ce conține tabul Costul oportunității
 
@@ -414,9 +414,9 @@ dobândă netă 756,00 lei/an; 500 lei/lună ajung în ~45 de luni (~3,7 ani).
 2. **Costul oportunității** — diferența dintre cea mai bună opțiune și cea aleasă, în putere de cumpărare.
 3. **Tabel comparativ** — ce primești și ce pierzi la fiecare opțiune.
 
-Valori implicite: 10.000 lei / 10 ani / 7% / impozit 1% / comisioane 0,3% / inflație 5% →
-cash 10.000,00 lei nominal (6.139,13 real), investiție 19.504,85 lei nominal (11.974,29 real),
-cost de oportunitate 5.835,15 lei.
+Valori implicite: 10,000 lei / 10 ani / 7% / impozit 1% / comisioane 0.3% / inflație 5% →
+cash 10,000.00 lei nominal (6,139.13 real), investiție 19,504.85 lei nominal (11,974.29 real),
+cost de oportunitate 5,835.15 lei.
 
 ## Ce conține tabul Buget 50/30/20
 
@@ -429,9 +429,9 @@ cost de oportunitate 5.835,15 lei.
 4. **Legături** — „Vezi dorințele în «Timp vs dorințe»” (prefill: venitul și dorințele) și, invers,
    „Vezi venitul în «Buget 50/30/20»” din tabul „Timp vs dorințe”.
 
-Valori implicite: 5.000 lei → 2.500 / 1.500 / 1.000 lei, toate la țintă. Dorințele de 1.500 lei
-costă 6,25 zile lucrate (50,00 ore), iar economia de 1.000 lei 4,17 zile lucrate.
-Cu 4.000 / 2.500 / 1.200 / 600 lei: deficit 300,00 lei, nevoi 62,50%, economii 15,00%.
+Valori implicite: 5,000 lei → 2,500 / 1,500 / 1,000 lei, toate la țintă. Dorințele de 1,500 lei
+costă 6.25 zile lucrate (50.00 ore), iar economia de 1,000 lei 4.17 zile lucrate.
+Cu 4,000 / 2,500 / 1,200 / 600 lei: deficit 300.00 lei, nevoi 62.50%, economii 15.00%.
 
 ## Ce conține tabul Sănătate financiară
 
@@ -445,11 +445,11 @@ Cu 4.000 / 2.500 / 1.200 / 600 lei: deficit 300,00 lei, nevoi 62,50%, economii 1
    «Buget 50/30/20»” (venitul, cheltuielile, economiile); invers, „Fond de urgență” trimite la
    „Sănătate financiară”.
 
-Valori implicite: venit 5.000, cheltuieli esențiale 2.500, economii 1.000, rate 500, rezervă 10.000,
-active 15.000, datorii 0 → rată de economii 20,00%, datorii 10,00%, rezerva 4,0 luni, net worth
-25.000,00 lei (0,42 luni de venit), 4 din 4 indicatori în regulă.
-Scenariul de risc (4.000 / 2.500 / 300 / 1.800 / 2.000 / 5.000 / 30.000): rată de economii 7,50%,
-datorii 45,00%, rezerva 0,8 luni, net worth −23.000,00 lei, lipsa 5.500,00 lei.
+Valori implicite: venit 5,000, cheltuieli esențiale 2,500, economii 1,000, rate 500, rezervă 10,000,
+active 15,000, datorii 0 → rată de economii 20.00%, datorii 10.00%, rezerva 4.0 luni, net worth
+25,000.00 lei (0.42 luni de venit), 4 din 4 indicatori în regulă.
+Scenariul de risc (4,000 / 2,500 / 300 / 1,800 / 2,000 / 5,000 / 30,000): rată de economii 7.50%,
+datorii 45.00%, rezerva 0.8 luni, net worth −23,000.00 lei, lipsa 5,500.00 lei.
 
 ## Ce conține tabul Diversificare și riscul
 
@@ -458,17 +458,17 @@ datorii 45,00%, rezerva 0,8 luni, net worth −23.000,00 lei, lipsa 5.500,00 lei
    ajustat la risc: (randament − rată fără risc) ÷ volatilitate.
 2. **Active configurabile** — tabel dinamic (nume, randament anual așteptat, volatilitate anuală,
    pondere), cu adăugare/ștergere/reset și salvare în `localStorage`.
-3. **Simulare Monte Carlo** — 5.000 de scenarii × 5 ani, randamente normale corelate (seed fix,
+3. **Simulare Monte Carlo** — 5,000 de scenarii × 5 ani, randamente normale corelate (seed fix,
    deci reproducibilă): mediană, p5, p95, probabilitatea de pierdere și drawdown mediu, pentru
    portofoliu și pentru activul cu randamentul cel mai mare.
 4. **Scenarii pe un an** — tabel cu randamentul și valoarea la −3σ … +3σ, pentru portofoliu și
    pentru activul individual.
 
-Valori implicite: acțiuni 8%/20% (50%), obligațiuni 5%/6% (30%), depozit 3,5%/0% (20%),
-corelație 30%, rată fără risc 3,5% → randament portofoliu 6,20%, volatilitate 10,68% (media
-ponderată ar fi 11,80%), randament ajustat la risc 0,25 vs 0,22 la acțiuni. Simularea: mediană
-13.247,56 lei (portofoliu) vs 13.638,48 lei (acțiuni), p5 9.238,02 lei vs 6.362,72 lei,
-drawdown mediu 5,68% vs 16,53%.
+Valori implicite: acțiuni 8%/20% (50%), obligațiuni 5%/6% (30%), depozit 3.5%/0% (20%),
+corelație 30%, rată fără risc 3.5% → randament portofoliu 6.20%, volatilitate 10.68% (media
+ponderată ar fi 11.80%), randament ajustat la risc 0.25 vs 0.22 la acțiuni. Simularea: mediană
+13,247.56 lei (portofoliu) vs 13,638.48 lei (acțiuni), p5 9,238.02 lei vs 6,362.72 lei,
+drawdown mediu 5.68% vs 16.53%.
 
 ## Ce conține tabul Asigurări
 
@@ -479,9 +479,9 @@ drawdown mediu 5,68% vs 16,53%.
    întâmplă, risc rămas în bugetul tău și lichiditatea necesară, pentru fiecare opțiune.
 3. **Trei riscuri frecvente** — sănătate, casă și mașină, cu valori ilustrative (nu oferte).
 
-Valori implicite: primă 2.000 lei, sumă 20.000 lei, probabilitate 8%, 10 ani, dobândă 3,5% →
-cost total al primelor 23.462,79 lei, pierdere așteptată 1.600,00 lei/an, diferență 400,00 lei,
-probabilitatea de cel puțin un eveniment 56,56%.
+Valori implicite: primă 2,000 lei, sumă 20,000 lei, probabilitate 8%, 10 ani, dobândă 3.5% →
+cost total al primelor 23,462.79 lei, pierdere așteptată 1,600.00 lei/an, diferență 400.00 lei,
+probabilitatea de cel puțin un eveniment 56.56%.
 
 ## Ce conține tabul Stress test
 
@@ -493,10 +493,10 @@ probabilitatea de cel puțin un eveniment 56,56%.
    introdus), plus valoarea așteptată (media ponderată).
 4. **Scenarii predefinite** — selector: Personalizat, Inflație 10%, Recesiune, Șoc combinat.
 
-Valori implicite: venit 5.000, cheltuieli 2.500, economii 1.000, rezervă 10.000, active 20.000,
-12 luni, inflație 10%, scădere venit 20%, randament −20% → venit 4.000,00 lei, cheltuieli
-2.750,00 lei, sold 1.250,00 lei, active 16.000,00 lei (pierdere 4.000,00 lei, revenire +25,00%),
-valoarea așteptată 19.500,00 lei.
+Valori implicite: venit 5,000, cheltuieli 2,500, economii 1,000, rezervă 10,000, active 20,000,
+12 luni, inflație 10%, scădere venit 20%, randament −20% → venit 4,000.00 lei, cheltuieli
+2,750.00 lei, sold 1,250.00 lei, active 16,000.00 lei (pierdere 4,000.00 lei, revenire +25.00%),
+valoarea așteptată 19,500.00 lei.
 
 ## Ce conține tabul Pensie / Pilon III
 
@@ -508,13 +508,13 @@ valoarea așteptată 19.500,00 lei.
    randamentul anual efectiv și valoarea reală (putere de cumpărare).
 3. **Evoluția pe ani** — un rând pe an: contribuții totale, valoare brută, după comisioane,
    impozit dacă retragi atunci și valoare netă.
-4. **Scenarii predefinite** — selector: Istoric (6,7% — media fondurilor Pilon III pe 2007–2025, ultimul an complet),
+4. **Scenarii predefinite** — selector: Istoric (6.7% — media fondurilor Pilon III pe 2007–2025, ultimul an complet),
    Conservator (4%), Optimist (9%), Personalizat.
 
-Valori implicite: 25 → 65 de ani, 300 lei/lună, 6,7% brut, 1,5% comision, 10% impozit, 4,9% inflație
-→ valoare brută 724.125,55 lei, cost comisioane 241.685,40 lei (33,38% din brut), impozit
-33.844,02 lei, valoare netă 448.596,14 lei (66.196,65 lei reali), randament efectiv 5,20%,
-randament real 0,29%.
+Valori implicite: 25 → 65 de ani, 300 lei/lună, 6.7% brut, 1.5% comision, 10% impozit, 4.9% inflație
+→ valoare brută 724,125.55 lei, cost comisioane 241,685.40 lei (33.38% din brut), impozit
+33,844.02 lei, valoare netă 448,596.14 lei (66,196.65 lei reali), randament efectiv 5.20%,
+randament real 0.29%.
 
 ## Ce conține tabul Impozitare pe investiții
 
@@ -525,11 +525,11 @@ randament real 0,29%.
    3%/1% (în funcție de deținere), chirie 10%/10% și câștigul de la pensie privată 10%/10% —
    cu baza de impozitare, „cum se aplică” și câte un link către sursă pentru fiecare rând.
 3. **Note metodologice** — comisioanele nu sunt impozite separat; plusvaloarea nu se impozitează
-   cât timp nu vinzi; pragul neditabil de 200 lei/tranzacție la crypto; pragul lunar de 3.000 lei
+   cât timp nu vinzi; pragul nedeductibil de 200 lei/tranzacție la crypto; pragul lunar de 3,000 lei
    la pensie privată.
 
-Valori implicite: valori mobiliare prin broker RO, 2026, 10.000 lei câștig → cotă 3%, impozit
-300,00 lei, net 9.700,00 lei, cu 200,00 lei mai mult decât în 2025.
+Valori implicite: valori mobiliare prin broker RO, 2026, 10,000 lei câștig → cotă 3%, impozit
+300.00 lei, net 9,700.00 lei, cu 200.00 lei mai mult decât în 2025.
 
 ## De unde vin datele
 
@@ -543,16 +543,16 @@ Valori implicite: valori mobiliare prin broker RO, 2026, 10.000 lei câștig →
   RSM — ghid fiscal imobiliar ([rsm.global](https://www.rsm.global/romania/ro/real-estate-tax-guide-romania));
   ASF — Pilonul III și datele fondurilor de pensii private ([asfromania.ro](https://asfromania.ro/));
   Tax Efficiency Lab — ghid fiscal ([taxefficiencylab.com](https://taxefficiencylab.com/romania-tax-guide)).
-- Valorile cheie: simulator 5.000 lei @ 5% → 5.250 / 6.077,53 / 7.756,64 / 9.899,66 lei;
-  deflator 2001 → 1.064,84 lei; Profit 10.000 / 25 / 28 / 1% / 0,3% / 5% → 11.200,00 / 1.200,00 / 1.184,40;
-  Costul mediu → 29,5447 lei; Sumă dorită 10% / 15 ani / 1.000.000 lei → 2.412,72 lei/lună;
-  Nu am bani → 2.570,00 lei fără CE / 2.577,41 lei cu CE / profit 7,41 lei;
-  Buget 50/30/20 → 2.500 / 1.500 / 1.000 lei (dorințele costă 6,25 zile lucrate);
-  Sănătate financiară → rezerva 4,0 luni, net worth 25.000,00 lei;
-  Diversificare → randament 6,20%, volatilitate 10,68%, randament ajustat la risc 0,25;
-  Asigurări → cost total primă 23.462,79 lei, pierdere așteptată 1.600,00 lei/an;
-  Stress test → venit 4.000,00 lei, cheltuieli 2.750,00 lei, active 16.000,00 lei;
-  Pensie / Pilon III → 724.125,55 lei brut, 448.596,14 lei net, cost comisioane 241.685,40 lei;
+- Valorile cheie: simulator 5,000 lei @ 5% → 5,250 / 6,077.53 / 7,756.64 / 9,899.66 lei;
+  deflator 2001 → 1,038.47 lei; Profit 10,000 / 25 / 28 / 1% / 0.3% / 5% → 11,200.00 / 1,200.00 / 1,184.40;
+  Costul mediu → 29.5447 lei; Sumă dorită 10% / 15 ani / 1,000,000 lei → 2,412.72 lei/lună;
+  Nu am bani → 2,570.00 lei fără CE / 2,577.41 lei cu CE / profit 7.41 lei;
+  Buget 50/30/20 → 2,500 / 1,500 / 1,000 lei (dorințele costă 6.25 zile lucrate);
+  Sănătate financiară → rezerva 4.0 luni, net worth 25,000.00 lei;
+  Diversificare → randament 6.20%, volatilitate 10.68%, randament ajustat la risc 0.25;
+  Asigurări → cost total primă 23,462.79 lei, pierdere așteptată 1,600.00 lei/an;
+  Stress test → venit 4,000.00 lei, cheltuieli 2,750.00 lei, active 16,000.00 lei;
+  Pensie / Pilon III → 724,125.55 lei brut, 448,596.14 lei net, cost comisioane 241,685.40 lei;
   Impozitare → broker RO ≥ 1 an: 1% (2025) / 3% (2026); dividende 10% / 16%.
 
 ## Notă

@@ -40,12 +40,12 @@ test('C1 — caz particular, fără facturi', () => {
 
 test('C2 — deflator: rândul 2026 = suma neschimbată, 2025 = echivalentul din 2025', () => {
   near(deflatorValue(5000, 2026), 5000); // anul curent nu se deflatează
-  near(deflatorValue(5000, 2025), 4703.668862, 1e-6);
-  near(deflatorValue(5000, 2024), 4383.661567, 1e-6);
-  near(deflatorValue(5000, 2020), 3145.326308, 1e-6);
-  near(deflatorValue(5000, 2010), 2475.702007, 1e-6);
-  near(deflatorValue(5000, 2001), 1064.843070, 1e-6);
-  near(deflatorValue(5000, 2000), 791.822628, 1e-6);
+  near(deflatorValue(5000, 2025), 4587.155963, 1e-6);
+  near(deflatorValue(5000, 2024), 4275.075455, 1e-6);
+  near(deflatorValue(5000, 2020), 3067.414555, 1e-6);
+  near(deflatorValue(5000, 2010), 2414.377278, 1e-6);
+  near(deflatorValue(5000, 2001), 1038.466224, 1e-6);
+  near(deflatorValue(5000, 2000), 772.208673, 1e-6);
   // 2024 trebuie să fie mai mare decât 2023 (deflatia e monotonă în timp).
   assert.ok(deflatorValue(5000, 2024) > deflatorValue(5000, 2023));
   // și 2025 să fie mai mică decât suma din 2026 (inflație pozitivă).

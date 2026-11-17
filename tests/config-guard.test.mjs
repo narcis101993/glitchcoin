@@ -140,12 +140,12 @@ test('CONFIG_AN: cotele fiscale sunt 10/16/3/6/16', () => {
   });
 });
 
-test('CONFIG_DERIVAT reproduce exact valorile afișate (9.198, 20,83, 66,50%, 21,50%, 250)', () => {
+test('CONFIG_DERIVAT reproduce exact valorile afișate (9,432.04, 20.83, 66.50%, 21.50%, 250)', () => {
   const d = gc.CONFIG_DERIVAT;
   assert.equal(d.anCurent, gc.CONFIG_AN.anCurent);
   assert.equal(d.zileLucratoare, 250);
   assert.equal(d.zileLucratoarePeLuna, 250 / 12);
-  assert.equal(Math.round(d.echivalent1000lei2000), 9198);
+  assert.equal(Math.round(d.echivalent1000lei2000), 9432);
   assert.equal(Number((d.crestereAlimente.max.valoare * 100).toFixed(2)), 66.5);
   assert.equal(d.crestereAlimente.max.produs, 'Pâine (500g)');
   assert.equal(Number((d.crestereAlimente.min.valoare * 100).toFixed(2)), 21.5);
@@ -173,9 +173,9 @@ test('markerii obligatorii nu pot dispărea (altfel valorile devin hardcodate)',
 
 /* ── 4. valorile afișate numai în locurile marcate ──────────────────── */
 
-test('index.html: 9.198 / 20,83 / 66,50% / 21,50% apar doar în elemente marcate', () => {
+test('index.html: 9,432.04 / 20.83 / 66.50% / 21.50% apar doar în elemente marcate', () => {
   for (const value of [
-    '9.198', '9,198', '9198',
+    '9.198', '9,198', '9198', '9,432.04', '9432',
     '20,83', '20.83', '2083',
     '66,50%', '66.50%', '66.5%', '0.665',
     '21,50%', '21.50%', '21.5%', '0.215',
@@ -193,7 +193,7 @@ test('index.html: niciun input/celulă cu 250 nu e nemarcat', () => {
 
 test('app.js: valorile de config nu apar ca literali în cod (comentariile sunt excluse)', () => {
   for (const value of [
-    '9.198', '9,198', '9198',
+    '9.198', '9,198', '9198', '9,432.04', '9432',
     '20,83', '20.83', '2083',
     '66,50', '66.50', '66.5', '0.665', '6650',
     '21,50', '21.50', '21.5', '0.215', '2150',

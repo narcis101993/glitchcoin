@@ -81,7 +81,7 @@ test('textul se regenerează când se schimbă inputurile, cât timp e deschis',
 
 test('inflație: textul exact din card, cu rata/anul/calificativul din CONFIG_AN', () => {
   const text = gc.textExplicaInflatie(gc.CONFIG_AN.inflatie.rata);
-  assert.equal(text, 'La 6,3% pe an, 1.000 lei de azi cumpără ~941 lei anul viitor (2026 e parțial).');
+  assert.equal(text, 'La 6.3% pe an, 1,000 lei de azi cumpără ~941 lei anul viitor (2026 e parțial).');
   assert.ok(text.includes(String(gc.CONFIG_AN.anCurent)), 'anul vine din config');
   // Dovada că nu e hardcodat: schimbăm configul, textul se schimbă.
   const cfg = gc.CONFIG_AN;
@@ -100,34 +100,34 @@ test('inflație: textul exact din card, cu rata/anul/calificativul din CONFIG_AN
   }
 });
 
-test('dobândă compusă: „După 10 ani la 7%, suma crește de ~1,97 ori”', () => {
+test('dobândă compusă: „După 10 ani la 7%, suma crește de ~1.97 ori”', () => {
   const text = gc.textExplicaCompusa(1000, 0.07, 10);
-  assert.match(text, /^După 10 ani la 7%, suma crește de ~1,97 ori:/);
-  assert.ok(text.includes('1.000 lei') && text.includes('~1.967 lei'));
+  assert.match(text, /^După 10 ani la 7%, suma crește de ~1.97 ori:/);
+  assert.ok(text.includes('1,000 lei') && text.includes('~1,967 lei'));
   assert.match(text, /Dobânda rămâne în cont/, 'explică mecanismul, nu formula');
 });
 
-test('buget: „50/30/20 înseamnă 2.500 / 1.500 / 1.000 lei pentru 5.000 lei”', () => {
+test('buget: „50/30/20 înseamnă 2,500 / 1,500 / 1,000 lei pentru 5,000 lei”', () => {
   assert.equal(gc.textExplicaBuget(5000),
-    '50/30/20 înseamnă 2.500 lei nevoi, 1.500 lei dorințe, 1.000 lei economii pentru 5.000 lei venit lunar.');
+    '50/30/20 înseamnă 2,500 lei nevoi, 1,500 lei dorințe, 1,000 lei economii pentru 5,000 lei venit lunar.');
   assert.equal(gc.textExplicaBuget(0),
     'Introdu venitul lunar net pentru a vedea repartizarea 50/30/20.');
 });
 
 test('timp și dobândă: interpretare în zile de muncă, respectiv lei după impozit', () => {
   const timp = gc.textExplicaTimp(5000, 3600, 250);
-  assert.match(timp, /O dorință de 3\.600 lei înseamnă ~15 zile de muncă \(8 ore pe zi\)/);
+  assert.match(timp, /O dorință de 3,600 lei înseamnă ~15 zile de muncă \(8 ore pe zi\)/);
   assert.match(timp, /dintr-un an de 250 zile lucrătoare/, 'zilele vin din panou/config');
   const dobanda = gc.textExplicaDobanda(15000, 0.07, 184, 0.1);
-  assert.ok(dobanda.includes('Pe 184 zile, 15.000 lei la 7% îți aduce'));
-  assert.ok(dobanda.includes('529,32 lei dobândă') && dobanda.includes('476,39 lei'));
+  assert.ok(dobanda.includes('Pe 184 zile, 15,000 lei la 7% îți aduce'));
+  assert.ok(dobanda.includes('529.32 lei dobândă') && dobanda.includes('476.39 lei'));
 });
 
 test('randament: diferența dintre brut, net și real e explicată în lei și %', () => {
   const text = gc.textExplicaRandament(10000, 0.1, 0.1, 0.01, 0.063);
-  assert.match(text, /La 10% pe 10\.000 lei, câștigul brut e 1\.000,00 lei/);
-  assert.ok(text.includes('890,00 lei (8,9%)') && text.includes('244,59 lei (2,45%)'));
-  assert.match(text, /după inflația de 6,3%/, 'inflația e interpretată, nu doar afișată');
+  assert.match(text, /La 10% pe 10,000 lei, câștigul brut e 1,000.00 lei/);
+  assert.ok(text.includes('890.00 lei (8.9%)') && text.includes('244.59 lei (2.45%)'));
+  assert.match(text, /după inflația de 6.3%/, 'inflația e interpretată, nu doar afișată');
 });
 
 test('stări limită: texte de ghidare, fără NaN / Infinity', () => {

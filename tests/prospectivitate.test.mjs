@@ -9,14 +9,14 @@ const CONFIG = gc.CONFIG_AN;
 
 /* ── 1. Textul exact cerut, la valorile curente din config ── */
 
-test('badge-ul global: „Date actualizate: 12 nov 2026”', () => {
-  assert.equal(gc.textDataActualizate(), 'Date actualizate: 12 nov 2026');
+test('badge-ul global: „Date actualizate: 16 nov 2026”', () => {
+  assert.equal(gc.textDataActualizate(), 'Date actualizate: 16 nov 2026');
 });
 
-test('nota de inflație: „2026 = parțial: oct 2026 vs dec 2025; rata oct/oct = 6,9%”', () => {
+test('nota de inflație: „2026 = parțial: oct 2026 vs dec 2025; rata oct/oct = 6.9%”', () => {
   assert.equal(
     gc.textEtichetaInflatie(),
-    '2026 = parțial: oct 2026 vs dec 2025; rata oct/oct = 6,9%',
+    '2026 = parțial: oct 2026 vs dec 2025; rata oct/oct = 6.9%',
   );
 });
 
@@ -49,7 +49,7 @@ test('eticheta de inflație urmează eticheta și rata oct/oct din config', () =
     CONFIG.inflatie.rataOctOct = 0.071;
     assert.equal(
       gc.textEtichetaInflatie(),
-      '2026 = parțial: sep 2027 vs dec 2026; rata oct/oct = 7,1%',
+      '2026 = parțial: sep 2027 vs dec 2026; rata oct/oct = 7.1%',
     );
   } finally {
     CONFIG.inflatie.eticheta = etichetaInitiala;
@@ -126,8 +126,8 @@ test('renderDataFreshness umple toate sloturile și adaugă linkuri cu sursele d
 
 test('textele afișate nu apar ca literali în app.js', () => {
   for (const literal of [
-    'Date actualizate: 12 nov 2026',
-    'rata oct/oct = 6,9%',
+    'Date actualizate: 16 nov 2026',
+    'rata oct/oct = 6.9%',
     'Cotele 2026 (3/6/16%',
   ]) {
     assert.ok(!js.includes(literal), `text hardcodat în app.js: ${literal}`);

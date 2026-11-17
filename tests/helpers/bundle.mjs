@@ -69,12 +69,15 @@ const src =
   'filterSearchItems, scoreSearchItem, collectAlerts, ' +
   'buildSearchItems, GLOBAL_PANELS, GLOBAL_IDS, globalName, ' +
   'buildStepsFromFields, stepTextFor, parseFormattedNumber, formatStatValue, ' +
-  'fmtLei, fmtPct, fmtPctSmart, fmtX, fmtInt, LOCALE, attachChartTip, clearChartTips };';
+  'fmtLei, fmtPct, fmtPctSmart, fmtX, fmtInt, LOCALE, attachChartTip, clearChartTips, ' +
+  'AB_SLOTS, AB_PREFIX, AB_CORE_TABS, abScenarioKey, abSaveScenario, abLoadScenario, ' +
+  'abClearScenarios, abCollectSnapshot, abDiffSnapshots, abRenderComparison, abBuildWidget, initScenarii };';
 
 vm.runInContext(src, ctx, { filename: 'glitchcoin-bundle.js' });
 
 export const gc = ctx.__gc;
 export const html = readFileSync(join(DIR, 'index.html'), 'utf8');
 export const css = readFileSync(join(DIR, 'styles.css'), 'utf8');
+export const readme = readFileSync(join(DIR, 'README.md'), 'utf8');
 export const js = readFileSync(join(DIR, 'app.js'), 'utf8');
 export const data = readFileSync(join(DIR, 'data.js'), 'utf8');

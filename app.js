@@ -101,6 +101,10 @@ function textContextFiscal() {
    Cheile au prefixul `glitchcoin-`, ca „Resetează tot" să știgă exact ce să șteargă. */
 
 const PERSIST_PREFIX = 'glitchcoin-';
+/* Scenariile A/B au prefix DISTINCT: „Resetează tot” curăță doar inputurile
+   (`glitchcoin-input:` / `glitchcoin-table:` / `glitchcoin-tab`), nu și
+   snapshoturile pe care utilizatorul le-a salvat explicit. */
+const AB_PREFIX = 'glitchcoin-scenario:';
 const PERSIST_DEBOUNCE_MS = 300;
 let persistTimer = null;
 
@@ -195,7 +199,7 @@ function persistRestore() {
 function persistClear() {
   try {
     Object.keys(localStorage)
-      .filter((k) => k.startsWith(PERSIST_PREFIX))
+      .filter((k) => k.startsWith(PERSIST_PREFIX) && !k.startsWith(AB_PREFIX))
       .forEach((k) => localStorage.removeItem(k));
   } catch (e) {
     // dacă stocarea e blocată, nu avem ce șterge
@@ -262,7 +266,7 @@ function resetAll() {
   renderCurs();
   resetBiase();
 
-  persistClear();       // „Resetează tot” = curăță și preferințele salvate
+  persistClear();       // „Resetează tot” = curăță inputurile; scenariile A/B rămân (le șterge doar butonul dedicat)
   persistSaveNow();     // pentru ca la refresh să revină la valorile implicite
 }
 
@@ -7093,6 +7097,280 @@ function downloadCSV(filename, csv) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+/* ═══ 27. Scenarii A/B (component reutilizabil) ═══════════
+   Snapshot = valorile tuturor inputurilor/selecturilor dintr-un panou +
+   textul summary-urilor acelui panou, în momentul salvării.
+   Cheile sunt globale (`glitchcoin-scenario:A` / `:B`), iar snapshotul
+   reține id-ul panoului: comparația se arată doar când A și B sunt din
+   același panou, ca să nu comparăm mere cu pere.
+
+   EXTINDERE LA ALT TAB: adaugă în panoul respectiv un singur element
+   `<div class="ab-widget" data-ab-panel="id-tab"></div>`. `initScenarii()`
+   găsește toate gazdele marcate și montează widgetul — fără alt cod,
+   fără duplicare de logică. Lista `AB_CORE_TABS` e doar documentație/
+   verificare pentru cele 6 taburi nucleu; nu e o listă de registrare.
+
+   Toate accesările localStorage sunt în try/catch, ca persistența
+   existentă: dacă stocarea e blocată, butoanele explică și nu crash-uiesc. */
+
+const AB_SLOTS = ['A', 'B'];
+const AB_CORE_TABS = ['inflatie', 'timp', 'dobanda', 'compusa', 'randament', 'buget'];
+
+function abScenarioKey(slot) {
+  return AB_PREFIX + slot;
+}
+
+/* `storage` e opțional, ca să poată fi testat cu un obiect fals; în aplicație
+   se folosește localStorage-ul browserului. */
+function abStorageOr(storage) {
+  return storage === undefined ? localStorage : storage;
+}
+
+function abSaveScenario(slot, snapshot, storage) {
+  try {
+    const s = abStorageOr(storage);
+    if (!s || !AB_SLOTS.includes(slot)) return false;
+    s.setItem(abScenarioKey(slot), JSON.stringify(snapshot));
+    return true;
+  } catch (e) {
+    return false; // stocare blocată / plină — nu întrerupe interfața
+  }
+}
+
+function abLoadScenario(slot, storage) {
+  try {
+    const s = abStorageOr(storage);
+    if (!s || !AB_SLOTS.includes(slot)) return null;
+    const raw = s.getItem(abScenarioKey(slot));
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || typeof data !== 'object' || !Array.isArray(data.fields) || !Array.isArray(data.outputs)) return null;
+    return data;
+  } catch (e) {
+    return null; // date corupte sau stocare blocată — ca și cum n-ar fi scenariu
+  }
+}
+
+function abClearScenarios(storage) {
+  try {
+    const s = abStorageOr(storage);
+    if (!s) return;
+    AB_SLOTS.forEach((slot) => s.removeItem(abScenarioKey(slot)));
+  } catch (e) {
+    // nimic de șters dacă stocarea e blocată
+  }
+}
+
+/* Eticheta unui câmp: `data-ab-label` > `<label for>` > aria-label > id.
+   Nu hardcodăm liste de câmpuri — funcționează pentru orice panou nou. */
+function abFieldLabel(el, panel) {
+  if (el.dataset && el.dataset.abLabel) return el.dataset.abLabel;
+  if (panel) {
+    const labels = panel.querySelectorAll('label[for]');
+    for (const label of labels) {
+      if (label.getAttribute('for') === el.id) {
+        // Etichetele au și un <span class="tip-wrap"> cu text de tooltip;
+        // luăm DOAR nodurile de text directe, ca numele câmpului să rămână scurt.
+        let text = '';
+        const nodes = label.childNodes;
+        if (nodes && typeof nodes.length === 'number') {
+          text = Array.from(nodes)
+            .filter((n) => n.nodeType === 3)
+            .map((n) => n.textContent || '')
+            .join(' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        }
+        if (!text) text = (label.textContent || '').replace(/\s+/g, ' ').trim();
+        if (text) return text;
+      }
+    }
+  }
+  const aria = el.getAttribute && el.getAttribute('aria-label');
+  return (aria && aria.trim()) || el.id;
+}
+
+function abCollectSnapshot(panel, panelId) {
+  const fields = [];
+  const outputs = [];
+  if (!panel) return { panel: panelId || '', fields, outputs };
+  panel.querySelectorAll('input[id], select[id]').forEach((el) => {
+    const type = (el.type || '').toLowerCase();
+    if (type === 'button' || type === 'submit' || type === 'reset') return;
+    const value = (type === 'checkbox' || type === 'radio')
+      ? (el.checked ? 'checked' : 'unchecked')
+      : el.value;
+    fields.push({ id: el.id, label: abFieldLabel(el, panel), value: String(value) });
+  });
+  panel.querySelectorAll('.summary[id]').forEach((el) => {
+    outputs.push({
+      id: el.id,
+      label: (el.dataset && el.dataset.abLabel) || 'Rezumat',
+      text: (el.textContent || '').replace(/\s+/g, ' ').trim(),
+    });
+  });
+  return { panel: panelId || '', fields, outputs };
+}
+
+function abMapById(items) {
+  const map = new Map();
+  (items || []).forEach((item) => { if (item && item.id) map.set(item.id, item); });
+  return map;
+}
+
+/* Returnează null când nu avem două scenarii comparabile (lipsă sau panou
+   diferit). Altfel: DOAR câmpurile care diferă + toate summary-urile. */
+function abDiffSnapshots(a, b) {
+  if (!a || !b || !a.panel || a.panel !== b.panel) return null;
+  const A = abMapById(a.fields), B = abMapById(b.fields);
+  const fields = [];
+  const ids = new Set([...A.keys(), ...B.keys()]);
+  ids.forEach((id) => {
+    const x = A.get(id), y = B.get(id);
+    const va = x ? x.value : null, vb = y ? y.value : null;
+    if (va === vb) return; // identice — nu apar în tabel
+    const ref = x || y;
+    fields.push({ id, label: ref.label || id, a: va === null ? '—' : va, b: vb === null ? '—' : vb });
+  });
+  const OA = abMapById(a.outputs), OB = abMapById(b.outputs);
+  const outputs = [];
+  const outIds = new Set([...OA.keys(), ...OB.keys()]);
+  outIds.forEach((id) => {
+    const x = OA.get(id), y = OB.get(id), ref = x || y;
+    outputs.push({
+      id,
+      label: ref.label || 'Rezumat',
+      a: x ? x.text : '—',
+      b: y ? y.text : '—',
+    });
+  });
+  return { panel: a.panel, fields, outputs };
+}
+
+/* Tabel construit cu createElement/textContent (nu innerHTML): valorile
+   salvate nu pot deveni HTML. Anteturi cu scope=col / scope=row. */
+function abRenderComparison(host, diff) {
+  if (!host) return;
+  host.replaceChildren();
+  if (!diff) return;
+
+  const table = document.createElement('table');
+  table.className = 'ab-table';
+  const caption = document.createElement('caption');
+  caption.textContent = 'Scenarii A vs B — câmpuri care diferă și rezultate';
+  table.appendChild(caption);
+
+  const thead = document.createElement('thead');
+  const headerRow = document.createElement('tr');
+  ['Câmp', 'A', 'B'].forEach((text) => {
+    const th = document.createElement('th');
+    th.setAttribute('scope', 'col');
+    th.textContent = text;
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  const addRow = (label, a, b, isOutput) => {
+    const tr = document.createElement('tr');
+    if (isOutput) tr.className = 'is-output';
+    const th = document.createElement('th');
+    th.setAttribute('scope', 'row');
+    th.textContent = (isOutput ? 'Rezultat · ' : '') + label;
+    tr.appendChild(th);
+    [a, b].forEach((value) => {
+      const td = document.createElement('td');
+      td.textContent = value;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  };
+
+  if (!diff.fields.length) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 3;
+    td.textContent = 'Nicio diferență — toate câmpurile sunt la fel.';
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  } else {
+    diff.fields.forEach((f) => addRow(f.label, f.a, f.b, false));
+  }
+  diff.outputs.forEach((o) => addRow(o.label, o.a, o.b, true));
+
+  table.appendChild(tbody);
+  host.appendChild(table);
+}
+
+/* Un widget = 4 butoane reale <button type="button"> (focalizabile cu Tab,
+   activabile cu Enter/Spațiu) + regiune status + zona tabelului. */
+function abBuildWidget(host) {
+  const panelId = host.dataset ? host.dataset.abPanel : '';
+  const panel = document.getElementById('panel-' + panelId);
+  const actions = document.createElement('div');
+  actions.className = 'ab-actions';
+  const status = document.createElement('p');
+  status.className = 'ab-status';
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-live', 'polite');
+  const results = document.createElement('div');
+  results.className = 'ab-results';
+
+  const setStatus = (msg) => { status.textContent = msg; };
+  const addButton = (text, onClick) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ab-btn';
+    btn.textContent = text;
+    btn.addEventListener('click', onClick);
+    actions.appendChild(btn);
+  };
+
+  AB_SLOTS.forEach((slot) => addButton('Salvează ' + slot, () => {
+    if (!panel) { setStatus('Panoul nu a fost găsit.'); return; }
+    const ok = abSaveScenario(slot, abCollectSnapshot(panel, panelId));
+    setStatus(ok
+      ? 'Scenariul ' + slot + ' a fost salvat în acest browser.'
+      : 'Stocarea locală e blocată; scenariul nu a fost salvat.');
+    results.replaceChildren();
+  }));
+
+  addButton('Arată comparația', () => {
+    const a = abLoadScenario('A'), b = abLoadScenario('B');
+    if (!a || !b) {
+      setStatus('Salvează mai întâi ambele scenarii (A și B).');
+      results.replaceChildren();
+      return;
+    }
+    const diff = abDiffSnapshots(a, b);
+    // Cheile A/B sunt globale: widgetul nu afișează comparația unui alt panou.
+    if (!diff || diff.panel !== panelId) {
+      setStatus('Scenariile sunt din alt panou. Salvează A și B aici.');
+      results.replaceChildren();
+      return;
+    }
+    abRenderComparison(results, diff);
+    setStatus('Comparație afișată: câmpurile care diferă și rezultatele.');
+  });
+
+  addButton('Șterge scenariile', () => {
+    abClearScenarios();
+    results.replaceChildren();
+    setStatus('Scenariile A și B au fost șterse.');
+  });
+
+  host.appendChild(actions);
+  host.appendChild(status);
+  host.appendChild(results);
+}
+
+/* Singurul punct de montare. Adaugă un `.ab-widget[data-ab-panel]` în HTML
+   pentru orice tab nou — nu se modifică nimic aici. */
+function initScenarii() {
+  document.querySelectorAll('.ab-widget[data-ab-panel]').forEach(abBuildWidget);
+}
+
 /* ═══ Inițializare ══════════════════════════════════════ */
 
 function populateYearSelect() {
@@ -7489,6 +7767,9 @@ function init() {
   initDca();
   initCurs();
   initBiase();
+
+  // Scenarii A/B: fiecare gazdă `.ab-widget` se montează singură.
+  initScenarii();
 }
 
 document.addEventListener('DOMContentLoaded', init);

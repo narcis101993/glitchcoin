@@ -35,10 +35,35 @@ Nu ai nevoie de internet — toate fișierele și toate datele sunt locale.
   din HTML.
 - **Tabelele dinamice** (Costul mediu de achiziție, „Nu am bani") și **tabul deschis** se rețin la fel.
 - **„Resetează tot”** (header, din dreapta) aduce toate cele 24 de taburi la valorile implicite:
-  inputuri statice, selectul Deflator (2001) și selectul „Tipul de venit", tabelele dinamice —
+  inputuri statice, selectul Deflator (2001) și selectul „Tipul de venit”, tabelele dinamice —
   și șterge preferințele salvate, ca la o pagină nouă.
-- Funcțiația are `try/catch` pe tot parcursul: dacă `localStorage` e blocat, aplicația funcționează
+- **„Resetează tot” NU șterge scenariile A/B** (decizie deliberată): snapshoturile au prefixul
+  separat `glitchcoin-scenario:` și sunt șterse doar prin butonul „Șterge scenariile” din panou.
+  Motivul: scenariile sunt comparații salvate explicit de tine, nu preferințe de sesiune.
+- Funcționalitatea are `try/catch` pe tot parcursul: dacă `localStorage` e blocat, aplicația funcționează
   oricum, doar nu reține valorile între deschideri (verificat cu stocarea blocată în browser).
+
+## Scenarii A/B (salvate local)
+
+Disponibil în 6 taburi nucleu: **Inflație, Timp vs dorințe, Dobândă, Dobândă compusă, Randament, Buget**.
+În panou, sub rezumat, găsești patru butoane mici: **Salvează A**, **Salvează B**,
+**Arată comparația**, **Șterge scenariile**.
+
+- **Salvează A / B** face un *snapshot* cu toate inputurile/selecturile panoului **și** textul
+  rezumatului afișat în acel moment. Fișierul e stocat local (`glitchcoin-scenario:A` / `:B`);
+  nu se trimite nimic pe rețea, nu e nevoie de cont.
+- **Arată comparația** afișează un tabel cu **doar câmpurile care diferă** între A și B, plus
+  rezultatele (summary-urile) ambelor scenarii. Dacă ambele scenarii sunt identice, tabelul
+  spune explicit „Nicio diferență”. Cheile A/B sunt globale, dar snapshotul reține panoul:
+  comparația se arată doar când A și B sunt salvate în același tab.
+- **Șterge scenariile** șterge explicit ambele chei. „Resetează tot” nu le atinge (vezi mai sus).
+- Tastatură: butoanele sunt `<button>` nativ, deci se ajunge la ele cu Tab și se activează
+  cu Enter/Spațiu; tabelul are `<caption>` și anteturi cu `scope="col"` / `scope="row"`.
+- Dacă `localStorage` e blocat, butoanele afișează un mesaj și aplicația merge mai departe.
+
+> Pentru a adăuga scenarii într-un tab nou, e suficient un singur element în HTML:
+> `<div class="ab-widget" data-ab-panel="id-tab"></div>`. Componentul din `app.js`
+> (`initScenarii`) îl găsește și montează widgetul automat — nu se scrie cod per tab.
 
 ## Navigare: sidebar pe categorii
 

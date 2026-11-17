@@ -469,15 +469,18 @@
           <div id="inflation-stats" class="stats-row"></div>
         </div>
 
-        <div class="card table-wrap scroll">
-          <table id="inflation-table">
-            <caption class="visually-hidden">Rata inflației anuale în România, 1991–2026</caption>
-            <thead>
-              <tr><th scope="col">An</th><th scope="col">Rata inflației</th></tr>
-            </thead>
-            <tbody id="inflation-table-body"></tbody>
-          </table>
-        </div>
+        <details class="inflation-details" id="inflation-details">
+          <summary>Rata inflației 1991–2026 — arată tabelul</summary>
+          <div class="card table-wrap scroll">
+            <table id="inflation-table">
+              <caption class="visually-hidden">Rata inflației anuale în România, 1991–2026</caption>
+              <thead>
+                <tr><th scope="col">An</th><th scope="col">Rata inflației</th></tr>
+              </thead>
+              <tbody id="inflation-table-body"></tbody>
+            </table>
+          </div>
+        </details>
 
         <p class="data-fresh-badge" id="badge-inflatie"></p>
         <p class="note" data-config-key="inflatie">

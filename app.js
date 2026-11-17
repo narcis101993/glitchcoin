@@ -4317,6 +4317,7 @@ function activateTab(id, { focus = false, focusPanel = false, scroll = false, hi
   }
 
   updateChrome(id);
+  updateTableScrollHints();
   if (stepMode) retargetStepMode(id);
   updateStepTriggerState();
 }
@@ -6973,32 +6974,55 @@ function attachChartTip(host, label, html) {
   host.setAttribute('aria-describedby', panelId);
   chartTips.push({ host, panel });
 
+  /* `pointer` e setat doar de evenimentele de mouse. Pe focus (tastatură)
+     rămâne null și panoul se poziționează față de element, ca înainte. */
+  let pointer = null;
+
   function position() {
-    const r = host.getBoundingClientRect();
     const p = panel.getBoundingClientRect();
     const margin = 12;
-    let left = r.left + r.width / 2 - p.width / 2;
-    left = Math.max(margin, Math.min(left, window.innerWidth - p.width - margin));
-    let top = r.top - p.height - 10; // deasupra barei, dacă e loc
-    if (top < margin) top = r.bottom + 10;
-    if (top + p.height > window.innerHeight - margin) {
-      top = Math.max(margin, window.innerHeight - p.height - margin);
+    const gap = 14;
+    let left;
+    let top;
+    if (pointer) {
+      // Mouse: panoul urmează cursorul la ~14 px, cu inversare când
+      // ar ieși din fereastră (dreapta / jos).
+      left = pointer.x + gap;
+      if (left + p.width > window.innerWidth - margin) left = pointer.x - p.width - gap;
+      top = pointer.y + gap;
+      if (top + p.height > window.innerHeight - margin) top = pointer.y - p.height - gap;
+    } else {
+      // Tastatură: deasupra elementului (poziționarea inițială).
+      const r = host.getBoundingClientRect();
+      left = r.left + r.width / 2 - p.width / 2;
+      top = r.top - p.height - 10;
+      if (top < margin) top = r.bottom + 10;
     }
+    left = Math.max(margin, Math.min(left, window.innerWidth - p.width - margin));
+    top = Math.max(margin, Math.min(top, window.innerHeight - p.height - margin));
     panel.style.left = left + 'px';
     panel.style.top = top + 'px';
   }
 
-  function show() {
+  function showAtPointer(event) {
+    pointer = { x: event.clientX, y: event.clientY };
+    panel.hidden = false;
+    position();
+  }
+  function showAtElement() {
+    pointer = null;
     panel.hidden = false;
     position();
   }
   function hide() {
+    pointer = null;
     panel.hidden = true;
   }
 
-  host.addEventListener('mouseenter', show);
+  host.addEventListener('mouseenter', showAtPointer);
+  host.addEventListener('mousemove', showAtPointer);
   host.addEventListener('mouseleave', hide);
-  host.addEventListener('focus', show);
+  host.addEventListener('focus', showAtElement);
   host.addEventListener('blur', hide);
   host.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
@@ -7006,9 +7030,9 @@ function attachChartTip(host, label, html) {
       hide();
     }
   });
-  // Panoul e fixed: la scroll îl repoziționăm, ca să urmeze bara/coloana
-  // (scroll-behavior: smooth face ca un hide imediat să închidă tooltipul
-  // chiar când utilizatorul ajunge la el din tastatură).
+  // Panoul e fixed: la scroll îl repoziționăm, ca să urmeze cursorul /
+  // elementul (scroll-behavior: smooth face ca un hide imediat să închidă
+  // tooltipul chiar când utilizatorul ajunge la el din tastatură).
   window.addEventListener('scroll', () => { if (!panel.hidden) position(); }, { passive: true });
   window.addEventListener('resize', () => { if (!panel.hidden) position(); });
 }
@@ -7562,6 +7586,43 @@ function populateYearSelect() {
   select.value = 2001; // valoarea din tabul sursă
 }
 
+/* ═══ Indiciu pentru tabelele cu scroll orizontal (audit UI) ═══
+   Tabelele rămân complete (nicio coloană ascunsă). Când conținutul nu
+   încape în container, adăugăm un indiciu discret „→ derulează” chiar
+   deasupra tabelului. Îl recalculăm la schimbarea tabului, la redimen-
+   sionare și la deschiderea tabelului inflației; în print e ascuns. */
+function updateTableScrollHints() {
+  document.querySelectorAll('.table-wrap').forEach((wrap) => {
+    const prev = wrap.previousElementSibling;
+    let hint = prev && prev.classList.contains('table-scroll-hint') ? prev : null;
+    if (!hint) {
+      hint = document.createElement('p');
+      hint.className = 'table-scroll-hint';
+      hint.textContent = '→ derulează';
+      hint.setAttribute('aria-hidden', 'true');
+      wrap.parentNode.insertBefore(hint, wrap);
+    }
+    hint.classList.toggle('is-visible', wrap.scrollWidth > wrap.clientWidth + 1);
+  });
+}
+
+/* Tabelul inflației e pliat implicit; la print trebuie deschis, altfel
+   lipsește din PDF. `beforeprint` acoperă și tipărirea din browser. */
+function initInflationPrint() {
+  const details = document.getElementById('inflation-details');
+  if (!details) return;
+  let wasOpen = false;
+  window.addEventListener('beforeprint', () => {
+    wasOpen = details.open;
+    details.open = true;
+    updateTableScrollHints();
+  });
+  window.addEventListener('afterprint', () => {
+    details.open = wasOpen;
+  });
+  details.addEventListener('toggle', updateTableScrollHints);
+}
+
 function init() {
   initTheme();
   initTabs();
@@ -7949,8 +8010,13 @@ function init() {
   // Scenarii A/B: fiecare gazdă `.ab-widget` se montează singură.
   initScenarii();
 
-  // „Explică rezultatul": fiecare gazdă `.explica-widget` se montează singură.
+  // „Explică rezultatul”: fiecare gazdă `.explica-widget` se montează singură.
   initExplicate();
+
+  // UI: indiciu pentru tabelele prea late + tabelul inflației deschis la print.
+  initInflationPrint();
+  updateTableScrollHints();
+  window.addEventListener('resize', updateTableScrollHints);
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -2372,6 +2372,7 @@ body.is-search-open { overflow: hidden; }
   .tabs-bar,
   .subnav,
   .tip-wrap,
+  .chart-tip,
   .chart-toggle,
   .table-actions,
   .presets,
@@ -2802,4 +2803,66 @@ body.is-search-open { overflow: hidden; }
 @media print {
   .explica-btn { display: none !important; }
   .explica-text { margin: 4px 0; padding: 0; border: 0; background: none; }
+}
+
+/* ── Tabele aliniate / încadrate (audit UI 2026-11-17) ───────
+   Nu ascundem nicio coloană. Pe ecrane mici compactăm paddingul și
+   fontul și lăsăm textul lung să se rupă în celulă, ca antetul și
+   corpul să rămână aliniate și nicio celulă să nu fie tăiată.
+   Scrollul orizontal rămâne acolo unde datele chiar nu încap. */
+@media (max-width: 900px) {
+  table { font-size: .82rem; }
+  thead th {
+    padding: 8px 10px;
+    font-size: .68rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    min-width: 44px;
+  }
+  tbody td {
+    padding: 7px 10px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    min-width: 44px;
+  }
+}
+
+/* Indiciu pentru `.table-wrap` care depășește containerul; JS-ul îl
+   adaugă doar când `scrollWidth > clientWidth` (vezi app.js). */
+.table-scroll-hint {
+  display: none;
+  margin: 6px 12px 2px;
+  text-align: right;
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .02em;
+}
+.table-scroll-hint.is-visible { display: block; }
+
+/* Tabelul inflației, pliat implicit (fără `open` în HTML). */
+.inflation-details { margin: 12px 0; }
+.inflation-details > summary {
+  width: fit-content;
+  padding: 6px 2px;
+  cursor: pointer;
+  font-size: .82rem;
+  color: var(--muted);
+  list-style: none;
+}
+.inflation-details > summary::-webkit-details-marker { display: none; }
+.inflation-details > summary::before { content: '▸ '; }
+.inflation-details[open] > summary::before { content: '▾ '; }
+.inflation-details > summary:hover { color: var(--ink-soft); }
+.inflation-details > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media print {
+  /* La print tabelul e deschis de `beforeprint` (app.js); ascundem
+     doar sumarul și indiciul de derulare, ca PDF-ul să fie curat. */
+  .table-scroll-hint { display: none !important; }
+  .inflation-details { break-inside: auto; }
+  .inflation-details > summary { display: none !important; }
 }

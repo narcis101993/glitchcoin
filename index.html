@@ -556,9 +556,14 @@
             <li><strong>Impozit pe venituri din investiții</strong> — PwC Tax Summaries:
               <a href="https://taxsummaries.pwc.com/romania/individual/significant-developments" target="_blank" rel="noopener">taxsummaries.pwc.com/romania</a>;
               EY: <a href="https://www.ey.com/en_gl/technical/tax-alerts/romanian-tax-changes-introduced-by-new-fiscal-and-budgetary-measures" target="_blank" rel="noopener">ey.com</a>.</li>
-            <li><strong>Comisioane de tranzacționare</strong> — media pieței RO 0.1–0.5% (0.3% online), 0.5–1% străin:
-              <a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro</a>,
-              <a href="https://www.wall-street.ro/articol/Money/201325/cat-te-costa-sa-cumperi-actiuni-pe-bursa-si-care-sunt-sumele-minime-de-care-ai-nevoie.html" target="_blank" rel="noopener">wall-street.ro</a>.</li>
+            <li><strong>Comisioane de tranzacționare</strong> — media pieței RO 0.1–0.5% (0.3% online), 0.5–1% străin
+              (<a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro</a>,
+              <a href="https://www.wall-street.ro/articol/Money/201325/cat-te-costa-sa-cumperi-actiuni-pe-bursa-si-care-sunt-sumele-minime-de-care-ai-nevoie.html" target="_blank" rel="noopener">wall-street.ro</a>).
+              Pentru cumpărarea de acțiuni pe BVB, anexele oficiale arată 0,25–0,41% + taxa ASF 0,06%, de unde valoarea implicită de 0,4%:
+              <a href="https://tradeville.ro/tranzactionare/comisioane-tradeville-010826" target="_blank" rel="noopener">TradeVille</a>,
+              <a href="https://www.investimental.ro/grila-comisioane-investimental/" target="_blank" rel="noopener">Investimental</a>,
+              <a href="https://salt.bank/storage/app/efsfiles/media/info-legale/Anexa-comisioane-piete-interne.pdf" target="_blank" rel="noopener">Salt Bank</a>,
+              <a href="https://www.zf.ro/burse-fonduri-mutuale/cat-costa-tranzactionarea-actiunilor-romanesti-prin-interactive-brokers-comision-de-0-28-din-valoarea-ordinului-minimum-10-lei-plus-o-taxa-de-custodie-de-0-1-pe-an-cum-sunt-aspectele-fiscale-23203099" target="_blank" rel="noopener">ZF — Interactive Brokers</a>.</li>
             <li><strong>Prețuri alimente</strong> — estimări metodologice (variații INS aplicate prețului 2024);
               studii de piață: <a href="https://infocons.ro/studiu-comparativ-infocons-protectia-consumatorilor-cat-ne-costa-alimentele-de-baza-septembrie-2025-vs-septembrie-2026" target="_blank" rel="noopener">InfoCons</a>.</li>
             <li><strong>Zile lucrătoare</strong> — 250 în România (2026): 365 − 104 weekend − 11 sărbători legale care cad în timpul săptămânii (din 16);
@@ -2112,10 +2117,24 @@
         Formula: (Σ preț × cantitate + Σ preț × cantitate × comision) / Σ cantitate —
         comisionul fiecărei tranșe se adaugă la valoarea ei (baza e suma plătită, nu doar prețul).
       </p>
+      <p class="note">
+        <strong>De ce 0,4%:</strong> comisionul implicit reprezintă costul tipic de achiziție pe piața din România:
+        media comisioanelor de cumpărare la BVB pe acțiuni — 0,33% (<a href="https://tradeville.ro/tranzactionare/comisioane-tradeville-010826" target="_blank" rel="noopener">TradeVille 0,38%</a>,
+        <a href="https://www.investimental.ro/grila-comisioane-investimental/" target="_blank" rel="noopener">Investimental 0,41%</a>,
+        <a href="https://salt.bank/storage/app/efsfiles/media/info-legale/Anexa-comisioane-piete-interne.pdf" target="_blank" rel="noopener">Salt Bank 0,25%</a>,
+        <a href="https://www.zf.ro/burse-fonduri-mutuale/cat-costa-tranzactionarea-actiunilor-romanesti-prin-interactive-brokers-comision-de-0-28-din-valoarea-ordinului-minimum-10-lei-plus-o-taxa-de-custodie-de-0-1-pe-an-cum-sunt-aspectele-fiscale-23203099" target="_blank" rel="noopener">Interactive Brokers 0,28%</a>)
+        + taxa ASF de cumpărare 0,06% = 0,39%, rotunjit la 0,4%. Verificat pe anexele oficiale de comisioane la 18.11.2026.
+        Comisionul fix per ordin (0,3 EUR la TradeVille, minim 5 lei la Salt Bank) nu e inclus, pentru că nu se poate
+        exprima ca procent — la tranzacțiile mici costul real e mai mare decât 0,4%.
+      </p>
           <div class="panel-sources">
         <h3>Surse</h3>
         <ul class="info-list">
           <li><a href="https://www.bvb.ro/TradingAndStatistics/Trading/MarketsToday" target="_blank" rel="noopener">BVB — tranzacționare și statistici</a></li>
+          <li><a href="https://tradeville.ro/tranzactionare/comisioane-tradeville-010826" target="_blank" rel="noopener">TradeVille — grila de comisioane, valabilă de la 1 august 2026 (BVB Standard 0,38% + 0,3 EUR/ordin; taxa ASF 0,06%)</a></li>
+          <li><a href="https://www.investimental.ro/grila-comisioane-investimental/" target="_blank" rel="noopener">Investimental — grila de comisioane (cumpărare acțiuni RO 0,41% + 1,45 RON)</a></li>
+          <li><a href="https://salt.bank/storage/app/efsfiles/media/info-legale/Anexa-comisioane-piete-interne.pdf" target="_blank" rel="noopener">Salt Bank — anexa de comisioane și tarife (0,25%/tranzacție, minim 5 lei; taxa ASF 0,06%)</a></li>
+          <li><a href="https://www.zf.ro/burse-fonduri-mutuale/cat-costa-tranzactionarea-actiunilor-romanesti-prin-interactive-brokers-comision-de-0-28-din-valoarea-ordinului-minimum-10-lei-plus-o-taxa-de-custodie-de-0-1-pe-an-cum-sunt-aspectele-fiscale-23203099" target="_blank" rel="noopener">ZF — Interactive Brokers: comision 0,28% pe acțiuni românești</a></li>
           <li><a href="https://www.wall-street.ro/articol/Money/201325/cat-te-costa-sa-cumperi-actiuni-pe-bursa-si-care-sunt-sumele-minime-de-care-ai-nevoie.html" target="_blank" rel="noopener">wall-street.ro — costul tranzacțiilor</a></li>
           <li><a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro — brokeri autorizați</a></li>
         </ul>
@@ -4110,6 +4129,10 @@
           <li><strong>BVB — Bursa de Valori București</strong> — <a href="https://www.bvb.ro/TradingAndStatistics/Trading/MarketsToday" target="_blank" rel="noopener">BVB — piețele astăzi (tranzacționare și statistici)</a></li>
           <li><strong>Comisioane de tranzacționare</strong> — <a href="https://www.money.ro/invata/brokeri-autorizati" target="_blank" rel="noopener">money.ro — brokeri autorizați și comisioane</a></li>
           <li><strong>Comisioane de tranzacționare</strong> — <a href="https://www.wall-street.ro/articol/Money/201325/cat-te-costa-sa-cumperi-actiuni-pe-bursa-si-care-sunt-sumele-minime-de-care-ai-nevoie.html" target="_blank" rel="noopener">wall-street.ro — costul tranzacțiilor pe bursă</a></li>
+          <li><strong>Comisioane de tranzacționare</strong> — <a href="https://tradeville.ro/tranzactionare/comisioane-tradeville-010826" target="_blank" rel="noopener">TradeVille — grila de comisioane (BVB Standard 0,38% + 0,3 EUR/ordin, taxa ASF 0,06%)</a></li>
+          <li><strong>Comisioane de tranzacționare</strong> — <a href="https://www.investimental.ro/grila-comisioane-investimental/" target="_blank" rel="noopener">Investimental — grila de comisioane (cumpărare acțiuni RO 0,41% + 1,45 RON)</a></li>
+          <li><strong>Comisioane de tranzacționare</strong> — <a href="https://salt.bank/storage/app/efsfiles/media/info-legale/Anexa-comisioane-piete-interne.pdf" target="_blank" rel="noopener">Salt Bank — anexa de comisioane și tarife (0,25%/tranzacție, minim 5 lei; taxa ASF 0,06%)</a></li>
+          <li><strong>Comisioane de tranzacționare</strong> — <a href="https://www.zf.ro/burse-fonduri-mutuale/cat-costa-tranzactionarea-actiunilor-romanesti-prin-interactive-brokers-comision-de-0-28-din-valoarea-ordinului-minimum-10-lei-plus-o-taxa-de-custodie-de-0-1-pe-an-cum-sunt-aspectele-fiscale-23203099" target="_blank" rel="noopener">ZF — Interactive Brokers: comision 0,28% pe acțiuni românești</a></li>
           <li><strong>Strategii și educație financiară</strong> — <a href="https://www.investor.gov/introduction-investing/investing-basics/glossary/dollar-cost-averaging" target="_blank" rel="noopener">Investor.gov — dollar-cost averaging</a></li>
           <li><strong>Strategii și educație financiară</strong> — <a href="https://www.investor.gov/introduction-investing" target="_blank" rel="noopener">Investor.gov — Introduction to Investing</a></li>
           <li><strong>Strategii și educație financiară</strong> — <a href="https://investor.vanguard.com/investor-resources-education/online-trading/dollar-cost-averaging-vs-lump-sum" target="_blank" rel="noopener">Vanguard Research — DCA vs. investire integrală</a></li>

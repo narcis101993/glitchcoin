@@ -360,9 +360,11 @@ profit brut 1,200.00 lei, profit net 1,184.40 lei, randament real 6.52% (profit 
 2. **Costul mediu ponderat** — (Σ preț × cantitate + Σ preț × cantitate × comision) / Σ cantitate,
    plus cantitatea totală, valoarea achiziționată și totalul plătit (cu comision).
 
-Valori implicite: (28.81 × 24), (27.75 × 144), (32.89 × 4), (34.40 × 30), toate cu comision 2%
-→ costul mediu 29.5447 lei pentru 202 de unități (5,851.00 lei achiziționat + 117.02 lei comisioane
-= 5,968.02 lei plătiți).
+Valori implicite: (28.81 × 24), (27.75 × 144), (32.89 × 4), (34.40 × 30), toate cu comision 0,4%
+→ costul mediu 29.0812 lei pentru 202 de unități (5,851.00 lei achiziționat + 23.40 lei comisioane
+= 5,874.40 lei plătiți). Comisionul de 0,4% e medie justificată: 0,33% comision mediu de cumpărare
+la BVB (TradeVille 0,38%, Investimental 0,41%, Salt Bank 0,25%, Interactive Brokers 0,28%) + 0,06%
+taxa ASF; anexele brokerilor sunt citate în tab și în pagina „Despre".
 
 ## Ce conține tabul Sumă dorită
 

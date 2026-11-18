@@ -110,11 +110,15 @@ let persistTimer = null;
 /* Valorile implicite pentru tabelele dinamice (identice cu cele din HTML).
    Sunt singura sursă de adevăr pentru reset — `COST_ROWS_DEFAULT` / `NUAM_ROWS_DEFAULT`
    de mai jos sunt initialize din ele, ca să nu existe două liste care să se diveră. */
+/* Comision implicit 0,4% (0,004 fracție) = media comisioanelor de cumpărare la BVB pe acțiuni
+   (0,33%: TradeVille 0,38%, Investimental 0,41%, Salt Bank 0,25%, IB 0,28%) + taxa ASF 0,06%.
+   Sursă: anexele oficiale de comisioane ale brokerilor, verificate 18.11.2026 și citate în
+   tabul „Costul mediu de achiziție". */
 const COST_DEFAULTS = [
-  { pret: 28.81, cantitate: 24, comision: 0.02 },
-  { pret: 27.75, cantitate: 144, comision: 0.02 },
-  { pret: 32.89, cantitate: 4, comision: 0.02 },
-  { pret: 34.4, cantitate: 30, comision: 0.02 },
+  { pret: 28.81, cantitate: 24, comision: 0.004 },
+  { pret: 27.75, cantitate: 144, comision: 0.004 },
+  { pret: 32.89, cantitate: 4, comision: 0.004 },
+  { pret: 34.4, cantitate: 30, comision: 0.004 },
 ];
 
 const NUAM_DEFAULTS = [
@@ -1157,7 +1161,7 @@ function initCost() {
   });
 
   document.getElementById('cost-add').addEventListener('click', () => {
-    costRows.push({ pret: 0, cantitate: 0, comision: 0.02 });
+    costRows.push({ pret: 0, cantitate: 0, comision: 0.004 }); // aceeași valoare cu COST_DEFAULTS
     renderCostRows();
     updateCostOutputs();
     persistSave();

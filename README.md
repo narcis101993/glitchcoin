@@ -369,8 +369,9 @@ taxa ASF; anexele brokerilor sunt citate în tab și în pagina „Despre".
 ## Ce conține tabul Sumă dorită
 
 1. **Patru inputuri** — randament anual, număr de ani, sumă inițială și sumă dorită.
-2. **Economia lunară necesară** — `-PMT(randament/12, ani×12, sumă inițială, sumă dorită)`,
-   plus totalul economisit și suma din dobândă.
+2. **Economia lunară necesară** — `(sumă dorită − sumă inițială × (1+r)^n) × r / ((1+r)^n − 1)`,
+   cu `r = randament/12` și `n = ani×12` (în notația PMT clasică: `-PMT(r, n, −sumă inițială, sumă dorită)`);
+   plus totalul economisit și suma din dobândă. Dacă suma inițială acoperă deja ținta, economia e 0.
 3. **Tabela pe ani** — suma acumulată, economisit în total, din dobândă și cât din țintă e acumulat.
 
 Valori implicite: 10% / 15 ani / 0 / 1,000,000 lei → **2,412.72 lei pe lună**

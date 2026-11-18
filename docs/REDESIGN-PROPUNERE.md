@@ -343,7 +343,7 @@ L251, L254, L425.
 | „Resetează valorile din Excel" | „**Resetează la valorile implicite"** |
 | „Tabul ascuns din Excel: vezi ce se întâmplă cu banii…" | „**Scenariu avansat — flux de numerar zilnic:** vezi ce se întâmplă cu banii…" |
 | „…la fel ca în tabul „Sumă dorită" din `GlitchCoin.xlsx`." | „Stabilește o sumă țintă și află cât trebuie să economisești în fiecare lună pentru a o atinge." |
-| „…identică cu `D9` din tabul „Sumă dorită" din Excel." | „Formula: `-PMT(randament/12, ani×12, sumă inițială, sumă dorită)` — adică rata lunară care, compusă, ajunge la țintă." |
+| „…identică cu `D9` din tabul „Sumă dorită" din Excel." | „Formula: `economie = (sumă dorită − sumă inițială × (1+r)^n) × r / ((1+r)^n − 1)`, cu `r = randament/12` și `n = ani×12` — contribuția lunară care ajunge la țintă." |
 | „…comisionul fiecărei tranșe se adaugă la valoarea ei, ca în Excel." | „…comisionul fiecărei tranșe se adaugă la valoarea ei (baza e suma plătită, nu doar prețul)." |
 | „…ca în formulele din Excel." | „…cu impozitul pe câștigul net (10%)." |
 | „Sursă date: `GlitchCoin.xlsx`, 9 taburi (septembrie 2025)" | „Date publice: **INS** (IPC) și **BNR** · Valorile implicite sunt alese ca exerciții (nu sunt date personale)" |

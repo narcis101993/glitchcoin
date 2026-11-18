@@ -285,10 +285,18 @@ la utilizatorul care crede că portofoliul a crescut cu 41,5% într-un an.
 
 `(Σ preț × cantitate + Σ preț × cantitate × comision) / Σ cantitate`. → 29,5447 lei, 202 unități, 5.851,00 + 117,02 = 5.968,02 ✓.
 
-### B8. Sumă dorită — **corect**
+### B8. Sumă dorită — **corectat ulterior** (notă istorică)
 
-`PMT(r/12, nper, pv, fv) = −r×(pv×(1+r)^nper + fv)/((1+r)^nper − 1)`. → 2.412,72 lei/lună, 434.289,21 economisiți,
-565.710,79 din dobândă ✓. Tratarea cazului `rata = 0` (împărțire la zero) e tratată corect.
+Auditul inițial eticheta formula drept „corect", dar era greșită: `pmt(r, n, pv, fv)` folosește
+convenția Excel (semne opuse între `pv` și `fv`), iar aplicația trimitea ambele valori pozitive —
+deci suma inițială se **adăuga** la țintă în loc să o reducă. Exemplul 7% / 10 ani / 90.000 /
+1.000.000 dădea 6.822,49 lei/lună, depășea ținta în anul 8 (1.031.939,67) și ajungea la 1.361.739,05 în anul 10.
+
+Forma corectă: `economie = (sumă dorită − sumă inițială×(1+r)^n) × r / ((1+r)^n − 1)`, cu
+`r = randament/12` și `n = ani×12` (echivalent Excel: `-PMT(r, n, −sumă inițială, sumă dorită)`).
+→ 4.732,54 lei/lună, 764.010,21 lei la anul 8 și exact 1.000.000,00 lei la anul 10 ✓.
+Cazul `rata = 0` (`economie = (sumă dorită − sumă inițială)/n`) e tratat corect; când suma inițială
+acoperă deja ținta, economia se plafonează la 0 și UI-ul afișează „ținta deja acoperită".
 
 ### B9. „Nu am bani" — **o eroare financiară reală (semn)**
 

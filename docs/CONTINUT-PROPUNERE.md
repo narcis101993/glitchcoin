@@ -217,7 +217,7 @@ Regula pentru fiecare secțiune: **Lead propus** (textul care înlocuiește lead
 
 **Surse:** [BNR — politica monetară și dobânzi](https://www.bnr.ro/) · [ASF — ghiduri pensii private](https://asfromania.ro/app.php/ro/a/1686/ghiduri-pensii-private)
 
-**De rescris:** „la fel ca în tabul „Sumă dorită" din GlitchCoin.xlsx" → eliminat; formula se scrie explicit (`-PMT(randament/12, ani×12, sumă inițială, sumă dorită)`), nu printr-o referință la o celulă.
+**De rescris:** „la fel ca în tabul „Sumă dorită" din GlitchCoin.xlsx" → eliminat; formula se scrie explicit (`economie = (sumă dorită − sumă inițială × (1+r)^n) × r / ((1+r)^n − 1)`, cu `r = randament/12`, `n = ani×12`), nu printr-o referință la o celulă.
 
 ### 9. Nu am bani — `panel-nuam`
 

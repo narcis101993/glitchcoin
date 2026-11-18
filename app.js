@@ -1180,13 +1180,25 @@ function initCost() {
 
 /* ═══ 11. Sumă dorită ═══════════════════════════════════ */
 
-/* Formula: -PMT(randament/12, ani*12, suma inițială, sumă dorită).
-   PMT(rate, nper, pv, fv) = -rate × (pv × (1+rate)^nper + fv) / ((1+rate)^nper − 1) */
+/* Contribuția lunară constantă (anuitate ordinară, plată la final de lună)
+   necesară ca `pv` (capitalul deja avut) să ajungă la `fv` (ținta) după `nper`
+   luni, la rata lunară `rate`:
+
+     fv = pv×(1+rate)^nper + contribuție×((1+rate)^nper − 1)/rate
+     ⇒ contribuție = (fv − pv×(1+rate)^nper)×rate/((1+rate)^nper − 1)
+
+   Spre deosebire de convenția clasică PMT (semne opuse între `pv` și `fv`),
+   aici `pv` și `fv` se dau AMBELE pozitive (capital existent, respectiv țintă),
+   iar rezultatul e contribuția pozitivă. Echivalent: −PMT(rate, nper, −pv, fv).
+   Dacă `pv` ar trece cu semn pozitiv în PMT, capitalul s-ar ADĂUGA la țintă
+   în loc să o reducă.
+   Pentru rate = 0: contribuție = (fv − pv)/nper.
+   Aceeași relație ca `economieNecesara`, care primește rata anuală, nu pe cea lunară. */
 function pmt(rate, nper, pv, fv) {
   if (nper <= 0) return null;
-  if (rate === 0) return -(pv + fv) / nper;
+  if (rate === 0) return (fv - pv) / nper;
   const putere = Math.pow(1 + rate, nper);
-  return -rate * (pv * putere + fv) / (putere - 1);
+  return (fv - pv * putere) * rate / (putere - 1);
 }
 
 /* Suma acumulată după `luni` luni: capitalul inițial crește cu dobânda,
@@ -1201,10 +1213,13 @@ function sumaAcumulata(sumaInitiala, rataLuna, luni, economie) {
 function computeSuma(randament, ani, sumaInitiala, sumaDorita) {
   const rataLuna = randament / 12;
   const luni = ani * 12;
-  const payment = pmt(rataLuna, luni, sumaInitiala, sumaDorita);
-  if (payment === null) return null;
+  const economieBrut = pmt(rataLuna, luni, sumaInitiala, sumaDorita);
+  if (economieBrut === null) return null;
 
-  const economie = -payment; // economisirea lunară, pozitivă
+  // Capitalul inițial poate acoperi ținta chiar și singur, prin dobândă:
+  // atunci nu e nevoie de contribuții — nu afișăm economii negative.
+  const dejaAcoperit = economieBrut <= 0;
+  const economie = dejaAcoperit ? 0 : economieBrut;
   const totalEconomisit = economie * luni;
   const sumaFinala = sumaAcumulata(sumaInitiala, rataLuna, luni, economie);
   const dinDobanda = sumaFinala - sumaInitiala - totalEconomisit;
@@ -1222,7 +1237,7 @@ function computeSuma(randament, ani, sumaInitiala, sumaDorita) {
     });
   }
 
-  return { economie, totalEconomisit, sumaFinala, dinDobanda, rows, luni };
+  return { economie, totalEconomisit, sumaFinala, dinDobanda, rows, luni, dejaAcoperit };
 }
 
 function renderSuma() {
@@ -1246,11 +1261,19 @@ function renderSuma() {
     return;
   }
 
-  summary.innerHTML =
-    `Pentru a ajunge de la <strong>${fmtLei(sumaInitiala)}</strong> la <strong>${fmtLei(sumaDorita)}</strong> ` +
-    `în <strong>${fmtInt(Math.round(ani))} de ani</strong> la randamentul de <strong>${fmtPct(randament)}</strong>, ` +
-    `trebuie să economisești <strong>${fmtLei(r.economie)}</strong> în fiecare lună — ` +
-    `<strong>${fmtLei(r.totalEconomisit)}</strong> economisiți în total, plus <strong>${fmtLei(r.dinDobanda)}</strong> din dobândă.`;
+  if (r.dejaAcoperit) {
+    summary.innerHTML =
+      `Ținta de <strong>${fmtLei(sumaDorita)}</strong> e deja acoperită de ` +
+      `<strong>${fmtLei(sumaInitiala)}</strong> la randamentul de <strong>${fmtPct(randament)}</strong> ` +
+      `în <strong>${fmtInt(Math.round(ani))} de ani</strong> — nu e nevoie de economii lunare: ` +
+      `capitalul ajunge la <strong>${fmtLei(r.sumaFinala)}</strong>, din care <strong>${fmtLei(r.dinDobanda)}</strong> dobândă.`;
+  } else {
+    summary.innerHTML =
+      `Pentru a ajunge de la <strong>${fmtLei(sumaInitiala)}</strong> la <strong>${fmtLei(sumaDorita)}</strong> ` +
+      `în <strong>${fmtInt(Math.round(ani))} de ani</strong> la randamentul de <strong>${fmtPct(randament)}</strong>, ` +
+      `trebuie să economisești <strong>${fmtLei(r.economie)}</strong> în fiecare lună — ` +
+      `<strong>${fmtLei(r.totalEconomisit)}</strong> economisiți în total, plus <strong>${fmtLei(r.dinDobanda)}</strong> din dobândă.`;
+  }
 
   document.getElementById('suma-economie').textContent = fmtLei(r.economie);
   document.getElementById('suma-total-economisit').textContent = fmtLei(r.totalEconomisit);
@@ -6173,7 +6196,7 @@ const FORMULA_TIPS = {
   },
   'suma-economie': {
     title: 'Economia lunară necesară',
-    text: '−PMT(randament ÷ 12, ani × 12, sumă inițială, sumă dorită). E suma constantă pe lună care, cu dobânda, ajunge la țintă.'
+    text: 'Contribuția lunară constantă = (sumă dorită − sumă inițială × (1+r)^n) × r / ((1+r)^n − 1), cu r = randament ÷ 12 și n = ani × 12. E suma care, adăugată la capitalul compus, ajunge exact la țintă.',
   },
   'suma-total-economisit': {
     title: 'Total economisit',

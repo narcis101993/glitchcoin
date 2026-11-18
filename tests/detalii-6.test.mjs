@@ -96,3 +96,47 @@ test('valorile implicite ale cardurilor coincid cu cele prefill-uite în taburi'
   assert.ok(s.economie > 0 && s.economie < 1000, `economie lunară rezonabilă: ${s.economie}`);
   assert.ok(Math.abs(s.sumaFinala - 100000) < 0.01, 'ținta e atinsă la final');
 });
+
+/* ── Regresiune: suma inițială trebuie SĂ SCADĂ efortul lunar ── */
+
+test('regresiune: exemplul lui Narcis (7% / 10 ani / 90.000 / 1.000.000)', () => {
+  const r = gc.computeSuma(0.07, 10, 90000, 1000000);
+
+  // Vechea formulă adăuga suma inițială la țintă → 6.822,49 lei/lună.
+  assert.ok(Math.abs(r.economie - 4732.54) < 0.01, `economie lunară: ${r.economie}`);
+  assert.equal(r.luni, 120);
+  assert.equal(r.dejaAcoperit, false);
+
+  const an8 = r.rows.find((row) => row.an === 8);
+  const an10 = r.rows.find((row) => row.an === 10);
+  assert.ok(Math.abs(an8.acumulata - 764010.21) < 0.01, `anul 8: ${an8.acumulata}`);
+  assert.ok(an8.acumulata < 1000000, 'ținta NU e atinsă în anul 8');
+  assert.ok(Math.abs(an10.acumulata - 1000000) < 0.01, `anul 10: ${an10.acumulata}`);
+  assert.ok(Math.abs(r.sumaFinala - 1000000) < 0.01, `suma finală: ${r.sumaFinala}`);
+});
+
+test('suma inițială acoperă deja ținta: economie 0, fără valori negative', () => {
+  for (const [initiala, dorita] of [
+    [100000, 100000],
+    [120000, 100000],
+    [900000, 1000000], // capitalul depășește ținta și prin dobândă
+  ]) {
+    const r = gc.computeSuma(0.07, 10, initiala, dorita);
+    assert.equal(r.dejaAcoperit, true, `${initiala} → ${dorita}`);
+    assert.equal(r.economie, 0);
+    assert.equal(r.totalEconomisit, 0);
+    assert.ok(r.dinDobanda >= 0, 'dobânda nu e negativă');
+    assert.ok(r.rows.every((row) => row.economisit === 0 && row.dobanda >= 0));
+    assert.ok(r.sumaFinala >= dorita, 'ținta rămâne acoperită');
+  }
+});
+
+test('cazuri limită: randament zero și calculatorul rapid de pe Acasă', () => {
+  const zero = gc.computeSuma(0, 10, 90000, 1000000);
+  assert.ok(Math.abs(zero.economie - (1000000 - 90000) / 120) < 1e-9, 'r = 0: (țintă − inițială)/luni');
+
+  // home-ul apelează computeSuma(0.10, 15, 0, sumaDorita) — rezultatul nu se schimbă.
+  const quick = gc.computeSuma(0.10, 15, 0, 1000000);
+  assert.ok(Math.abs(quick.economie - 2412.72) < 0.01, `quick economie: ${quick.economie}`);
+  assert.ok(Math.abs(quick.sumaFinala - 1000000) < 0.01, `quick țintă: ${quick.sumaFinala}`);
+});

@@ -50,9 +50,9 @@ test('CI rulează testele și verificarea datelor la push/PR', () => {
 });
 
 test('versiunea afișată vine din CONFIG_AN', () => {
-  assert.equal(gc.CONFIG_AN.versiune, '3.0.0');
+  assert.equal(gc.CONFIG_AN.versiune, '3.0.1');
   assert.match(html, /data-config-key="versiune" id="versiune-app"/);
-  assert.ok(!html.includes('v2.13'), 'footerul vechi a rămas');
+  assert.ok(!html.includes('v3.0.0'), 'footerul static vechi a rămas');
 });
 
 test('validarea internă a datelor nu găsește probleme', () => {

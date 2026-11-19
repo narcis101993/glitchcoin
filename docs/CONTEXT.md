@@ -2,7 +2,7 @@
 
 > Fișier de context, creat de Organizer la 2026-11-11 din conversația cu Narcis.
 > Sursa de adevăr pentru starea proiectelor rămâne `~/.hermes/profiles/organizer/workspace/proiecte.md`.
-> Ultima actualizare: 2026-11-13.
+> Ultima actualizare: 2026-11-19.
 
 ## Ce e GlitchCoin
 
@@ -33,6 +33,7 @@ Aplicație web de educație financiară, derivată dintr-un Excel de învățare
 
 ## Stare
 
+- **v3.1.0 (MINOR — secțiune nouă „Istoric de versiuni"): LIVE și testat** — implementat 2026-11-19 (card `t_e66e4039`, commit `a0625f5`). Bump MINOR după adăugarea secțiunii colapsabile „Istoric de versiuni" (v1 → v3.0.1) în pagina „Despre". Verificare: `node --check app.js && node --check data.js && node --test tests/` (toate verzi), footer `file://` arată v3.1.0, secțiunea colapsată se extinde la click, 6 locuri + intrarea din istoric + `<summary>` sincronizate pe 3.1.0.
 - **v3.0.1 (corecții după v3.0): LIVE și testat** — implementat 2026-11-18 (card `t_8446f449`). Bump PATCH după trei corecții: rândul „Cont de economii" (2–3%/an, sursă Raiffeisen) și disclaimer „nu e sfat financiar" în „Fond de urgență" (`11c82fc`); comision implicit 0,4% cu sursă în „Costul mediu de achiziție" (`7084e69`); corecția formulei „Sumă dorită" — capitalul inițial reduce contribuția lunară (`78480c7`). Verificare: `node --check app.js && node --check data.js && node --test tests/` (toate verzi), footer `file://` arată v3.0.1, 6 locuri sincronizate pe 3.0.1.
 - **v1 (tabul Inflație): LIVE și testat** — build + testare finalizate 2026-11-11 (carduri `t_89156cf0`, `t_0b9c7a42`).
   Fișiere pe disc: `index.html`, `styles.css`, `data.js`, `app.js`, `README.md` (deschide cu dublu-click pe `index.html`).

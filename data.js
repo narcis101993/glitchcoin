@@ -23,7 +23,7 @@
    Sursa valorilor: DATE-2025-2026.md §2, §5, §7 — raport de cercetare păstrat
    în repo (public) și atașat și pe cardul t_fe959b3f. */
 const CONFIG_AN = {
-  versiune: '3.0.1',
+  versiune: '3.1.0',
   anCurent: 2026,
   inflatie: {
     rata: 0.063,                 // 6,3% — oct 2026 vs dec 2025 (YTD, parțial)

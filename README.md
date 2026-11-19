@@ -3,6 +3,10 @@
 Aplicație web de educație financiară, cu 24 de calculatoare grupate în 6 categorii.
 HTML + CSS + JavaScript static, **fără backend**, fără conturi, fără date personale.
 
+## v3.1.0 — ce e nou
+
+- **Istoric de versiuni**: secțiune colapsabilă în pagina „Despre", cu toate versiunile de la v1 la v3.0.1 (card `t_e66e4039`).
+
 ## v3.0.1 — ce e nou
 
 - **Fond de urgență**: rândul „Cont de economii" (2–3%/an, sursă Raiffeisen) și disclaimer „nu e sfat financiar".

@@ -2908,6 +2908,61 @@ body.is-search-open { overflow: hidden; }
   border-radius: 4px;
 }
 
+/* Istoric de versiuni în pagina „Despre” — același marker ▸/▾ și același
+   focus-visible ca tabelul inflației; tokenii CSS acoperă ambele teme. */
+.version-history { margin: 18px 0 8px; }
+.version-history > summary {
+  width: fit-content;
+  padding: 6px 2px;
+  cursor: pointer;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--accent-ink);
+  list-style: none;
+}
+.version-history > summary::-webkit-details-marker { display: none; }
+.version-history > summary::before { content: '▸ '; }
+.version-history[open] > summary::before { content: '▾ '; }
+.version-history > summary:hover { color: var(--ink); }
+.version-history > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.version-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.version-entry {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  break-inside: avoid;
+}
+[data-theme="dark"] .version-entry {
+  border-left-color: var(--accent);
+  background: var(--surface-2);
+}
+.version-entry h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: .95rem;
+  color: var(--ink);
+}
+.v-tag { font-variant-numeric: tabular-nums; }
+.version-entry time { font-size: .8rem; font-weight: 400; color: var(--muted); }
+.version-entry ul { margin: 0; padding-left: 18px; }
+.version-entry li { font-size: .86rem; line-height: 1.5; color: var(--ink-soft); }
+.version-entry li + li { margin-top: 4px; }
+.version-entry li strong { color: var(--accent-ink); }
+.version-entry code { font-size: .82em; color: var(--ink); }
+@media (max-width: 480px) {
+  .version-entry { padding: 10px 12px; }
+  .version-entry h3 { gap: 4px; }
+}
+
 @media print {
   /* La print tabelul e deschis de `beforeprint` (app.js); ascundem
      doar sumarul și indiciul de derulare, ca PDF-ul să fie curat. */

@@ -4155,6 +4155,141 @@
       </div>
 
       <p class="note">GlitchCoin este un proiect educațional, fără backend și fără conturi.</p>
+
+      <details class="version-history" id="istoric-versiuni">
+        <summary>Istoric de versiuni (v1 → v3.0.1)</summary>
+        <div class="version-list">
+          <article class="version-entry">
+            <h3><span class="v-tag">v3.0.1</span> · <time datetime="2026-11-18">18.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> rândul „Cont de economii” (2–3%/an, sursă Raiffeisen) în „Fond de urgență”.</li>
+              <li><strong>Schimbat:</strong> comision implicit 0,4% în „Costul mediu de achiziție”, justificat prin surse.</li>
+              <li><strong>Îmbunătățire:</strong> „Sumă dorită” — capitalul inițial reduce contribuția lunară (card <code>t_8446f449</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v3 (v3.0)</span> · <time datetime="2026-11-17">17.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> date verificabile cu <code>scripts/verifica-date.mjs</code>, metodologie documentată și CI la push/PR.</li>
+              <li><strong>Schimbat:</strong> randament real afișat în trei taburi, an fiscal 2025/2026 selectabil, prețuri estimate marcate cu <code>*</code>.</li>
+              <li><strong>Îmbunătățire:</strong> „Explică rezultatul” și scenariile A/B în 23 de taburi; progres „explorat” opțional și categorii rapide pe mobil.</li>
+              <li><strong>Context:</strong> interfața cu 6 categorii, dark mode și navigare pe hash din redesign (card <code>t_7eba600f</code>, Etapele 0–6).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.13</span> · <time datetime="2026-11-16">16.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Curs de schimb” (randament în valută, curs, impozit, inflație importată) și „Biaseuri comportamentale” (ancorare, cont mental, aversiune la pierdere, FOMO, cadrare).</li>
+              <li><strong>Schimbat:</strong> două legături noi între taburi (Dobânda vs inflație → Curs, Curs → Costul oportunității).</li>
+              <li><strong>Îmbunătățire:</strong> test rapid de cinci întrebări cu scor și tabel de referință; 145 de teste (card <code>t_3917ffbb</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.12</span> · <time datetime="2026-11-16">16.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Datorii bune vs rele” (anuitate, cost total, prag de indiferență) și „Scalarea în timp (DCA)” (cost mediu vs preț mediu, DCA față de investirea integrală).</li>
+              <li><strong>Schimbat:</strong> patru legături noi între taburi, inclusiv Costul mediu ↔ DCA.</li>
+              <li><strong>Îmbunătățire:</strong> tabel de evoluție lunară și comparație deterministă pe patru căi ale prețului; 126 de teste (card <code>t_72fafaff</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.11</span> · <time datetime="2026-11-16">16.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Pensie / Pilon III” (comisioane, impozit pe câștig, valoare reală) și „Impozitare pe investiții” (cote reale 2025→2026, calculator comparativ).</li>
+              <li><strong>Schimbat:</strong> patru legături noi, de la Pensie la „Sumă dorită” și de la Randament/Profit la „Impozitare”.</li>
+              <li><strong>Îmbunătățire:</strong> tabel de evoluție pe ani și scenarii Istoric/Conservator/Optimist; 104 teste (card <code>t_fb5f36fc</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.10</span> · <time datetime="2026-11-16">16.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Diversificare și riscul” (Monte Carlo cu 5.000 de simulări), „Asigurări” (primă vs auto-asigurare) și „Stress test” (buget și active sub stres).</li>
+              <li><strong>Schimbat:</strong> cinci legături noi între taburi, de la Diversificare la Randament și de la Stress test la Buget/Sănătate.</li>
+              <li><strong>Îmbunătățire:</strong> tabel dinamic de active și scenarii predefinite; 82 de teste (card <code>t_dd0e718a</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.9</span> · <time datetime="2026-11-15">15.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Buget 50/30/20” (nevoi/dorințe/economii, alarme) și „Sănătate financiară” (rată de economii, datorii/venit, net worth).</li>
+              <li><strong>Schimbat:</strong> cinci legături noi, inclusiv Buget/Sănătate → Stress test și Sănătate → Fond de urgență.</li>
+              <li><strong>Îmbunătățire:</strong> dorințele exprimate în zile și ore lucrate; 60 de teste (card <code>t_41410e1b</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.8</span> · <time datetime="2026-11-15">15.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> patru taburi: „Dobândă vs inflație”, „Regula 72”, „Fond de urgență” și „Costul oportunității”.</li>
+              <li><strong>Schimbat:</strong> seria istorică 2000–2025 și comparația cash vs investiție pe 26 de ani.</li>
+              <li><strong>Îmbunătățire:</strong> grafice și tabele pentru dublare și randament real; 44 de teste (card <code>t_88a8e0a3</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.7</span> · <time datetime="2026-11-13">13.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> inputul „Zile lucrătoare / an” în „Timp vs dorințe” (implicit 248 la acea dată).</li>
+              <li><strong>Schimbat:</strong> zilele lucrătoare pe lună se derivă din cele anuale, în loc de un divisor fix de 20.</li>
+              <li><strong>Îmbunătățire:</strong> valoarea se salvează local și revine la 248 prin „Resetează tot”; 29 de teste (card <code>t_5ce2d4f5</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.6</span> · <time datetime="2026-11-13">13.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> datele complete 2025 și 2026 (inflație 7,3%, respectiv 6,3% parțial).</li>
+              <li><strong>Schimbat:</strong> 12 corecții financiare C1–C12: semnul dobânzii, deflatorul fără decalaj, impozitul pe tipuri de venit, seria INS, comisioanele, pierderea neimpozabilă.</li>
+              <li><strong>Îmbunătățire:</strong> valori recalculate independent și verificate în browser; 28 de teste (carduri <code>t_b3026530</code>, <code>t_35151f97</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.4</span> · <time datetime="2026-11-12">12.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Sumă dorită” și „Nu am bani” (flux de numerar zilnic, facturi dinamice, scenarii pe 1 și 10 ani).</li>
+              <li><strong>Schimbat:</strong> bara de taburi lărgită ca toate cele 9 taburi să încapă pe ecrane mari.</li>
+              <li><strong>Îmbunătățire:</strong> coloana „Cât din țintă e acumulat” și nume de facturi cu lățime minimă, fără truncare (card <code>t_92ef3881</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.3</span> · <time datetime="2026-11-12">12.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Profit” și „Costul mediu de achiziție”, cu tabel dinamic de tranzacții.</li>
+              <li><strong>Schimbat:</strong> costul mediu calculat ca medie ponderată cu comision, nu simplu.</li>
+              <li><strong>Îmbunătățire:</strong> adăugare/ștergere/reset de rânduri cu păstrarea focalizării, verificate cu 14.000 + 2.000 de comparații aleatorii (card <code>t_0d7052b4</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.2</span> · <time datetime="2026-11-12">12.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Dobânda compusă” și „Randament”, după formulele sursă.</li>
+              <li><strong>Schimbat:</strong> randamentul e împărțit în brut, net și real, cu impozit și inflație.</li>
+              <li><strong>Îmbunătățire:</strong> 168 de valori comparate cu sursa, inclusiv cazuri extreme (sumă 0, rată 0, deflație); card <code>t_f5b5cfc7</code>.</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.1</span> · <time datetime="2026-11-11">11.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> taburile „Timp vs dorințe” și „Calculul dobânzii”.</li>
+              <li><strong>Schimbat:</strong> dorințele convertite în minute, ore și zile de muncă; dobânda arătată brut, net și ca procent.</li>
+              <li><strong>Îmbunătățire:</strong> cazuri extreme (venit 0) și navigare cu tastatura verificate (card <code>t_e9220d69</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v2.0</span> · <time datetime="2026-11-11">11.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> bară de taburi în loc de ancore, cu 8 taburi active și „Nu am bani” încă ascuns.</li>
+              <li><strong>Schimbat:</strong> navigarea din tabul „Inflație” rămâne doar acolo (subnav); calculul din v1 neschimbat.</li>
+              <li><strong>Îmbunătățire:</strong> săgeți, Home/End și ARIA validate; fără overflow la 390px (card <code>t_6c7f7921</code>).</li>
+            </ul>
+          </article>
+          <article class="version-entry">
+            <h3><span class="v-tag">v1</span> · <time datetime="2026-11-11">11.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> prima versiune, cu un singur tab: „Inflație” — simulator, prețuri alimente și deflator.</li>
+              <li><strong>Schimbat:</strong> modelul de calcul a fost transferat din fișierul sursă în pagina locală.</li>
+              <li><strong>Îmbunătățire:</strong> calculele reproduc sursa cu eroare maximă de ~2e-12, offline, fără erori JS (carduri <code>t_89156cf0</code>, <code>t_0b9c7a42</code>).</li>
+            </ul>
+          </article>
+        </div>
+      </details>
     </section>
 
         <nav class="panel-nav" id="panel-nav" aria-label="Navigare între taburi" hidden>

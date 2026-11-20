@@ -51,9 +51,12 @@ test('Secțiunea „Despre” — panou global, link în sidebar, trei carduri',
   includes(html, 'id="despre-title"', 'titlu Despre');
   includes(html, 'id="nav-despre"', 'link Despre');
   assert.equal((html.match(/class="about-card"/g) || []).length, 3, 'carduri Despre');
-  assert.equal(gc.GLOBAL_PANELS.length, 4);
+  assert.equal(gc.GLOBAL_PANELS.length, 5);
   assert.ok(gc.GLOBAL_IDS.includes('despre'));
+  assert.ok(gc.GLOBAL_IDS.includes('feedback'));
   assert.equal(gc.parseHash('#despre').type, 'global');
+  assert.equal(gc.parseHash('#feedback').type, 'global');
+  assert.equal(gc.parseHash('#feedback').id, 'feedback');
   includes(css, '.about-card', 'stil about-card');
 });
 

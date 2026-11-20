@@ -3,6 +3,12 @@
 Aplicație web de educație financiară, cu 24 de calculatoare grupate în 6 categorii.
 HTML + CSS + JavaScript static, **fără backend**, fără conturi, fără date personale.
 
+## v3.2.0 — ce e nou
+
+- **Feedback**: tab global nou după „Despre” — formular cu tip (bug / idee / întrebare), mesaj și email opțional. Trimite prin `mailto:` (se deschide aplicația de mail, destinatarul e ales de tine) și are buton de copiere ca rezervă (card `t_34d0eb8d`).
+- **Îmbunătățiri planulate**: listă publică în același tab, cu stările Planificat / În lucru / Terminat; elementele sunt documentate în carduri și în notele proiectului, fără promisiuni de date.
+- **Istoric de versiuni**: actualizat la v3.2.0 în pagina „Despre”.
+
 ## v3.1.0 — ce e nou
 
 - **Istoric de versiuni**: secțiune colapsabilă în pagina „Despre", cu toate versiunile de la v1 la v3.0.1 (card `t_e66e4039`).

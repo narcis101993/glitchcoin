@@ -68,6 +68,8 @@ const src =
   'FORMULA_TIPS, parseHash, hashForTab, stepTab, normalizeText, ' +
   'filterSearchItems, scoreSearchItem, collectAlerts, ' +
   'buildSearchItems, GLOBAL_PANELS, GLOBAL_IDS, globalName, ' +
+  'FEEDBACK_TIPURI, FEEDBACK_MIN_MESAJ, feedbackValidate, feedbackSubject, feedbackBody, ' +
+  'feedbackMailto, feedbackCopyText, feedbackOpenMail, ' +
   'buildStepsFromFields, stepTextFor, parseFormattedNumber, formatStatValue, ' +
   'fmtLei, fmtPct, fmtPctSmart, fmtX, fmtInt, LOCALE, attachChartTip, clearChartTips, ' +
   'AB_SLOTS, AB_PREFIX, AB_CORE_TABS, abScenarioKey, abSaveScenario, abLoadScenario, ' +

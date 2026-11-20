@@ -197,9 +197,9 @@ test('Disclaimer — vizibil în footer și pe Acasă, redactat profesional', ()
 });
 
 /* ── 9. Secțiuni globale în sidebar ────────────────────── */
-test('Sidebar — patru secțiuni globale, cu stare activă și hash', () => {
+test('Sidebar — cinci secțiuni globale, cu stare activă și hash', () => {
   const links = [...html.matchAll(/<a class="side-global-link" id="nav-([a-z]+)" href="#([a-z]+)" data-global="([a-z]+)">/g)];
-  assert.deepEqual(links.map((m) => m[1]), ['glosar', 'faq', 'mituri', 'despre']);
+  assert.deepEqual(links.map((m) => m[1]), ['glosar', 'faq', 'mituri', 'despre', 'feedback']);
   for (const m of links) {
     assert.equal(m[2], m[1], 'href și id diferă');
     assert.equal(m[3], m[1], 'data-global și id diferă');
@@ -226,7 +226,7 @@ test('JS — panouri globale: parseHash, activateGlobal, buildSearchItems', () =
   assert.equal(gc.globalName('glosar'), 'Glosar');
   assert.equal(gc.globalName('mituri'), 'Mituri și adevăruri');
   assert.equal(gc.globalName('despre'), 'Despre');
-  assert.equal(gc.GLOBAL_PANELS.length, 4);
+  assert.equal(gc.GLOBAL_PANELS.length, 5);
   assert.equal(gc.buildSearchItems().length, 24, 'în vm nu există [data-search]');
 });
 

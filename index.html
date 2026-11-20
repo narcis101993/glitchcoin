@@ -91,6 +91,7 @@
         <a class="side-global-link" id="nav-faq" href="#faq" data-global="faq">Întrebări frecvente</a>
         <a class="side-global-link" id="nav-mituri" href="#mituri" data-global="mituri">Mituri și adevăruri</a>
         <a class="side-global-link" id="nav-despre" href="#despre" data-global="despre">Despre</a>
+        <a class="side-global-link" id="nav-feedback" href="#feedback" data-global="feedback">Feedback</a>
       </div>
       <div class="side-group" data-cat="fundamente">
         <button class="side-cat" type="button" aria-expanded="true" aria-controls="cat-fundamente">
@@ -4157,8 +4158,15 @@
       <p class="note">GlitchCoin este un proiect educațional, fără backend și fără conturi.</p>
 
       <details class="version-history" id="istoric-versiuni">
-        <summary>Istoric de versiuni (v1 → v3.1.0)</summary>
+        <summary>Istoric de versiuni (v1 → v3.2.0)</summary>
         <div class="version-list">
+          <article class="version-entry">
+            <h3><span class="v-tag">v3.2.0</span> · <time datetime="2026-11-20">20.11.2026</time></h3>
+            <ul>
+              <li><strong>Nou:</strong> tab global „Feedback” după „Despre” — formular cu tip / mesaj / email opțional, trimitere prin <code>mailto:</code>, buton „Copiază textul” și lista „Îmbunătățiri planulate” (card <code>t_34d0eb8d</code>).</li>
+              <li><strong>Îmbunătățire:</strong> validare cu mesaj vizibil (fără <code>alert()</code>) și confirmare în regiune <code>aria-live</code>.</li>
+            </ul>
+          </article>
           <article class="version-entry">
             <h3><span class="v-tag">v3.1.0</span> · <time datetime="2026-11-19">19.11.2026</time></h3>
             <ul>
@@ -4298,6 +4306,87 @@
       </details>
     </section>
 
+    <section id="panel-feedback" class="global-panel" role="region" aria-labelledby="feedback-title" tabindex="-1" hidden>
+      <h2 id="feedback-title">Feedback</h2>
+      <p class="lead">Spune-ne ce nu merge, ce ai schimba sau ce nu e clar. Textul se pregătește în aplicația ta de mail — tu alegi destinatarul, iar GlitchCoin nu stochează nimic.</p>
+
+      <section class="feedback-card section" data-search data-search-id="feedback-form" data-search-cat="Feedback" data-search-target="feedback" aria-labelledby="feedback-form-title">
+        <h3 id="feedback-form-title">Trimite feedback</h3>
+        <form class="feedback-form" id="feedback-form" novalidate>
+          <div class="feedback-grid">
+            <div class="field">
+              <label for="feedback-tip">Tip</label>
+              <select id="feedback-tip" name="tip">
+                <option value="bug">Bug — ceva nu merge</option>
+                <option value="idee">Idee — o propunere</option>
+                <option value="intrebare">Întrebare — o nelămurire</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="feedback-email">Email (opțional)</label>
+              <input id="feedback-email" name="email" type="email" autocomplete="email" placeholder="nume@domeniu.ro" aria-describedby="feedback-email-hint">
+              <p class="field-hint" id="feedback-email-hint">Adaugă-l doar dacă vrei un răspuns. Nu e salvat de aplicație.</p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="feedback-mesaj">Mesaj <span aria-hidden="true">*</span></label>
+            <textarea id="feedback-mesaj" name="mesaj" rows="6" required minlength="10" aria-describedby="feedback-mesaj-hint feedback-error" placeholder="Descrie ce ai observat…"></textarea>
+            <p class="field-hint" id="feedback-mesaj-hint">Minimum 10 caractere. Te rugăm să nu incluzi date personale sau sume reale.</p>
+          </div>
+          <p class="feedback-error" id="feedback-error" role="alert" hidden></p>
+          <div class="feedback-actions">
+            <button class="feedback-send" id="feedback-trimite" type="submit">Trimite pe mail</button>
+            <button class="feedback-copy" id="feedback-copiaza" type="button">Copiază textul</button>
+          </div>
+          <p class="feedback-live" id="feedback-live" role="status" aria-live="polite"></p>
+          <p class="note">„Trimite pe mail” deschide aplicația de mail cu subiectul și textul deja completate. GlitchCoin nu trimite nimic singur și nu păstrează mesajul.</p>
+        </form>
+      </section>
+
+      <section class="feedback-card section roadmap" aria-labelledby="roadmap-title" data-search data-search-id="feedback-roadmap" data-search-cat="Feedback" data-search-target="feedback">
+        <h3 id="roadmap-title">Îmbunătățiri planulate</h3>
+        <p class="note">Stări folosite: Planificat · În lucru · Terminat. Lista include doar elemente documentate în proiect, nu promisiuni. În acest moment nimic nu e marcat „În lucru”.</p>
+        <ul class="roadmap-list">
+          <li class="roadmap-item" data-stare="planificat">
+            <span class="roadmap-status status-planificat">Planificat</span>
+            <h4>Simulare Monte Carlo într-un Web Worker</h4>
+            <p>Simularea rulează azi cu <code>setTimeout</code> pe thread-ul principal; intenția consemnată e un thread separat, astfel încât interfața să nu aștepte calculul.</p>
+            <p class="roadmap-source">Sursă: card <code>t_26c18d0f</code> (deviația notată la v3.0).</p>
+          </li>
+          <li class="roadmap-item" data-stare="planificat">
+            <span class="roadmap-status status-planificat">Planificat</span>
+            <h4>Actualizarea anuală a datelor</h4>
+            <p>Seriile de inflație și valorile din <code>CONFIG_AN</code> se actualizează când apar datele finale (2026), apoi la trecerea la anul următor; textele se trag din config, nu se scriu manual.</p>
+            <p class="roadmap-source">Sursă: <code>docs/METODOLOGIE.md</code> §1 „Surse și actualizare anuală”.</p>
+          </li>
+          <li class="roadmap-item" data-stare="planificat">
+            <span class="roadmap-status status-planificat">Planificat</span>
+            <h4>Prețuri alimentare estimate → valori oficiale</h4>
+            <p>Prețurile marcate cu <code>*</code> pentru 2025–2026 sunt estimări metodologice; ele se înlocuiesc cu valori publicate, când devin disponibile.</p>
+            <p class="roadmap-source">Sursă: <code>docs/METODOLOGIE.md</code> §1–2 și nota din tabul „Inflație”.</p>
+          </li>
+          <li class="roadmap-item" data-stare="terminat">
+            <span class="roadmap-status status-terminat">Terminat</span>
+            <h4>Tab global „Feedback” (formular mail + această listă)</h4>
+            <p>Formular cu tip / mesaj / email opțional, trimitere prin <code>mailto:</code>, buton de copiere și listă publică de îmbunătățiri.</p>
+            <p class="roadmap-source">Sursă: card <code>t_34d0eb8d</code> (v3.2.0).</p>
+          </li>
+          <li class="roadmap-item" data-stare="terminat">
+            <span class="roadmap-status status-terminat">Terminat</span>
+            <h4>Istoric de versiuni în pagina „Despre”</h4>
+            <p>Secțiune colapsabilă cu toate versiunile, de la v1 la v3.1.0, cu data și schimbările principale.</p>
+            <p class="roadmap-source">Sursă: card <code>t_e66e4039</code> (v3.1.0).</p>
+          </li>
+          <li class="roadmap-item" data-stare="terminat">
+            <span class="roadmap-status status-terminat">Terminat</span>
+            <h4>Corecții financiare C1–C12 și comision justificat</h4>
+            <p>Deflator, zile lucrătoare ca input, comision implicit de 0,4% în „Costul mediu” și corectarea formulei „Sumă dorită”.</p>
+            <p class="roadmap-source">Sursă: card <code>t_8446f449</code> (v3.0.1).</p>
+          </li>
+        </ul>
+      </section>
+    </section>
+
         <nav class="panel-nav" id="panel-nav" aria-label="Navigare între taburi" hidden>
       <button class="panel-nav-btn" id="prev-tab" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
@@ -4368,7 +4457,7 @@
       </p>
       <p>
         Valorile implicite sunt alese ca exerciții, nu sunt date personale ·
-        GlitchCoin <span data-config-key="versiune" id="versiune-app">v3.1.0</span> · aplicație locală, fără backend
+        GlitchCoin <span data-config-key="versiune" id="versiune-app">v3.2.0</span> · aplicație locală, fără backend
       </p>
       <p>
         Surse publice: <a href="https://insse.ro/cms/en/content/cpi-annual-data-series" target="_blank" rel="noopener">INS — IPC național</a> ·

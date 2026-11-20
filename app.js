@@ -4270,20 +4270,134 @@ const CATEGORIES = [
 const TAB_CATEGORY = {};
 CATEGORIES.forEach((c) => c.tabs.forEach((t) => { TAB_CATEGORY[t] = c; }));
 
-/* Secțiunile globale din sidebar (Etapa 4 + 5): glosar, FAQ, mituri, despre.
-   Nu sunt taburi — nu au categorie, nu se numără în cele 24 și nu au
-   săgeți Precedent/Următor. Se deschide din sidebar sau din căutare. */
+/* Secțiunile globale din sidebar (Etapa 4 + 5 + v3.2): glosar, FAQ,
+   mituri, despre, feedback. Nu sunt taburi — nu au categorie, nu se numără
+   în cele 24 și nu au săgeți Precedent/Următor. Se deschid din sidebar
+   sau din căutare. */
 const GLOBAL_PANELS = [
   { id: 'glosar', nume: 'Glosar' },
   { id: 'faq', nume: 'Întrebări frecvente' },
   { id: 'mituri', nume: 'Mituri și adevăruri' },
   { id: 'despre', nume: 'Despre' },
+  { id: 'feedback', nume: 'Feedback' },
 ];
 const GLOBAL_IDS = GLOBAL_PANELS.map((g) => g.id);
 
 function globalName(id) {
   const g = GLOBAL_PANELS.find((x) => x.id === id);
   return g ? g.nume : id;
+}
+
+/* ── Feedback (v3.2) ────────────────────────────────────────
+   Fără backend: construim un mailto: și îl predăm aplicației de mail.
+   Destinatarul e gol intenționat — nu punem adrese personale în repo;
+   utilizatorul o completează în clientul de mail. */
+const FEEDBACK_TIPURI = { bug: 'Bug', idee: 'Idee', intrebare: 'Întrebare' };
+const FEEDBACK_MIN_MESAJ = 10;
+const FEEDBACK_EMAIL = '';
+
+function feedbackValidate(mesaj) {
+  const text = String(mesaj == null ? '' : mesaj).trim();
+  if (!text) return 'Scrie un mesaj înainte de a trimite.';
+  if (text.length < FEEDBACK_MIN_MESAJ) {
+    return `Mesajul e prea scurt — minimum ${FEEDBACK_MIN_MESAJ} caractere.`;
+  }
+  return '';
+}
+
+function feedbackSubject(tip, mesaj) {
+  const eticheta = FEEDBACK_TIPURI[tip] || 'Feedback';
+  const cuvinte = String(mesaj == null ? '' : mesaj).trim().split(/\s+/).filter(Boolean).slice(0, 6).join(' ');
+  const scurt = cuvinte.length > 54 ? cuvinte.slice(0, 53).trimEnd() + '…' : cuvinte;
+  return '[GlitchCoin] ' + eticheta + (scurt ? ': ' + scurt : '');
+}
+
+function feedbackBody(tip, mesaj, email, context) {
+  const ctx = context || {};
+  const adresa = email && String(email).trim() ? String(email).trim() : '(opțional, nefurnizat)';
+  const versiune = ctx.versiune || CONFIG_AN.versiune;
+  const pagina = ctx.pagina ||
+    ((typeof location !== 'undefined' && location.href) ? location.href : '');
+  return [
+    'Tip: ' + (FEEDBACK_TIPURI[tip] || 'Feedback'),
+    '',
+    'Mesaj:',
+    String(mesaj == null ? '' : mesaj).trim(),
+    '',
+    'Email: ' + adresa,
+    'Versiune aplicație: v' + versiune,
+    'Pagina: ' + pagina,
+  ].join('\n');
+}
+
+function feedbackMailto(tip, mesaj, email, context) {
+  return 'mailto:' + FEEDBACK_EMAIL + '?subject=' +
+    encodeURIComponent(feedbackSubject(tip, mesaj)) +
+    '&body=' + encodeURIComponent(feedbackBody(tip, mesaj, email, context));
+}
+
+function feedbackCopyText(tip, mesaj, email, context) {
+  return feedbackSubject(tip, mesaj) + '\n\n' + feedbackBody(tip, mesaj, email, context);
+}
+
+/* Deschiderea e într-o funcție separată: browserul o poate înlocui ca
+   să verifice mailto: fără a lansa efectiv clientul de mail. */
+function feedbackOpenMail(href) {
+  location.href = href;
+}
+
+function feedbackLive(message) {
+  const live = document.getElementById('feedback-live');
+  if (live) live.textContent = message;
+}
+
+function initFeedback() {
+  const form = document.getElementById('feedback-form');
+  if (!form) return;
+  const tip = document.getElementById('feedback-tip');
+  const mesaj = document.getElementById('feedback-mesaj');
+  const email = document.getElementById('feedback-email');
+  const err = document.getElementById('feedback-error');
+
+  const setError = (text) => {
+    if (err) { err.textContent = text; err.hidden = !text; }
+    if (mesaj) mesaj.setAttribute('aria-invalid', text ? 'true' : 'false');
+  };
+  const context = () => ({
+    versiune: CONFIG_AN.versiune,
+    pagina: (typeof location !== 'undefined' && location.href) ? location.href : '',
+  });
+  const values = () => ({
+    tip: tip ? tip.value : '',
+    mesaj: mesaj ? mesaj.value : '',
+    email: email ? email.value : '',
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const v = values();
+    const greseala = feedbackValidate(v.mesaj);
+    if (greseala) {
+      setError(greseala);
+      if (mesaj) mesaj.focus();
+      return;
+    }
+    setError('');
+    feedbackOpenMail(feedbackMailto(v.tip, v.mesaj, v.email, context()));
+    feedbackLive('Textul e pregătit în aplicația de mail.');
+  });
+
+  const copiaza = document.getElementById('feedback-copiaza');
+  if (copiaza) copiaza.addEventListener('click', () => {
+    const v = values();
+    const text = feedbackCopyText(v.tip, v.mesaj, v.email, context());
+    const ok = () => feedbackLive('Textul feedback-ului a fost copiat.');
+    const fail = () => feedbackLive('Nu s-a putut copia. Selectează textul manual.');
+    if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok, () => { if (copyFallback(text)) ok(); else fail(); });
+    } else if (copyFallback(text)) ok();
+    else fail();
+  });
 }
 
 /* ── Hash `#categorie/tab` (cu fallback retro-compatibil `#tab`) ──
@@ -7807,6 +7921,7 @@ function init() {
   initAlerts();
   initStepMode();
   initCopyButtons();
+  initFeedback();
   initCountUp();
   initFormulaTips();
   populateYearSelect();

@@ -2725,6 +2725,116 @@ body.is-search-open { overflow: hidden; }
 .about-card h3 { margin: 0 0 6px; font-size: .95rem; color: var(--ink); }
 .about-card p { margin: 0; font-size: .87rem; line-height: 1.55; color: var(--ink-soft); }
 
+/* ── Feedback (v3.2) ─────────────────────────────────────── */
+.feedback-card.section { padding-top: 18px; }
+.feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.field textarea {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  width: 100%;
+  min-height: 130px;
+  resize: vertical;
+}
+.field textarea:hover { border-color: var(--line-strong); }
+.field textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+.feedback-error {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--neg);
+  border-radius: var(--radius-sm);
+  background: var(--neg-soft);
+  color: var(--neg-strong);
+  font-size: .85rem;
+  font-weight: 600;
+}
+.feedback-error[hidden] { display: none; }
+.feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.feedback-actions button {
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color var(--speed) var(--ease),
+              border-color var(--speed) var(--ease);
+}
+.feedback-actions button:hover { background: var(--surface-2); }
+.feedback-actions button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+.feedback-actions .feedback-send {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+.feedback-actions .feedback-send:hover { background: var(--accent-strong); }
+.feedback-actions .feedback-copy {
+  background: var(--surface);
+  color: var(--ink);
+}
+.feedback-live {
+  min-height: 1.2em;
+  margin: 0 0 8px;
+  font-size: .85rem;
+  color: var(--accent-ink);
+}
+
+/* Roadmap public: stări reale, fără promisiuni de date. */
+.roadmap-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.roadmap-item {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.roadmap-item h4 {
+  margin: 6px 0 4px;
+  font-size: .94rem;
+  color: var(--ink);
+}
+.roadmap-item p { margin: 0 0 4px; font-size: .85rem; line-height: 1.5; color: var(--ink-soft); }
+.roadmap-status {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+}
+.status-planificat { background: var(--warn-soft); color: var(--warn); }
+.status-in-lucru { background: var(--accent-soft); color: var(--accent-ink); }
+.status-terminat { background: var(--pos-soft); color: var(--pos-strong); }
+.roadmap-item .roadmap-source { font-size: .76rem; color: var(--muted); }
+.roadmap-source code { font-size: .95em; }
+
 /* ── Disclaimer ─────────────────────────────────────────── */
 .disclaimer-note {
   margin: 0 0 18px;

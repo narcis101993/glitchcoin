@@ -3,6 +3,12 @@
 Aplicație web de educație financiară, cu 24 de calculatoare grupate în 6 categorii.
 HTML + CSS + JavaScript static, **fără backend**, fără conturi, fără date personale.
 
+## v3.2.1 — ce e nou
+
+- **Feedback**: destinatarul mesajelor trimise prin `mailto:` e acum adresa publică de contact a proiectului, stabilită de Narcis (20.11); nu mai trebuie completată manual în clientul de mail (card `t_54aa3d1c`).
+- **Claritate**: formularul menționează explicit unde ajunge răspunsul.
+- **Istoric de versiuni**: actualizat la v3.2.1 în pagina „Despre”.
+
 ## v3.2.0 — ce e nou
 
 - **Feedback**: tab global nou după „Despre” — formular cu tip (bug / idee / întrebare), mesaj și email opțional. Trimite prin `mailto:` (se deschide aplicația de mail, destinatarul e ales de tine) și are buton de copiere ca rezervă (card `t_34d0eb8d`).

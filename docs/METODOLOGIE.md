@@ -1,6 +1,6 @@
 # GlitchCoin — metodologie (document viu)
 
-> Versiunea analizată: v3.2.0 · actualizat: 2026-11-20.
+> Versiunea analizată: v3.2.1 · actualizat: 2026-11-20.
 > `docs/REVIEW-FINANCIAR.md` e un snapshot istoric (12–16.11.2026); pentru starea curentă vezi acest document, `data.js`, `app.js` și `README.md`.
 
 ## 1. Surse și actualizare anuală

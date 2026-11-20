@@ -50,7 +50,7 @@ test('Formular — tip, mesaj, email opțional, butoane și regiuni ARIA', () =>
   assert.ok(!block.includes('alert('), 'formularul nu trebuie să folosească alert()');
   includes(js, 'feedbackOpenMail(feedbackMailto(', 'trimite prin mailto');
   includes(js, 'location.href = href;', 'deschidere prin location.href');
-  includes(js, "const FEEDBACK_EMAIL = '';", 'fără adresă personală încodată');
+  includes(js, "const FEEDBACK_EMAIL = 'narcis101993@yahoo.ro';", 'destinatarul feedback-ului e configurat');
   includes(css, '.feedback-error', 'stil eroare');
   includes(css, '.roadmap-item', 'stil roadmap');
 });
@@ -79,28 +79,28 @@ test('Subiect — tipul și primele cuvinte din mesaj', () => {
 
 test('Corpul mailului — mesaj, email, versiune și adresa paginii', () => {
   const body = gc.feedbackBody('idee', '  o idee clară  ', '  user@example.com  ',
-    { versiune: '3.2.0', pagina: 'file:///GlitchCoin/index.html#feedback' });
+    { versiune: '3.2.1', pagina: 'file:///GlitchCoin/index.html#feedback' });
   includes(body, 'Tip: Idee', 'tip');
   includes(body, 'Mesaj:\no idee clară', 'mesaj trimis');
   includes(body, 'Email: user@example.com', 'email');
-  includes(body, 'Versiune aplicație: v3.2.0', 'versiune');
+  includes(body, 'Versiune aplicație: v3.2.1', 'versiune');
   includes(body, 'Pagina: file:///GlitchCoin/index.html#feedback', 'adresa paginii');
-  const faraEmail = gc.feedbackBody('bug', 'mesaj suficient de lung', '', { versiune: '3.2.0', pagina: 'x' });
+  const faraEmail = gc.feedbackBody('bug', 'mesaj suficient de lung', '', { versiune: '3.2.1', pagina: 'x' });
   includes(faraEmail, 'Email: (opțional, nefurnizat)', 'email absent');
   assert.ok(!faraEmail.includes('undefined'), 'fără valori undefined în corp');
 });
 
-test('mailto: — destinatar gol, subiect și corp codate corect', () => {
+test('mailto: — destinatar configurat, subiect și corp codate corect', () => {
   const link = gc.feedbackMailto('bug', 'Butonul nu merge', '',
-    { versiune: '3.2.0', pagina: 'https://exemplu.ro/#feedback' });
-  assert.ok(link.startsWith('mailto:?subject='), 'fără destinatar codat');
+    { versiune: '3.2.1', pagina: 'https://exemplu.ro/#feedback' });
+  assert.ok(link.startsWith('mailto:narcis101993@yahoo.ro?subject='), 'destinatarul trebuie în mailto:');
   const params = new URLSearchParams(link.slice(link.indexOf('?') + 1));
   assert.equal(params.get('subject'), '[GlitchCoin] Bug: Butonul nu merge');
   includes(params.get('body'), 'Butonul nu merge');
-  includes(params.get('body'), 'Versiune aplicație: v3.2.0');
+  includes(params.get('body'), 'Versiune aplicație: v3.2.1');
   includes(params.get('body'), 'https://exemplu.ro/#feedback');
   assert.ok(!link.includes(' '), 'spațiile trebuie codate');
-  const copy = gc.feedbackCopyText('bug', 'Butonul nu merge', '', { versiune: '3.2.0', pagina: 'x' });
+  const copy = gc.feedbackCopyText('bug', 'Butonul nu merge', '', { versiune: '3.2.1', pagina: 'x' });
   includes(copy, '[GlitchCoin] Bug: Butonul nu merge\n\n', 'copierea include subiectul');
   includes(copy, 'Mesaj:\nButonul nu merge', 'copierea include corpul');
 });
@@ -125,14 +125,14 @@ test('Îmbunătățiri planulate — 3 planificate, 3 terminate, surse reale', (
 });
 
 /* ── 5. Versiunea (6 locuri + istoric + README) ─────────── */
-test('Versiunea e v3.2.0 în cele 6 locuri + istoric', () => {
-  assert.equal(gc.CONFIG_AN.versiune, '3.2.0');
-  includes(data, "versiune: '3.2.0'", 'data.js');
-  includes(html, 'id="versiune-app">v3.2.0</span>', 'footer index.html');
-  includes(v3test, "'3.2.0'", 'tests/v3.test.mjs');
-  includes(readme, '## v3.2.0 — ce e nou', 'README');
-  includes(context, 'v3.2.0', 'docs/CONTEXT.md');
-  includes(metodologie, 'v3.2.0', 'docs/METODOLOGIE.md');
-  includes(html, 'Istoric de versiuni (v1 → v3.2.0)', 'sumar istoric');
-  includes(html, '<span class="v-tag">v3.2.0</span>', 'intrare istoric');
+test('Versiunea e v3.2.1 în cele 6 locuri + istoric', () => {
+  assert.equal(gc.CONFIG_AN.versiune, '3.2.1');
+  includes(data, "versiune: '3.2.1'", 'data.js');
+  includes(html, 'id="versiune-app">v3.2.1</span>', 'footer index.html');
+  includes(v3test, "'3.2.1'", 'tests/v3.test.mjs');
+  includes(readme, '## v3.2.1 — ce e nou', 'README');
+  includes(context, 'v3.2.1', 'docs/CONTEXT.md');
+  includes(metodologie, 'v3.2.1', 'docs/METODOLOGIE.md');
+  includes(html, 'Istoric de versiuni (v1 → v3.2.1)', 'sumar istoric');
+  includes(html, '<span class="v-tag">v3.2.1</span>', 'intrare istoric');
 });

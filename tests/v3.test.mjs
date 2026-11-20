@@ -50,11 +50,11 @@ test('CI rulează testele și verificarea datelor la push/PR', () => {
 });
 
 test('versiunea afișată vine din CONFIG_AN', () => {
-  assert.equal(gc.CONFIG_AN.versiune, '3.2.0');
+  assert.equal(gc.CONFIG_AN.versiune, '3.2.1');
   // Verific explicit fallback-ul din footer: versiunile vechi există acum
   // legitim în istoric, deci prohibiția e limitată la <span>-ul footerului.
-  assert.match(html, /data-config-key="versiune" id="versiune-app">v3\.2\.0<\/span>/);
-  assert.ok(!html.includes('id="versiune-app">v3.1.0<'), 'footerul static vechi a rămas');
+  assert.match(html, /data-config-key="versiune" id="versiune-app">v3\.2\.1<\/span>/);
+  assert.ok(!html.includes('id="versiune-app">v3.2.0<'), 'footerul static vechi a rămas');
 });
 
 test('validarea internă a datelor nu găsește probleme', () => {

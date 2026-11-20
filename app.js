@@ -4290,11 +4290,11 @@ function globalName(id) {
 
 /* ── Feedback (v3.2) ────────────────────────────────────────
    Fără backend: construim un mailto: și îl predăm aplicației de mail.
-   Destinatarul e gol intenționat — nu punem adrese personale în repo;
-   utilizatorul o completează în clientul de mail. */
+   Destinatarul e adresa publică de contact a proiectului (decizia lui
+   Narcis, 20.11); utilizatorul o vede deja completată în clientul de mail. */
 const FEEDBACK_TIPURI = { bug: 'Bug', idee: 'Idee', intrebare: 'Întrebare' };
 const FEEDBACK_MIN_MESAJ = 10;
-const FEEDBACK_EMAIL = '';
+const FEEDBACK_EMAIL = 'narcis101993@yahoo.ro';
 
 function feedbackValidate(mesaj) {
   const text = String(mesaj == null ? '' : mesaj).trim();
